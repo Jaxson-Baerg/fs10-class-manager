@@ -11,14 +11,15 @@
 
     <main>
       <div class="jumbotron">
-        <a class="nav-link" href="/about">About</a>
+        <a class="nav-link" href="/">Home</a>
       </div>
       <ul>
-        <% typeList.forEach(obj => { %>
+        <% classList.forEach(obj => { %>
           <li>
-            <h2><%= obj.name %></h2>
-            <p><%= obj.description %></p>
-            <a href=<%= `/schedule/${obj.class_type_id}` %>>View Schedule</a>
+            <h3><%= formatDate(obj.start_datetime); %></h3>
+            <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
+            <h4>Spots Remaining: <%= obj.spots_remaining %></h4>
+            <a href=<%= `/register/${obj.class_id}` %>>Register</a>
           </li>
         <% }); %>
       </ul>
