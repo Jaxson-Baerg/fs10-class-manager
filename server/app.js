@@ -7,6 +7,7 @@ const logger = require('morgan');
 // const favicon = require('serve-favicon');
 
 const homeRouter = require('./routes/home');
+const aboutRouter = require('./routes/about');
 const studentsRouter = require('./routes/students');
 const classesRouter = require('./routes/classes');
 const classTypesRouter = require('./routes/class_types');
@@ -30,13 +31,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cookieSession({
-  name: 'fortysixten',
+  name: 'fortysix10fitness',
   keys:['SecretKey','anotherSecretKey'],
   maxAge: 24* 60 * 60 * 1000
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', homeRouter);
+app.use('/about', aboutRouter);
 app.use('/students', studentsRouter);
 app.use('/classes', classesRouter);
 app.use('/class_types', classTypesRouter);
