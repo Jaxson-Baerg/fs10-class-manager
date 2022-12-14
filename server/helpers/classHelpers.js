@@ -1,7 +1,7 @@
 const { getClassesById } = require('../db/queries/classQueries');
 const { getStudentById } = require('../db/queries/studentQueries');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
-const { getAllStudentsPerClass } = require('../db/queries/classStudentQueries');
+const { getStudentsForClass } = require('../db/queries/classStudentQueries');
 
 // Get class objects from list of class ids
 const getClassList = async (classIds) => {
@@ -43,7 +43,7 @@ const unpackageClassObjects = async (classList) => {
 const getSpotsRemaining = async (classList) => {
   const classes = [];
   for (let c of classList) {
-    const numStudents = await getAllStudentsPerClass(c.class_id);
+    const numStudents = await getStudentsForClass(c.class_id);
     classes.push({
       ...c,
       spots_remaining: c.max_students - numStudents.length

@@ -7,7 +7,9 @@ const logger = require('morgan');
 // const favicon = require('serve-favicon');
 
 const homeRouter = require('./routes/home');
+const scheduleRouter = require('./routes/schedule');
 const aboutRouter = require('./routes/about');
+
 const studentsRouter = require('./routes/students');
 const classesRouter = require('./routes/classes');
 const classTypesRouter = require('./routes/class_types');
@@ -38,7 +40,9 @@ app.use(cookieSession({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', homeRouter);
+app.use('/schedule', scheduleRouter);
 app.use('/about', aboutRouter);
+
 app.use('/students', studentsRouter);
 app.use('/classes', classesRouter);
 app.use('/class_types', classTypesRouter);

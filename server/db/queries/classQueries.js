@@ -20,7 +20,7 @@ const getClassesById = async (class_id) => {
 // Get all classes by their class type id
 const getClassesByClassType = async (class_type_id) => {
   const queryDef = {
-    text: 'SELECT * FROM classes WHERE class_type_id = $1;',
+    text: 'SELECT *, start_datetime - NOW() AS time_to_class FROM classes WHERE class_type_id = $1;',
     values: [class_type_id]
   };
 
