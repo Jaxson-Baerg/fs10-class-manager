@@ -25,8 +25,11 @@
               <h4><%= formatDate(obj.start_datetime); %></h4>
               <h4><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h4>
               <p><%= obj.description %></p>
-              <form action="/schedule/cancel" method="GET" onsubmit="e => {if (!window.confirm('Are you sure?')) {e.preventDefault();}}">
-                <input id="class_id" name="class_id" type="text" value=<%= obj.class_id %> hidden disabled/>
+              <form action="/schedule/cancel/confirm" method="POST">
+                <input name="class_id" value=<%= obj.class_id %> hidden />
+                <input name="credits" value=<%= obj.credit_cost %> hidden />
+                <button type="submit">Cancel</button>
+                <span>This will refund you <%= obj.credit_cost %> credits.</span>
               </form>
             </li>
           <% }); %>
