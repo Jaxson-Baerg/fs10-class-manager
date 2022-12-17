@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 const { getClassTypes } = require('../db/queries/classTypeQueries');
+const { updateHistory } = require('../helpers/operationHelpers');
 
+// Render the home page with class types list displayed
 router.get('/', async (req, res) => {
   try {
     const typeList = await getClassTypes();
-    res.render('../../client/views/pages/home', { typeList });
+
+    req.session.history = updateHistory(req.session.history, '/');
+    res.render('../../client/views/pages/home', { typeList, user: req.session.user });
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
