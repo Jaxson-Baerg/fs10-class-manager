@@ -19,7 +19,7 @@ const getStudentByEmail = async (email) => {
   };
 
   const data = await db.query(queryDef);
-  return data.rows;
+  return data.rows[0];
 };
 
 // Get a single student by its id
@@ -30,7 +30,7 @@ const getStudentById = async (id) => {
   };
 
   const data = await db.query(queryDef);
-  return data.rows;
+  return data.rows[0];
 };
 
 // Get a student's unique code by its id
@@ -43,6 +43,17 @@ const getStudentCodeById = async (id) => {
   const data = await db.query(queryDef);
   return data.rows;
 };
+
+// Get a student by its unique code
+const getStudentByCode = async (code) => {
+  const queryDef = {
+    text: 'SELECT student_id, first_name, last_name, email, credits FROM students WHERE unique_code = $1;',
+    values: [code]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+}
 
 // Update a student's info by the parameters
 const updateStudent = async (student_id, studentInfo) => {
@@ -62,7 +73,7 @@ const updateStudent = async (student_id, studentInfo) => {
 const addStudent = async (first_name, last_name, email) => {
   const unique_code = generateUniqueCode()
   const queryDef = {
-    text: `INSERT INTO students (first_name, last_name, email, unique_code, credits) VALUES ($1, $2, $3, $4, $5) RETURNING student_id;`,
+    text: `INSERT INTO students (first_name, last_name, email, unique_code, credits) VALUES ($1, $2, $3, $4, $5) RETURNING student_id, first_name, last_name, email, credits;`,
     values: [first_name, last_name, email, unique_code, 0]
   };
 
@@ -71,10 +82,12 @@ const addStudent = async (first_name, last_name, email) => {
 };
 
 module.exports = {
+  generateUniqueCode,
   getStudents,
   getStudentByEmail,
   getStudentById,
   getStudentCodeById,
+  getStudentByCode,
   updateStudent,
   addStudent
 };
