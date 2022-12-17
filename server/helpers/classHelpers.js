@@ -18,7 +18,7 @@ const getStudentList = async (studentIds) => {
   const students = [];
   for (studentId of studentIds) {
     const studentList = await getStudentById(Number(studentId.student_id));
-    students.push(studentList[0]);
+    students.push(studentList);
   }
   return students;
 };
