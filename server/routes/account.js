@@ -5,7 +5,7 @@ const router = express.Router();
 require('dotenv').config();
 
 const { getClassesForStudent } = require('../db/queries/classStudentQueries');
-const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent } = require('../db/queries/studentQueries');
+const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory } = require('../helpers/operationHelpers');
 
@@ -13,6 +13,8 @@ const { formatDate, formatTime, updateHistory } = require('../helpers/operationH
 router.get('/', async (req, res) => {
   try {
     if (req.session.user) {
+      req.session.user = await getStudentById(req.session.user.student_id);
+
       const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
