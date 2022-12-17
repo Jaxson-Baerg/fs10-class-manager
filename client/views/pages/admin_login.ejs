@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header>
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>Admin Login:</h1>
+        <% if(message) { %>
+          <p class="alert alert-danger"><%= message %></p>
+        <% } %>
+        <form action="/admin/login" method="POST">
+          <div>
+            <label for="password">Password:</label>
+            <input id="password" name="password" type="password" value="" required />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>

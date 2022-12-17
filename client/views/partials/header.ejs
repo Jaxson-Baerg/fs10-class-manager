@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="border-radius: 5px; background-color: rgb(85, 85, 85);">
+  <a class="navbar-brand" href="/"><img src="../../public/images/favicon.ico" width="40" height="40"> fortysix10fitness</a>
+  <ul class="navbar-nav mr-auto">
+    <% if (user) { %>
+      <li class="nav-item">
+        <a class="nav-link" href="/account">Acount</a>
+      </li>
+    <% } %>
+    <li class="nav-item">
+      <a class="nav-link" href="/purchase">Purchase Credits</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/about">About</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/admin">Admin</a>
+    </li>
+  </ul>
+  <% if (!user) { %>
+    <a class="nav-link" href="/account/login">Login</a>
+    <a class="nav-link" href="/account/register">Register</a>
+  <% } else { %>
+    <span>Welcome, <%= user.first_name %>!</span>
+    <a class="nav-link" href="/account/logout">Logout</a>
+  <% } %>
+</nav>

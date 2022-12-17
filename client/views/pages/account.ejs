@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header>
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>My Account</h1>
+        <% if(message) { %>
+          <p class="alert alert-success"><%= message %></p>
+        <% } %>
+        <h2>Hello, <%= user.first_name %></h2>
+        <h4>You have <%= user.credits %> credits.</h4>
+        <!-- put subscription info here -->
+        <ul>
+          <% classes.forEach(obj => { %>
+            <li>
+              <h3><%= obj.name %></h3>
+              <h4><%= formatDate(obj.start_datetime); %></h4>
+              <h4><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h4>
+              <p><%= obj.description %></p>
+              <form action="/schedule/cancel" method="GET" onsubmit="e => {if (!window.confirm('Are you sure?')) {e.preventDefault();}}">
+                <input id="class_id" name="class_id" type="text" value=<%= obj.class_id %> hidden disabled/>
+              </form>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>
