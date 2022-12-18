@@ -63,9 +63,9 @@ router.post('/login/email', async (req, res) => {
       });
 
       await transporter.sendMail({
-        from: '"FortySix10 Fitness" <lisa@fortysix10fitness.ca>',
+        from: process.env.EMAIL_FROM,
         to: process.env.EMAIL_TO ?? student.email,
-        subject: 'FortySix10 Fitness Login Code',
+        subject: process.env.COMPANY + ' Login Code',
         text: `Here is your unique code to login: ${unique_code}`,
       });
 
