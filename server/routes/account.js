@@ -53,8 +53,8 @@ router.post('/login/email', async (req, res) => {
       await updateStudent(student.student_id, { unique_code });
 
       const transporter = nodemailer.createTransport({
-        host: "smtp.zoho.com",
-        port: 465,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
         secure: true,
         auth: {
           user: process.env.EMAIL_USER,
@@ -63,9 +63,9 @@ router.post('/login/email', async (req, res) => {
       });
 
       await transporter.sendMail({
-        from: '"fortysix10fitness " <jaxson.baerg@zohomail.com>',
-        to: 'jaxson.baerg@gmail.com',
-        subject: 'fortysix10fitness Login Code',
+        from: '"FortySix10 Fitness" <lisa@fortysix10fitness.ca>',
+        to: process.env.EMAIL_TO ?? student.email,
+        subject: 'FortySix10 Fitness Login Code',
         text: `Here is your unique code to login: ${unique_code}`,
       });
 
