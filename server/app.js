@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 const createError = require('http-errors');
 const logger = require('morgan');
 
+// Import route files
 const homeRouter = require('./routes/home');
 const scheduleRouter = require('./routes/schedule');
 const accountRouter = require('./routes/account');
@@ -18,6 +19,7 @@ const classTypesRouter = require('./routes/class_types');
 
 const app = express();
 
+// Allow client to access the icon
 app.get('/public/images/favicon.ico', (req, res) => {
   res.sendFile(__dirname + '/public/images/favicon.ico');
 });
@@ -31,20 +33,21 @@ app.get('/public/images/favicon.ico', (req, res) => {
 // app.use(cors(corsOptions));
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+app.use(logger('dev')); // Logs requests to the server
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys:['key1', 'key2', 'key3'],
-  maxAge: 24* 60 * 60 * 1000
+  maxAge: 24* 60 * 60 * 1000 // 24 hours
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
+// Set routes by incoming url
 app.use('/', homeRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/account', accountRouter);
@@ -71,7 +74,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;

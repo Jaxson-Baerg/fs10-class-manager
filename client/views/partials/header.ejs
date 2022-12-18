@@ -1,26 +1,33 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="border-radius: 5px; background-color: rgb(85, 85, 85);">
-  <a class="navbar-brand" href="/"><img src="../../public/images/favicon.ico" width="40" height="40"> fortysix10fitness</a>
-  <ul class="navbar-nav mr-auto">
-    <% if (user) { %>
-      <li class="nav-item">
-        <a class="nav-link" href="/account">Acount</a>
+<div class="container d-flex align-items-center">
+
+  <h1><a class="" href="/"><img src="../../public/images/favicon.ico" width="40" height="40"> fortysix10fitness</a></h1>
+
+  <nav id="navbar" class="navbar order-last order-lg-0">
+    <ul class="">
+      <% if (user) { %>
+        <li class="">
+          <a class="nav-link" href="/account">Acount</a>
+        </li>
+      <% } %>
+      <li class="">
+        <a class="" href="/purchase">Purchase Credits</a>
       </li>
-    <% } %>
-    <li class="nav-item">
-      <a class="nav-link" href="/purchase">Purchase Credits</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/about">About</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/admin">Admin</a>
-    </li>
-  </ul>
+      <li class="">
+        <a class="" href="/about">About</a>
+      </li>
+      <li class="">
+        <a class="" href="/admin">Admin</a>
+      </li>
+    </ul>
+  </nav>
+
   <% if (!user) { %>
-    <a class="nav-link" href="/account/login">Login</a>
-    <a class="nav-link" href="/account/register">Register</a>
+    <h5>
+      <a class="" href="/account/login">Login</a> / 
+      <a class="" href="/account/register">Register</a>
+    </h5>
   <% } else { %>
-    <span>Welcome, <%= user.first_name %>!</span>
-    <a class="nav-link" href="/account/logout">Logout</a>
+    <h5>Welcome, <%= user.first_name %>! <a class="" href="/account/logout">Logout</a></h5>
   <% } %>
-</nav>
+
+</div>

@@ -11,15 +11,15 @@
 
     <main>
       <% if (credits > 1) { %>
-        <p>Registering for this class will cost <%= credits %> credits. Are you sure?</p>
+        <p>Cancelling this class will refund you <%= credits %> credits. Are you sure?</p>
       <% } else { %>
-        <p>Registering for this class will cost <%= credits %> credit. Are you sure?</p>
+        <p>Cancelling this class will refund you <%= credits %> credit. Are you sure?</p>
       <% } %>
       <p>You have <%= user.credits %> credits in your account.</p>
-      <form action=<%= `/schedule/${class_id}` %> method="GET">
+      <form action="/account" method="GET">
         <button type="submit">Cancel</button>
       </form>
-      <form action="/schedule/register" method="POST">
+      <form action="/schedule/cancel" method="POST">
         <input name="class_id" value=<%= class_id %> hidden />
         <input name="credits" value=<%= credits %> hidden />
         <button type="submit">Confirm</button>

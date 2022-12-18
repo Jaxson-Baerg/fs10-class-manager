@@ -3,26 +3,24 @@
   <head>
     <%- include('../partials/head'); %>
   </head>
-  <body class="container">
+  <body class="">
 
-    <header>
+    <header id="header" class="fixed-top d-flex align-items-center">
       <%- include('../partials/header'); %>
     </header>
 
-    <main>
-      <div class="jumbotron">
-        <h1>Image placeholder</h1>
-        <h2>Class Schedules</h2>
-        <ul>
-          <% typeList.forEach(type => { %>
-            <li>
-              <h2><%= type.name %></h2>
-              <p><%= type.description %></p>
-              <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
-            </li>
-          <% }); %>
-        </ul>
-      </div>
+    <main id="main">
+      <h1>Image placeholder</h1>
+      <h2>Class Schedules</h2>
+      <ul>
+        <% typeList.forEach(type => { %>
+          <li>
+            <h2><%= type.name %></h2>
+            <p><%= type.description %></p>
+            <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
+          </li>
+        <% }); %>
+      </ul>
     </main>
 
     <footer>

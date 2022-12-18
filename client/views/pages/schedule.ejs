@@ -10,23 +10,21 @@
     </header>
 
     <main>
-      <div class="jumbotron">
-        <ul>
-          <% classList.forEach(obj => { %>
-            <li>
-              <h3><%= formatDate(obj.start_datetime); %></h3>
-              <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
-              <p>Spots Remaining: <%= obj.spots_remaining %></p>
-              <p>Credit Cost: <%= obj.credit_cost %></p>
-              <form action="/schedule/register/confirm" method="POST" >
-                <input name="class_id" value=<%= obj.class_id %> hidden />
-                <input name="credits" value=<%= obj.credit_cost %> hidden />
-                <button type="submit">Register</button>
-              </form>
-            </li>
-          <% }); %>
-        </ul>
-      </div>
+      <ul>
+        <% classList.forEach(obj => { %>
+          <li>
+            <h3><%= formatDate(obj.start_datetime); %></h3>
+            <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
+            <p>Spots Remaining: <%= obj.spots_remaining %></p>
+            <p>Credit Cost: <%= obj.credit_cost %></p>
+            <form action="/schedule/register/confirm" method="POST" >
+              <input name="class_id" value=<%= obj.class_id %> hidden />
+              <input name="credits" value=<%= obj.credit_cost %> hidden />
+              <button type="submit">Register</button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
     </main>
 
     <footer>
