@@ -5,22 +5,24 @@
   </head>
   <body class="container">
 
-    <header>
+    <header id="header" class="fixed-top">
       <%- include('../partials/header'); %>
     </header>
 
     <main>
-      <h1>Admin Login:</h1>
-      <% if(message) { %>
-        <p class="alert alert-danger"><%= message %></p>
-      <% } %>
-      <form action="/admin/login" method="POST">
-        <div>
-          <label for="password">Password:</label>
-          <input id="password" name="password" type="password" value="" required />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+      <div class="jumbotron">
+        <h1>Admin Login:</h1>
+        <% if(message) { %>
+          <p class="alert alert-danger"><%= message %></p>
+        <% } %>
+        <form action="/admin/login" method="POST">
+          <div>
+            <label for="password">Password:</label>
+            <input id="password" name="password" type="password" value="" required />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </main>
 
     <footer>

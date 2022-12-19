@@ -20,8 +20,8 @@ const classTypesRouter = require('./routes/class_types');
 const app = express();
 
 // Allow client to access the icon
-app.get('/public/images/favicon.ico', (req, res) => {
-  res.sendFile(__dirname + '/public/images/favicon.ico');
+app.get('/public/images/:image_url', (req, res) => {
+  res.sendFile(__dirname + `/public/images/${req.params.image_url}`);
 });
 
 // const cors = require('cors');

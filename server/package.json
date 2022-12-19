@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "watch": "nodemon node ./bin/www",
     "start": "node ./bin/www",
     "db:reset": "node ./db/reset.js"
   },
@@ -23,5 +24,8 @@
     "pg": "^8.8.0",
     "pg-native": "^3.0.1",
     "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }

@@ -5,15 +5,17 @@
   </head>
   <body class="container">
 
-    <header>
+    <header id="header" class="fixed-top">
       <%- include('../partials/header'); %>
     </header>
 
     <main>
-      <h1>Purchase page</h1>
-      <% if (message) { %>
-        <p class="alert alert-danger"><%= message %></p>
-      <% } %>
+      <div class="jumbotron">
+        <h1>Purchase page</h1>
+        <% if (message) { %>
+          <p class="alert alert-danger"><%= message %></p>
+        <% } %>
+      </div>
     </main>
 
     <footer>

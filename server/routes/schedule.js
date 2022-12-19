@@ -25,7 +25,7 @@ router.post('/register/confirm', async (req, res) => {
   try {
     if (req.session.user) {
       if (req.session.user.credits > req.body.credits) {
-        res.render('../../client/views/pages/class_register', { user: req.session.user, class_id: req.body.class_id, credits: req.body.credits });
+        res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
       } else {
         req.session.history = updateHistory(req.session.history, 'purchase/');
         res.render('../../client/views/pages/purchase', { user: req.session.user, message: `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`});

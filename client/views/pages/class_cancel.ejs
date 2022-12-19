@@ -5,25 +5,26 @@
   </head>
   <body class="container">
 
-    <header>
+    <header id="header" class="fixed-top">
       <%- include('../partials/header'); %>
     </header>
 
     <main>
-      <% if (credits > 1) { %>
-        <p>Cancelling this class will refund you <%= credits %> credits. Are you sure?</p>
-      <% } else { %>
-        <p>Cancelling this class will refund you <%= credits %> credit. Are you sure?</p>
-      <% } %>
-      <p>You have <%= user.credits %> credits in your account.</p>
-      <form action="/account" method="GET">
-        <button type="submit">Cancel</button>
-      </form>
-      <form action="/schedule/cancel" method="POST">
-        <input name="class_id" value=<%= class_id %> hidden />
-        <input name="credits" value=<%= credits %> hidden />
-        <button type="submit">Confirm</button>
-      </form>
+      <div class="jumbotron">
+        <% if (credits > 1) { %>
+          <p>Cancelling this class will refund you <%= credits %> credits. Are you sure?</p>
+        <% } else { %>
+          <p>Cancelling this class will refund you <%= credits %> credit. Are you sure?</p>
+        <% } %>
+        <p>You have <%= user.credits %> credits in your account.</p>
+        
+        <a href="/account">Go Back</a>
+        <form action="/schedule/cancel" method="POST">
+          <input name="class_id" value=<%= class_id %> hidden />
+          <input name="credits" value=<%= credits %> hidden />
+          <button type="submit">Confirm</button>
+        </form>
+      </div>
     </main>
 
     <footer>

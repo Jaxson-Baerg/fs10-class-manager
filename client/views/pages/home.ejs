@@ -3,27 +3,29 @@
   <head>
     <%- include('../partials/head'); %>
   </head>
-  <body class="">
+  <body class="container">
 
-    <header id="header" class="fixed-top d-flex align-items-center">
+    <header id="header" class="fixed-top">
       <%- include('../partials/header'); %>
     </header>
 
-    <main id="main">
-      <h1>Image placeholder</h1>
-      <h2>Class Schedules</h2>
-      <ul>
-        <% typeList.forEach(type => { %>
-          <li>
-            <h2><%= type.name %></h2>
-            <p><%= type.description %></p>
-            <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
-          </li>
-        <% }); %>
-      </ul>
+    <main>
+      <img class="home-image" src="../../public/images/home_page_image.jpg" width="100%">
+      <div class="jumbotron home">
+        <h2>Class Schedules</h2>
+        <ul>
+          <% typeList.forEach(type => { %>
+            <li>
+              <h2><%= type.name %></h2>
+              <p><%= type.description %></p>
+              <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
     </main>
 
-    <footer>
+    <footer class="fixed-bottom footer-home">
       <%- include('../partials/footer'); %>
     </footer>
 

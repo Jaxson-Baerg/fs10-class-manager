@@ -1,33 +1,36 @@
-<div class="container d-flex align-items-center">
+<div class="nav-container d-flex align-items-center">
 
-  <h1><a class="" href="/"><img src="../../public/images/favicon.ico" width="40" height="40"> fortysix10fitness</a></h1>
+  <h1><a href="/">fortysix10fitness</a></h1>
+  <img class="nav-logo" src="../../public/images/nav_logo.png" width="100" height="100">
 
-  <nav id="navbar" class="navbar order-last order-lg-0">
-    <ul class="">
-      <% if (user) { %>
+  <div class="nav-link-container">
+    <nav id="navbar" class="navbar order-last order-lg-0">
+      <ul class="">
         <li class="">
-          <a class="nav-link" href="/account">Acount</a>
+          <a class="" href="/">Home</a>
         </li>
-      <% } %>
-      <li class="">
-        <a class="" href="/purchase">Purchase Credits</a>
-      </li>
-      <li class="">
-        <a class="" href="/about">About</a>
-      </li>
-      <li class="">
-        <a class="" href="/admin">Admin</a>
-      </li>
-    </ul>
-  </nav>
+        <% if (user) { %>
+          <li class="">
+            <a class="nav-link" href="/account">Acount</a>
+          </li>
+          <li class="">
+            <a class="" href="/purchase">Purchase Credits</a>
+          </li>
+        <% } %>
+        <li class="">
+          <a class="" href="/about">About</a>
+        </li>
+      </ul>
+    </nav>
 
-  <% if (!user) { %>
-    <h5>
-      <a class="" href="/account/login">Login</a> / 
-      <a class="" href="/account/register">Register</a>
-    </h5>
-  <% } else { %>
-    <h5>Welcome, <%= user.first_name %>! <a class="" href="/account/logout">Logout</a></h5>
-  <% } %>
+    <% if (!user) { %>
+      <h5>
+        <a class="" href="/account/login">Login</a> / 
+        <a class="" href="/account/register">Register</a>
+      </h5>
+    <% } else { %>
+      <h5>Welcome, <%= user.first_name %>! <a class="" href="/account/logout">Logout</a></h5>
+    <% } %>
+  </div>
 
 </div>
