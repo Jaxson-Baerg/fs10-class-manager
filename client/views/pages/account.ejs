@@ -20,17 +20,20 @@
         <!-- put subscription info here -->
         <ul>
           <% classes.forEach(obj => { %>
-            <li>
-              <h3><%= obj.name %></h3>
+            <li class=<%= obj.time_to_class.days < 0 ? "closed-class" : ""; %>>
+              <h3><%= obj.name %> <%= obj.time_to_class.days < 0 ? "(Finished)" : ""; %></h3>
               <h4><%= formatDate(obj.start_datetime); %></h4>
               <h4><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h4>
               <p><%= obj.description %></p>
-              <form action="/schedule/cancel/confirm" method="POST">
-                <input name="class_id" value=<%= obj.class_id %> hidden />
-                <input name="credits" value=<%= obj.credit_cost %> hidden />
-                <button type="submit">Cancel</button>
-                <span>This will refund you <%= obj.credit_cost %> credits.</span>
-              </form>
+              <% if (obj.time_to_class.hours > -1) { %>
+                <form action="/schedule/cancel/confirm" method="POST">
+                  <input name="class_id" value=<%= obj.class_id %> hidden />
+                  <input name="credits" value=<%= !obj.time_to_class.days ? 0 : obj.credit_cost; %> hidden />
+                  <input name="hours_to_class" value=<%= obj.time_to_class.hours %> hidden />
+                  <button type="submit">Cancel</button>
+                  <span><%= !obj.time_to_class.days ? "Class is coming up! This won't refund you any credits." : `This will refund you ${obj.credit_cost} credits.`; %></span>
+                </form>
+              <% } %>
             </li>
           <% }); %>
         </ul>

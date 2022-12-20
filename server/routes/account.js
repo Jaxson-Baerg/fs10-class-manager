@@ -7,7 +7,7 @@ require('dotenv').config();
 const { getClassesForStudent } = require('../db/queries/classStudentQueries');
 const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
-const { formatDate, formatTime, updateHistory } = require('../helpers/operationHelpers');
+const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the user's account page if they are logged in
 router.get('/', async (req, res) => {
@@ -18,6 +18,8 @@ router.get('/', async (req, res) => {
       const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
+      const classListCom = await sortClasses(classesCom);
+      console.log(classListCom);
 
       req.session.history = updateHistory(req.session.history, 'account/');
       res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classesCom.sort(c => c.start_datetime), message: undefined });
@@ -89,6 +91,8 @@ router.post('/login', async (req, res) => {
       const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
+      const classListCom = await sortClasses(classesCom);
+      console.log(classListCom);
 
       req.session.history = updateHistory(req.session.history, 'account/');
       res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classesCom.sort(c => c.start_datetime), message: "Successfully logged in." });
@@ -136,6 +140,7 @@ router.post('/register', async (req, res) => {
       const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
+      const classListCom = await sortClasses(classesCom);
 
       req.session.history = updateHistory(req.session.history, 'account/');
       res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classesCom.sort(c => c.start_datetime), message: "Successfully created your account." });

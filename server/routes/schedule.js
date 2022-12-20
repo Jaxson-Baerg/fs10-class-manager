@@ -5,13 +5,14 @@ const { updateStudent, getStudentById } = require('../db/queries/studentQueries'
 const { getClassesByClassType } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent } = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
-const { formatDate, formatTime, updateHistory } = require('../helpers/operationHelpers');
+const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the schedule page for a given class type
 router.get('/:class_type_id', async (req, res) => {
   try {
-    const classListInc = await getClassesByClassType(req.params.class_type_id);
-    const classListCom = await getSpotsRemaining(classListInc);
+    const classList = await getClassesByClassType(req.params.class_type_id);
+    const classListInc = await getSpotsRemaining(classList);
+    const classListCom = await sortClasses(classListInc);
 
     req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
     res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined });

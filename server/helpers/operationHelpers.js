@@ -23,8 +23,21 @@ const updateHistory = (history, url) => {
   return history;
 };
 
+// Sort past classes to the end of the array
+const sortClasses = (classes) => {
+  classes.forEach(c => {
+    if (c.time_to_class.hours < 0) {
+      classes.splice(classes.indexOf(c), 1);
+      classes.push(c);
+    }
+  });
+
+  return classes;
+};
+
 module.exports = {
   formatDate,
   formatTime,
-  updateHistory
+  updateHistory,
+  sortClasses
 };
