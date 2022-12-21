@@ -7,14 +7,14 @@ const getClasses = async () => {
 };
 
 // Get a class by it's id with time from present until the class appended
-const getClassesById = async (class_id) => {
+const getClassById = async (class_id) => {
   const queryDef = {
     text: 'SELECT *, start_datetime - NOW() AS time_to_class FROM classes WHERE class_id = $1;',
     values: [class_id]
   };
 
   const data = await db.query(queryDef);
-  return data.rows;
+  return data.rows[0];
 };
 
 // Get all classes by their class type id
@@ -52,7 +52,7 @@ const deleteClass = async (class_id) => {
 
 module.exports = {
   getClasses,
-  getClassesById,
+  getClassById,
   getClassesByClassType,
   createClass,
   deleteClass

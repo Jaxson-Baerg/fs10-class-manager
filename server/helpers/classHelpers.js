@@ -1,4 +1,4 @@
-const { getClassesById } = require('../db/queries/classQueries');
+const { getClassById } = require('../db/queries/classQueries');
 const { getStudentById } = require('../db/queries/studentQueries');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
 const { getStudentsForClass } = require('../db/queries/classStudentQueries');
@@ -7,8 +7,8 @@ const { getStudentsForClass } = require('../db/queries/classStudentQueries');
 const getClassList = async (classIds) => {
   const classes = [];
   for (classId of classIds) {
-    const classList = await getClassesById(Number(classId.class_id));
-    classes.push(classList[0]);
+    const classList = await getClassById(Number(classId.class_id));
+    classes.push(classList);
   }
   return classes;
 };
