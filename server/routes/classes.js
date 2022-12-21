@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getClasses, getClassesById, getClassesByClassType, createClass, deleteClass } = require('../db/queries/classQueries');
+const { getClasses, getClassById, getClassesByClassType, createClass, deleteClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, registerStudent, cancelRegistration } = require('../db/queries/classStudentQueries');
 const { getStudentList, unpackageClassObjects, getSpotsRemaining } = require('../helpers/classHelpers');
 
@@ -18,8 +18,8 @@ router.get('/', async (req, res) => {
 // Get a single class by its id
 router.get('/:class_id', async (req, res) => {
   try {
-    const classesInc = await getClassesById(Number(req.params.class_id));
-    const classesCom = await unpackageClassObjects(classesInc);
+    const classesInc = await getClassById(Number(req.params.class_id));
+    const classesCom = await unpackageClassObjects([classesInc]);
     res.json(classesCom);
   } catch(err) {
     res.status(500).json({ error: err.message });
