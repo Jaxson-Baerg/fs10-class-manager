@@ -13,15 +13,17 @@
       <img class="home-image" src="../../public/images/home_page_image.jpg" width="100%">
       <div class="jumbotron home">
         <h2>Class Schedules</h2>
-        <ul>
+        <div class="row portfolio-container">
           <% typeList.forEach(type => { %>
-            <li>
-              <h2><%= type.name %></h2>
-              <p><%= type.description %></p>
-              <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
-            </li>
+            <div class="col-lg-4 col-md-6 portfolio-item wow" style="<%= `background: url('public/images/${type.name}.jpg'); background-size: cover;` %>">
+                <div class="portfolio-info">
+                  <h2><%= type.name %></h2>
+                  <p><%= type.description %></p>
+                  <a href=<%= `/schedule/${type.class_type_id}` %>>View Schedule</a>
+                </div>
+            </div>
           <% }); %>
-        </ul>
+          </div>
       </div>
     </main>
 
