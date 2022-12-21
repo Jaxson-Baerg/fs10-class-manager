@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1><%= classObj.name %></h1>
+        <h3><%= formatDate(classObj.start_datetime); %></h3>
+        <h3><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h3>
+        <p>Spots Remaining: <%= classObj.spots_remaining %></p>
+        <p>Credit Cost: <%= classObj.credit_cost %></p>
+        <form action="/admin/email" method="POST">
+          <input name="student_list" value=<%= studentList %> hidden />
+          <button type="submit">Email Students</button>
+        </form>
+        <div class="row portfolio-container">
+          <% studentList.forEach(obj => { %>
+            <div class="col-lg-4 col-md-6 portfolio-item wow">
+              <h3><%= obj.first_name %> <%= obj.last_name %></h3>
+              <p>Email: <%= obj.email %></p>
+              <p>Credits: <%= obj.credits %></p>
+              <a href=<%= `/admin/class/${obj.class_id}` %>>View Students</a>
+              <button>Cancel Registration</button>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>

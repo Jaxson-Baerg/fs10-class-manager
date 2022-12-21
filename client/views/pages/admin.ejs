@@ -11,7 +11,21 @@
 
     <main>
       <div class="jumbotron">
-        <h1>Admin page</h1>
+        <h1>Admin</h1>
+        <a href="/admin/create/class_type">Create Class Type</a>
+        <a href="/admin/create/class">Create Class</a>
+        <div class="row portfolio-container">
+          <% typeList.forEach(type => { %>
+            <div class="col-lg-4 col-md-6 portfolio-item wow" style="<%= `background: url('public/images/${type.name}.jpg'); background-size: cover;` %>">
+              <div class="portfolio-info">
+                <h2><%= type.name %></h2>
+                <p><%= type.description %></p>
+                <a href=<%= `/admin/schedule/${type.class_type_id}` %>>View Classes</a>
+                <button>Edit</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
       </div>
     </main>
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>Create Class Type</h1>
+        <form action="/admin/create/class_type" method="POST">
+          <div>
+            <label for="name">Enter a name:</label>
+            <input name="name" type="text" required />
+          </div>
+          <div>
+            <label for="description">Enter a description:</label>
+            <input name="description" type="text" required />
+          </div>
+          <div>
+            <label for="photo">Upload a Photo</label>
+            <input name="photo" type="file" required />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>
