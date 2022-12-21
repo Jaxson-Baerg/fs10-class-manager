@@ -72,8 +72,27 @@
     display: flex;
   }
 
+  .portfolio-item {
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+    margin: 1em;
+    min-height: 20em;
+    max-width: 31.1%;
+    box-shadow: 2px 2px 5px rgb(117, 117, 117);
+    transition: all 0.1s ease-in-out 0s;
+  }
+
+  .portfolio-item:hover {
+    box-shadow: 5px 5px 8px rgb(73, 73, 73);
+  }
+
   .closed-class {
-    background: rgb(255, 255, 255, 0.5);
+    background: maroon;
+  }
+
+  .open-class {
+    background: aqua;
   }
 
   footer {
