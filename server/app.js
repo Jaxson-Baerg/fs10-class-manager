@@ -43,9 +43,7 @@ app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys:['key1', 'key2', 'key3'],
-  maxAge: 24* 60 * 60 * 1000, // 24 hours
-  sameSite: 'none',
-  secure: true
+  maxAge: 24* 60 * 60 * 1000 // 24 hours
 }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
