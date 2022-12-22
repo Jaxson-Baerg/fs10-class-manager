@@ -13,7 +13,31 @@
       <div class="jumbotron">
         <h1>Admin</h1>
         <form action="/admin/create/class" method="POST">
-          
+          <div>
+            <select id="type" name="type" required >
+              <% classTypes.forEach(c => { %>
+                <option value=<%= c.class_type_id %>><%= c.name %></option>
+              <% }) %>
+            </select>
+            <label for="type">Choose the type of class:</label>
+          </div>
+          <div>
+            <input id="date" name="date" type="datetime-local" required />
+            <label for="date">Select the date and starting time for the class:</label>
+          </div>
+          <div>
+            <input id="time" name="time" type="time" required/>
+            <label for="time">Enter the ending time for the class:</label>
+          </div>
+          <div>
+            <input id="credit" name="credit" type="number" min="1" required />
+            <label for="credit">Enter how many credits this class will cost:</label>
+          </div>
+          <div>
+            <input id="student" name="student" type="number" min="1" required />
+            <label for="student">Enter the maximum number of students this class can have:</label>
+          </div>
+          <button type="submit">Submit</button>
         </form>
       </div>
     </main>

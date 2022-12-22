@@ -8,6 +8,14 @@
     <header id="header" class="fixed-top">
       <%- include('../partials/header'); %>
     </header>
+    
+    <script type="text/javascript">
+      const cancelHandler = (credits) => {
+        if (!confirm(`This will refund ${credits} credit(s) to their account, are you sure?`)) {
+          event.preventDefault();
+        }
+      };
+    </script>
 
     <main>
       <div class="jumbotron">
@@ -16,21 +24,35 @@
         <h3><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h3>
         <p>Spots Remaining: <%= classObj.spots_remaining %></p>
         <p>Credit Cost: <%= classObj.credit_cost %></p>
-        <form action="/admin/email" method="POST">
-          <input name="student_list" value=<%= studentList %> hidden />
-          <button type="submit">Email Students</button>
-        </form>
-        <div class="row portfolio-container">
-          <% studentList.forEach(obj => { %>
-            <div class="col-lg-4 col-md-6 portfolio-item wow">
-              <h3><%= obj.first_name %> <%= obj.last_name %></h3>
-              <p>Email: <%= obj.email %></p>
-              <p>Credits: <%= obj.credits %></p>
-              <a href=<%= `/admin/class/${obj.class_id}` %>>View Students</a>
-              <button>Cancel Registration</button>
-            </div>
-          <% }); %>
-        </div>
+        <% if (studentList.length !== 0) { %>
+          <form action="/admin/email" method="POST">
+            <input name="student_list" value=<%= studentList %> hidden />
+            <button type="submit">Email Students</button>
+          </form>
+          <div class="row portfolio-container">
+            <% studentList.forEach(obj => { %>
+              <div class="col-lg-4 col-md-6 portfolio-item wow">
+                <h3><%= obj.first_name %> <%= obj.last_name %></h3>
+                <p>Email: <%= obj.email %></p>
+                <p>Credits: <%= obj.credits %></p>
+                <% if (!completeList[obj.student_id]) { %>
+                  <form action="/admin/checkin" method="POST">
+                    <input name="class_id" value=<%= classObj.class_id %> hidden />
+                    <input name="student_id" value=<%= obj.student_id %> hidden />
+                    <button type="submit">Check In</button>
+                  </form>
+                <% } else { %>
+                  <p>Checked in!</p>
+                <% } %>
+                <form action="/admin/cancel" method="POST" onsubmit="cancelHandler(<%= classObj.credit_cost %>)">
+                  <input name="class_id" value=<%= classObj.class_id %> hidden />
+                  <input name="student_id" value=<%= obj.student_id %> hidden />
+                  <button type="submit">Cancel Registration</button>
+                </form>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
       </div>
     </main>
 

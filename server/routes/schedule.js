@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType } = require('../db/queries/classQueries');
-const { registerStudent, cancelRegistration, getClassesForStudent } = require('../db/queries/classStudentQueries');
+const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
@@ -87,9 +87,11 @@ router.post('/cancel', async (req, res) => {
       const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
+      const classListCom = sortClasses(classesCom);
+      const numComClasses = await getCompletedClasses(req.session.user.student_id);
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classesCom.sort(c => c.start_datetime), message: "Successfully cancelled." });
+      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully cancelled." });
     } else {
       res.redirect('/');
     }

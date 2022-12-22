@@ -3,10 +3,10 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const { getClassesByClassType, getClassById } = require('../db/queries/classQueries');
-const { getStudentsForClass } = require('../db/queries/classStudentQueries');
-const { getClassTypes, getClassTypeById } = require('../db/queries/classTypeQueries');
-const { getSpotsRemaining, getStudentList } = require('../helpers/classHelpers');
+const { getClassesByClassType, getClassById, createClass } = require('../db/queries/classQueries');
+const { getStudentsForClass, cancelRegistration, completeClass } = require('../db/queries/classStudentQueries');
+const { getClassTypes, getClassTypeById, createClassType } = require('../db/queries/classTypeQueries');
+const { getSpotsRemaining, getStudentList, getStudentsCheckedIn } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -50,11 +50,14 @@ router.get('/class/:class_id', async (req, res) => {
   try {
     if (req.session.admin) {
       const classObj = await getClassById(req.params.class_id);
+      const classObjCom = await getSpotsRemaining([classObj]);
       const studentIdList = await getStudentsForClass(req.params.class_id);
       const studentObjList = await getStudentList(studentIdList);
+      const completeList = await getStudentsCheckedIn(req.params.class_id, studentIdList);
+      console.log(completeList);
 
       req.session.history = updateHistory(req.session.history, `admin/class/${req.params.class_id}`);
-      res.render('../../client/views/pages/admin_class', { user: req.session.user, formatDate, formatTime, classObj, studentList: studentObjList });
+      res.render('../../client/views/pages/admin_class', { user: req.session.user, formatDate, formatTime, classObj: classObjCom[0], studentList: studentObjList, completeList });
     } else {
       res.redirect('/admin/login');
     }
@@ -81,7 +84,9 @@ router.get('/create/class_type', async (req, res) => {
 router.post('/create/class_type', async (req, res) => {
   try {
     if (req.session.admin) {
+      await createClassType(req.body);
 
+      res.redirect('/admin');
     } else {
       res.redirect('/admin/login');
     }
@@ -94,8 +99,10 @@ router.post('/create/class_type', async (req, res) => {
 router.get('/create/class', async (req, res) => {
   try {
     if (req.session.admin) {
+      const classTypes = await getClassTypes();
+
       req.session.history = updateHistory(req.session.history, 'admin/create/class');
-      res.render('../../client/views/pages/admin_create_class', { user: req.session.user });
+      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes });
     } else {
       res.redirect('/admin/login');
     }
@@ -108,10 +115,47 @@ router.get('/create/class', async (req, res) => {
 router.post('/create/class', async (req, res) => {
   try {
     if (req.session.admin) {
+      const start_datetime = req.body.date.split('T');
+      start_datetime.splice(2, 0, '-07:00').splice(1, 1, `${req.body.date.split('T')[1]}:00`);
+      const end_datetime = req.body.date.split('T');
+      end_datetime.splice(1, 1);
+      end_datetime.push(req.body.time)
+      end_datetime.push('-07:00');
 
+      await createClass({
+        class_type_id: req.body.type,
+        start_datetime: start_datetime.join(' '),
+        end_datetime: end_datetime.join(' '),
+        credit_cost: req.body.credit,
+        max_students: req.body.student
+      });
+
+      res.redirect('/admin');
     } else {
       res.redirect('/admin/login');
     }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Checkin a student into a class (change classstudent complete column to true)
+router.post('/checkin/', async (req, res) => {
+  try {
+    await completeClass(req.body.class_id, req.body.student_id);
+
+    res.redirect(`/admin/class/${req.body.class_id}`);
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cancel a student's registration for a class
+router.post('/cancel', async (req, res) => {
+  try {
+    await cancelRegistration(req.body.class_id, req.body.student_id);
+
+    res.redirect(`/admin/class/${req.body.class_id}`);
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
