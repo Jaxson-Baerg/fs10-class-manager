@@ -4,7 +4,7 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const { getClassesForStudent } = require('../db/queries/classStudentQueries');
+const { getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
@@ -19,9 +19,10 @@ router.get('/', async (req, res) => {
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
       const classListCom = sortClasses(classesCom);
+      const numComClasses = await getCompletedClasses(req.session.user.student_id);
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), message: undefined });
+      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: undefined });
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to access your account page." });
@@ -91,9 +92,10 @@ router.post('/login', async (req, res) => {
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
       const classListCom = sortClasses(classesCom);
+      const numComClasses = await getCompletedClasses(req.session.user.student_id);
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), message: "Successfully logged in." });
+      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully logged in." });
     } else {
       res.redirect('/');
     }
@@ -106,7 +108,7 @@ router.post('/login', async (req, res) => {
 router.get('/logout', async (req, res) => {
   try {
     if (req.session.user) {
-      req.session = null;
+      req.session.user = null;
     }
     res.redirect('/');
   } catch(err) {
@@ -139,9 +141,10 @@ router.post('/register', async (req, res) => {
       const classesInc = await getClassList(classIds); // Get all class objects
       const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
       const classListCom = sortClasses(classesCom);
+      const numComClasses = await getCompletedClasses(req.session.user.student_id);
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), message: "Successfully created your account." });
+      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully created your account." });
     } else {
       res.render('../../client/views/pages/error', { message: "There was an error creating your account.", user: req.session.user });
     }
