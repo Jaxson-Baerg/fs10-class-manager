@@ -6,7 +6,7 @@ require('dotenv').config();
 const { getClassesByClassType, getClassById, createClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass } = require('../db/queries/classStudentQueries');
 const { getClassTypes, getClassTypeById, createClassType } = require('../db/queries/classTypeQueries');
-const { getSpotsRemaining, getStudentList, getStudentsCheckedIn } = require('../helpers/classHelpers');
+const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -50,11 +50,12 @@ router.get('/class/:class_id', async (req, res) => {
   try {
     if (req.session.admin) {
       const classObj = await getClassById(req.params.class_id);
-      const classObjCom = await getSpotsRemaining([classObj]);
+      const classObjInc = await unpackageClassObjects([classObj]);
+      const classObjCom = await getSpotsRemaining(classObjInc);
+
       const studentIdList = await getStudentsForClass(req.params.class_id);
       const studentObjList = await getStudentList(studentIdList);
       const completeList = await getStudentsCheckedIn(req.params.class_id, studentIdList);
-      console.log(completeList);
 
       req.session.history = updateHistory(req.session.history, `admin/class/${req.params.class_id}`);
       res.render('../../client/views/pages/admin_class', { user: req.session.user, formatDate, formatTime, classObj: classObjCom[0], studentList: studentObjList, completeList });

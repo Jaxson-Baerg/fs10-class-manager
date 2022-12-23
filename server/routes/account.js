@@ -71,7 +71,7 @@ router.post('/login/email', async (req, res) => {
         text: `Here is your unique code to login: ${unique_code}`,
       });
 
-      res.render('../../client/views/pages/account_code_login', { user: req.session.user });
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student });
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "There is no account with this email."});

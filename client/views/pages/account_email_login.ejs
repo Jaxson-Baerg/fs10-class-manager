@@ -15,13 +15,18 @@
         <% if(message) { %>
           <p class="alert alert-danger"><%= message %></p>
         <% } %>
-        <form action="/account/login/email" method="POST">
-          <div>
-            <label for="email">Email:</label>
-            <input id="email" name="email" type="email" placeholder="Enter your email here" value="" required />
+        <div class="row mt-5 justify-content-center">
+          <div class="col-lg-10">
+            <form action="/account/login/email" method="POST" class="input-form">
+              <div class="form-group mt-3">
+                <input id="email" name="email" class="form-control" type="email" placeholder="Your Email" value="" required />
+              </div>
+              <div class="text-center">
+                <button type="submit">Submit</button>
+              </div>
+            </form>
           </div>
-          <button type="submit">Submit</button>
-        </form>
+        </div>
         <span>Don't have an account? <a href="/account/register">Click here to register!</a></span>
       </div>
     </main>

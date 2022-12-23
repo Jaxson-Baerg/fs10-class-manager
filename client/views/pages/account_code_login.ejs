@@ -12,14 +12,22 @@
     <main>
       <div class="jumbotron">
         <h1>Enter the code sent to your email:</h1>
-        <form action="/account/login" method="POST">
-          <div>
-            <label for="code">Emailed Code:</label>
-            <input id="code" name="code" type="password" placeholder="Enter unique code here" required />
+        <div class="row mt-5 justify-content-center">
+          <div class="col-lg-10">
+            <form id="code" action="/account/login" method="POST" class="input-form">
+              <div class="form-group mt-3">
+                <input id="code" name="code" class="form-control" type="password" placeholder="Your Code" required />
+              </div>
+              <div class="text-center">
+                <button type="submit" form="code">Submit</button>
+              </div>
+            </form>
+            <form id="resend" action="/account/login/email" method="POST">
+              <input name="email" value=<%= student.email %> hidden />
+              <button type="submit" form="resend" class="btn btn-link">Resend Code</button>
+            </form>
           </div>
-          <input type="submit" value="submit" />
-        </form>
-        <button>Resend Code</button>
+        </div>
       </div>
     </main>
 

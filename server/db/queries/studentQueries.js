@@ -2,7 +2,7 @@ const db = require('../index');
 
 // Generate a unique alphanumeric code
 const generateUniqueCode = () => {
-  return Math.random().toString(36).slice(2, 8);
+  return Math.floor(100000 + Math.random() * 900000);
 };
 
 // Get all students' info except id and unique code

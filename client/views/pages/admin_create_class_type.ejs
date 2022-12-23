@@ -11,22 +11,26 @@
 
     <main>
       <div class="jumbotron">
-        <h1>Create Class Type</h1>
-        <form action="/admin/create/class_type" method="POST">
-          <div>
-            <label for="name">Enter a name:</label>
-            <input name="name" type="text" required />
+        <h1>Create a Class Type</h1>
+        <div class="row mt-5 justify-content-center">
+          <div class="col-lg-10">
+            <form action="/admin/create/class_type" method="POST" class="input-form">
+              <div class="form-group mt-3">
+                <input name="name" class="form-control" type="text" placeholder="Your Name" required />
+              </div>
+              <div class="form-group mt-3">
+                <textarea name="description" class="form-control" type="text" placeholder="Your Description" maxlength="300" required></textarea>
+              </div>
+              <div class="form-group mt-3">
+                <label for="image_url">Upload a Photo:</label>
+                <input name="image_url" type="file" required />
+              </div>
+              <div class="text-center">
+                <button type="submit">Submit</button>
+              </div>
+            </form>
           </div>
-          <div>
-            <label for="description">Enter a description:</label>
-            <input name="description" type="text" required />
-          </div>
-          <div>
-            <label for="image_url">Upload a Photo</label>
-            <input name="image_url" type="file" required />
-          </div>
-          <button type="submit">Submit</button>
-        </form>
+        </div>
       </div>
     </main>
 

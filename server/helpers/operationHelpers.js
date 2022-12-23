@@ -11,8 +11,8 @@ const formatTime = (timestamp, timezone) => {
   const dateStr = `${timestamp}`;
 
   const tempDate = dateStr.split(' '); // tempDate = ["Thu", "Dec", "15", "2022", "16:30:00", "GMT-0700", "(Mountain", "Standard" ,"Time)"]
-  return `${tempDate[4].split(':')[0] > 12 ? tempDate[4].split(':')[0] - 12 : tempDate[4].split(':')[0].split('')[0] === "0" ? tempDate[4].split(':')[0].split('')[1] : tempDate[4].split(':')[0]}:${tempDate[4].split(':')[1]} ${tempDate[4].split(':')[0] > 11 ? "PM" : "AM"} ${timezone ? `${tempDate[6]} ${tempDate[7]} ${tempDate[8]}` : ''}`; // 4:30 PM
-};
+  return `${tempDate[4].split(':')[0] > 12 ? tempDate[4].split(':')[0] - 12 : tempDate[4].split(':')[0].split('')[0] === "0" ? tempDate[4].split(':')[0].split('')[1] : tempDate[4].split(':')[0]}:${tempDate[4].split(':')[1]} ${tempDate[4].split(':')[0] > 11 ? "PM" : "AM"} ${timezone ? `MST` : ''}`; // 4:30 PM
+}; // Depends on if different timezones are needed: timezone ? `${tempDate[6]} ${tempDate[7]} ${tempDate[8]}` : ''
 
 // Update the session history array to track where the user goes
 const updateHistory = (history, url) => {
