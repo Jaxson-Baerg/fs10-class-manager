@@ -16,9 +16,8 @@
         <div class="row portfolio-container">
           <% typeList.forEach(type => { %>
             <div class="col-lg-4 col-md-6 portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
-                <div class="portfolio-info">
-                  <h2><%= type.name %></h2>
-                  <p><%= type.description %></p>
+                <div class="portfolio-info d-flex justify-content-center align-items-center">
+                  <h1><%= type.name %></h1>
                   <a href=<%= `/schedule/${type.class_type_id}` %> class="fix-to-bottom"><button type="button" class="link-btn">View Schedule</button></a>
                 </div>
             </div>

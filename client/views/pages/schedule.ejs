@@ -11,6 +11,8 @@
 
     <main>
       <div class="jumbotron">
+        <h1><%= classType.name %></h1>
+        <p><%= classType.description %></p>
         <div class="row portfolio-container">
           <% classList.forEach(obj => { %>
             <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1 ? 'col-lg-4 col-md-6 portfolio-item wow closed-class' : 'col-lg-4 col-md-6 portfolio-item wow open-class'; %>" >

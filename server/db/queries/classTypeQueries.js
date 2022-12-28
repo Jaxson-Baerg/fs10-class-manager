@@ -14,7 +14,7 @@ const getClassTypeById = async (class_type_id) => {
   };
 
   const data = await db.query(queryDef);
-  return data.rows;
+  return data.rows[0];
 };
 
 // Create a class type from the parameters

@@ -6,16 +6,18 @@ const { getClassesByClassType } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
+const { getClassTypeById } = require('../db/queries/classTypeQueries');
 
 // Render the schedule page for a given class type
 router.get('/:class_type_id', async (req, res) => {
   try {
+    const classType = await getClassTypeById(req.params.class_type_id);
     const classList = await getClassesByClassType(req.params.class_type_id);
     const classListInc = await getSpotsRemaining(classList);
     const classListCom = await sortClasses(classListInc);
 
     req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
-    res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined });
+    res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined, classType });
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
