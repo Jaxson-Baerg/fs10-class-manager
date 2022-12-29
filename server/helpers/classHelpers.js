@@ -31,8 +31,8 @@ const unpackageClassObjects = async (classList) => {
 
     c = {
       ...c,
-      name: classType[0].name,
-      description: classType[0].description
+      name: classType.name,
+      description: classType.description
     };
     classes.push(c);
   };

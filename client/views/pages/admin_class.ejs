@@ -31,9 +31,10 @@
           </form>
           <div class="row portfolio-container">
             <% studentList.forEach(obj => { %>
-              <div class="col-lg-4 col-md-6 portfolio-item wow">
-                <div class="portfolio-info">
-                  <h3><%= obj.first_name %> <%= obj.last_name %></h3>
+              <div class="col-lg-4 col-md-6 div-sizing">
+              <div class="portfolio-item wow">
+                <div class="portfolio-info card-center">
+                  <h3 class="card-text"><%= obj.first_name %> <%= obj.last_name %></h3>
                   <p>Email: <%= obj.email %></p>
                   <p>Credits: <%= obj.credits %></p>
                   <div class="student-buttons d-flex fix-to-bottom">
@@ -53,6 +54,7 @@
                     </form>
                   </div>
                 </div>
+              </div>
               </div>
             <% }); %>
           </div>

@@ -16,15 +16,17 @@
         <a href="/admin/create/class"><button type="button" class="btn link-btn">Create Class</button></a>
         <div class="row portfolio-container">
           <% typeList.forEach(type => { %>
-            <div class="col-lg-4 col-md-6 portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
-              <div class="portfolio-info">
-                <h2><%= type.name %></h2>
-                <p><%= type.description %></p>
+            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
+              <div class="portfolio-info card-center">
+                <h2 class="card-text"><%= type.name %></h2>
+                <p><%= type.description.substr(0, 100) + '\u2026' %></p>
                 <div class="fix-to-bottom">
                   <a href=<%= `/admin/schedule/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
                   <a href="">Edit</a>
                 </div>
               </div>
+            </div>
             </div>
           <% }); %>
         </div>

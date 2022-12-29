@@ -12,12 +12,14 @@
     <main>
       <div class="jumbotron">
         <h1><%= classType.name %></h1>
+        <p><%= classType.description %></p>
         <div class="row portfolio-container">
           <% classList.forEach(obj => { %>
-            <div class="<%= obj.time_to_class.hours < 0 ? 'col-lg-4 col-md-6 portfolio-item wow closed-class' : 'col-lg-4 col-md-6 portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info">
-                <h3><%= formatDate(obj.start_datetime); %></h3>
-                <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
+            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="<%= obj.time_to_class.hours < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+              <div class="portfolio-info card-center">
+                <h5><%= formatDate(obj.start_datetime); %></h5>
+                <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
                 <p>Spots Remaining: <%= obj.spots_remaining %></p>
                 <p>Credit Cost: <%= obj.credit_cost %></p>
                 <% if (obj.time_to_class.hours < 0) { %>
@@ -29,6 +31,7 @@
                   <button class="btn link-btn">Delete</button>
                 </div>
               </div>
+            </div>
             </div>
           <% }); %>
         </div>

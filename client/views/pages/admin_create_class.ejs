@@ -16,7 +16,7 @@
           <div class="col-lg-10">
             <form action="/admin/create/class" method="POST" class="input-form">
               <div class="form-group mt-3">
-                <label for="type">Choose the type of class:</label>
+                <label for="type">Choose the type of class:</label><br>
                 <select id="type" name="type" required >
                   <% classTypes.forEach(c => { %>
                     <option value=<%= c.class_type_id %>><%= c.name %></option>
