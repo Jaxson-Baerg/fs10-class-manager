@@ -45,7 +45,6 @@
     position: absolute;
     left: 0;
     z-index: -1;
-    margin-top: -400px;
   }
 
   .home {
@@ -177,6 +176,58 @@
   .btn-link {
     background: none!important;
     color: #3498db!important;
+  }
+
+  #card-error {
+    color: rgb(105, 115, 134);
+    text-align: left;
+    font-size: 13px;
+    line-height: 17px;
+    margin-top: 12px;
+  }
+
+  #card-element {
+    border-radius: 4px 4px 0 0 ;
+    padding: 12px;
+    border: 1px solid rgba(50, 50, 93, 0.1);
+    height: 44px;
+    width: 100%;
+    background: white;
+  }
+
+  .account-box {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #sub-box-div {
+    width: 30%;
+  }
+  @media only screen and (max-width: 600px) {
+    .account-box {
+      flex-direction: column;
+    }
+    
+    #sub-box-div {
+      width: 100%;
+    }
+  }
+
+  .sub-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.2em;
+    padding: 0.5em;
+    border: 0.2px green solid;
+    border-radius: 10px;
+    background-color: #a5ffa5;
+    box-shadow: 1px 1px 3px rgb(117, 117, 117);
+    transition: all 0.1s ease-in-out 0s;
+  }
+
+  .sub-box:hover {
+    box-shadow: 2px 2px 5px rgb(69, 69, 69);
   }
 
   footer {
