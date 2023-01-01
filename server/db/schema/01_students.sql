@@ -5,5 +5,6 @@ CREATE TABLE students(
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
     unique_code TEXT NOT NULL,
-    credits INT NOT NULL
+    credits INT NOT NULL,
+    customer_id TEXT
 );
