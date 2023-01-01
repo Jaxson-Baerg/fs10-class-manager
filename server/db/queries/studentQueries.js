@@ -7,14 +7,14 @@ const generateUniqueCode = () => {
 
 // Get all students' info except id and unique code
 const getStudents = async () => {
-  const data = await db.query('SELECT first_name, last_name, email, credits FROM students;');
+  const data = await db.query('SELECT first_name, last_name, email, credits, customer_id FROM students;');
   return data.rows;
 };
 
 // Get a single student by its email
 const getStudentByEmail = async (email) => {
   const queryDef = {
-    text: 'SELECT student_id, first_name, last_name, email, credits FROM students WHERE email = $1;',
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id FROM students WHERE email = $1;',
     values: [email]
   };
 
@@ -25,7 +25,7 @@ const getStudentByEmail = async (email) => {
 // Get a single student by its id
 const getStudentById = async (id) => {
   const queryDef = {
-    text: 'SELECT student_id, first_name, last_name, email, credits FROM students WHERE student_id = $1;',
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id FROM students WHERE student_id = $1;',
     values: [id]
   };
 
@@ -47,7 +47,7 @@ const getStudentCodeById = async (id) => {
 // Get a student by its unique code
 const getStudentByCode = async (code) => {
   const queryDef = {
-    text: 'SELECT student_id, first_name, last_name, email, credits FROM students WHERE unique_code = $1;',
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id FROM students WHERE unique_code = $1;',
     values: [code]
   };
 
