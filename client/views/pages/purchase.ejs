@@ -11,21 +11,45 @@
 
     <main>
       <div class="jumbotron">
-        <h1>Purchase page</h1>
+        <h1 class="text-center">Purchase Credits</h1>
         <% if (message) { %>
           <p class="alert alert-danger"><%= message %></p>
         <% } %>
 
         <div class="row mt-5 justify-content-center">
           <div class="col-lg-10">
-            <form action="/purchase/checkout" method="POST" class="input-form">
+            <form action="/purchase/checkout" method="POST" class="input-form card-center">
               <div class="form-group mt-3">
-                <label></label>
-                <select></select>
+                <label for="name">Name:</label>
+                <input name="name" type="text" class="form-control" placeholder="Your name" required />
               </div>
               <div class="form-group mt-3">
-                <label></label>
-                <input type="number" required />
+                <label for="email">Email:</label>
+                <input name="email" type="email" class="form-control" placeholder="Your email" required />
+              </div>
+              <div class="form-group mt-3">
+                <label for="credit-options">Select Type:</label><br>
+                <select name="credit-options" required>
+                  <% if (subscriptions.length === 0) { %>
+                    <option disabled selected value> -- select an option -- </option>
+                    <option value="one-time">One-Time Purchase</option>
+                    <option value="subscription">Subscription (monthly)</option>
+                  <% } else { %>
+                    <option value="one-time">One-Time Purchase</option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="form-group mt-3">
+                <label for="credit-amount">Credit Amount:</label><br>
+                <input name="credit-amount" type="number" min="1" max="50" class="form-control" required />
+              </div>
+
+              <p>Credit or Debit card:</p>
+              <div id="card-element"></div>
+              <div id="card-error" role="alert"></div>
+
+              <div class="text-center">
+                <button type="submit">Checkout</button>
               </div>
             </form>
           </div>
@@ -35,6 +59,51 @@
 
     <footer>
       <%- include('../partials/footer'); %>
+      <script src="https://js.stripe.com/v3/"></script>
+      <script>
+        const stripe = Stripe('pk_test_51M4ZqpEvFrYKbLBW24FF15tKSSdcZEbOMjWKwE15EhtTS2zEDkq91CNuwOCKXXU3G0dIqOAKapi4W9H5FvU83m1h00CHXHvrVu'); // Your Publishable Key
+        const elements = stripe.elements();
+
+        // Create our card inputs
+        var style = {
+          base: {
+            fontSize: '16px', '::placeholder': { color: "#aab7c4"},
+            fontFamily: '"Open Sans", "Helvetica", sans-serif',
+            fontSmoothing: 'antialiased',
+          },
+          invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+          }
+        };
+
+        const card = elements.create('card', { style });
+        card.mount('#card-element');
+
+        const form = document.querySelector('form');
+        const errorEl = document.querySelector('#card-errors');
+
+        // Give our token to our form
+        const stripeTokenHandler = token => {
+          const hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'stripeToken');
+          hiddenInput.setAttribute('value', token.id);
+          form.appendChild(hiddenInput);
+
+          form.submit();
+        }
+
+        // Create token from card data
+        form.addEventListener('submit', e => {
+          e.preventDefault();
+
+          stripe.createToken(card).then(res => {
+            if (res.error) errorEl.textContent = res.error.message;
+            else stripeTokenHandler(res.token);
+          })
+        })
+      </script>
     </footer>
 
   </body>

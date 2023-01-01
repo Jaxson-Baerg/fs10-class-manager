@@ -15,14 +15,34 @@
         <% if(message) { %>
           <p class="alert alert-success"><%= message %></p>
         <% } %>
-        <h2>Hello, <%= user.first_name %></h2>
-        <h4>You have <%= user.credits %> credits.</h4>
-        <h4>You have completed <%= numComClasses %> classes.</h4>
-        <!-- put subscription info here -->
+        <div class="account-box">
+          <div>
+            <h2>Hello, <%= user.first_name %></h2>
+            <h5>You have <%= user.credits %> credits.</h5>
+            <h5>You have completed <%= numComClasses %> classes.</h5>
+          </div>
+          <div id="sub-box-div">
+            <% if (subscription) { %>
+              <h5>Subscription:</h5>
+              <div class="sub-box">
+                <p>Next payment:<br><%= subscription.next_invoice %></p>
+                <div>
+                  <p><%= subscription.credit_amount %> credits.</p>
+                  <p><%= subscription.price %></p>
+                  <form id="sub-cancel" action="/purchase/subscription/cancel" method="POST">
+                    <button type="submit">Cancel</button>
+                  </form>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+        <h5>Your scheduled classes:</h5>
         <div class="row portfolio-container">
           <% classes.forEach(obj => { %>
-            <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'col-lg-4 col-md-6 portfolio-item wow closed-class' : 'col-lg-4 col-md-6 portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info">
+            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+              <div class="portfolio-info card-center">
                 <h3><%= obj.name %> <%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? "(Finished)" : ""; %></h3>
                 <h6><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
                 <p><%= obj.description %></p>
@@ -37,6 +57,7 @@
                 <% } %>
               </div>
             </div>
+            </div>
           <% }); %>
         </div>
       </div>
@@ -45,6 +66,14 @@
     <footer>
       <%- include('../partials/footer'); %>
     </footer>
+
+    <script>
+      $('#sub-cancel').on('submit', e => {
+        if (!window.confirm('Are you sure you wish to cancel your subscription? (You will keep your credits)')) {
+          e.preventDefault();
+        }
+      });
+    </script>
 
   </body>
 </html>
