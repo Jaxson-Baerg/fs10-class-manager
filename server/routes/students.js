@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const { getStudents, getStudentByEmail, getStudentById, getStudentCodeById, updateStudent, addStudent } = require('../db/queries/studentQueries');
 const { getClassesForStudent } = require('../db/queries/classStudentQueries');
-const { getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
+const { getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 
 // Get a list of all students in database
 router.get('/', async (req, res) => {

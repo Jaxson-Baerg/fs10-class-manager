@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { getClasses, getClassById, getClassesByClassType, createClass, deleteClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, registerStudent, cancelRegistration } = require('../db/queries/classStudentQueries');
-const { getStudentList, unpackageClassObjects, getSpotsRemaining } = require('../helpers/classHelpers');
+const { getStudentList, unpackageClassObjects, getSpotsRemaining } = require('../helpers/classStudentHelpers');
 
 // Get all classes
 router.get('/', async (req, res) => {

@@ -4,9 +4,10 @@ const router = express.Router();
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
-const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
+const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
+const { getAccountPageData } = require('../helpers/renderHelpers');
 
 // Render the schedule page for a given class type
 router.get('/:class_type_id', async (req, res) => {
@@ -50,12 +51,10 @@ router.post('/register', async (req, res) => {
       await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
       req.session.user = await getStudentById(req.session.user.student_id);
 
-      const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
-      const classesInc = await getClassList(classIds); // Get all class objects
-      const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
+      const data = await getAccountPageData(req.session.user, "Successfully registered.");
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classesCom.sort(c => c.start_datetime), message: "Successfully registered." });
+      res.render('../../client/views/pages/account', data);
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
@@ -86,14 +85,10 @@ router.post('/cancel', async (req, res) => {
       await updateStudent(req.session.user.student_id, { credits: Number(req.session.user.credits) + Number(req.body.credits) });
       req.session.user = await getStudentById(req.session.user.student_id);
 
-      const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
-      const classesInc = await getClassList(classIds); // Get all class objects
-      const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
-      const classListCom = sortClasses(classesCom);
-      const numComClasses = await getCompletedClasses(req.session.user.student_id);
+      const data = await getAccountPageData(req.session.user, "Successfully cancelled class registration.");
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully cancelled." });
+      res.render('../../client/views/pages/account', data);
     } else {
       res.redirect('/');
     }

@@ -6,7 +6,7 @@ require('dotenv').config();
 const { getClassesByClassType, getClassById, createClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass } = require('../db/queries/classStudentQueries');
 const { getClassTypes, getClassTypeById, createClassType } = require('../db/queries/classTypeQueries');
-const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
+const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -140,7 +140,7 @@ router.post('/create/class', async (req, res) => {
   }
 });
 
-// Checkin a student into a class (change classstudent complete column to true)
+// Check-in a student into a class (change classstudent complete column to true)
 router.post('/checkin/', async (req, res) => {
   try {
     await completeClass(req.body.class_id, req.body.student_id);

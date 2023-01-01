@@ -1,28 +1,26 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
+const handlebars = require('handlebars');
 const router = express.Router();
 
 require('dotenv').config();
 
-const { getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
-const { getClassList, unpackageClassObjects } = require('../helpers/classHelpers');
-const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
+const { updateHistory } = require('../helpers/operationHelpers');
+const { getAccountPageData } = require('../helpers/renderHelpers');
 
 // Render the user's account page if they are logged in
 router.get('/', async (req, res) => {
   try {
     if (req.session.user) {
       req.session.user = await getStudentById(req.session.user.student_id);
-
-      const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
-      const classesInc = await getClassList(classIds); // Get all class objects
-      const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
-      const classListCom = sortClasses(classesCom);
-      const numComClasses = await getCompletedClasses(req.session.user.student_id);
+      
+      const data = await getAccountPageData(req.session.user);
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: undefined });
+      res.render('../../client/views/pages/account', data);
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to access your account page." });
@@ -64,14 +62,23 @@ router.post('/login/email', async (req, res) => {
         },
       });
 
+      // Compile HTML for email styling and variable passing
+      const filePath = path.join(__dirname, '../views/email_code.html');
+      const source = fs.readFileSync(filePath, 'utf-8').toString();
+      const template = handlebars.compile(source);
+      const replacements = {
+        code: unique_code
+      };
+      const htmlToSend = template(replacements);
+
       await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: process.env.EMAIL_TO ?? student.email,
         subject: process.env.COMPANY + ' Login Code',
-        text: `Here is your unique code to login: ${unique_code}`,
+        html: htmlToSend
       });
 
-      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student });
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student, message: undefined });
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "There is no account with this email."});
@@ -88,16 +95,12 @@ router.post('/login', async (req, res) => {
     if (student) {
       req.session.user = student;
 
-      const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
-      const classesInc = await getClassList(classIds); // Get all class objects
-      const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
-      const classListCom = sortClasses(classesCom);
-      const numComClasses = await getCompletedClasses(req.session.user.student_id);
+      const data = await getAccountPageData(req.session.user, "Successfully logged in.");
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully logged in." });
+      res.render('../../client/views/pages/account', data);
     } else {
-      res.redirect('/');
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student, message: "Incorrect code." });
     }
   } catch(err) {
     res.status(500).json({ error: err.message });
@@ -137,14 +140,10 @@ router.post('/register', async (req, res) => {
     if (student) {
       req.session.user = student;
 
-      const classIds = await getClassesForStudent(req.session.user.student_id); // Get all class ids
-      const classesInc = await getClassList(classIds); // Get all class objects
-      const classesCom = await unpackageClassObjects(classesInc); // Append all class type data onto class objects
-      const classListCom = sortClasses(classesCom);
-      const numComClasses = await getCompletedClasses(req.session.user.student_id);
+      const data = await getAccountPageData(req.session.user, "Successfully created your account.");
 
       req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', { user: req.session.user, formatDate, formatTime, classes: classListCom.sort(c => c.start_datetime), numComClasses, message: "Successfully created your account." });
+      res.render('../../client/views/pages/account', data);
     } else {
       res.render('../../client/views/pages/error', { message: "There was an error creating your account.", user: req.session.user });
     }
