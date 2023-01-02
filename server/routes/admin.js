@@ -3,9 +3,9 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const { getClassesByClassType, getClassById, createClass, deleteClass } = require('../db/queries/classQueries');
+const { getClassesByClassType, getClassById, createClass, deleteClass, updateClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass, getRegistrations } = require('../db/queries/classStudentQueries');
-const { getClassTypes, getClassTypeById, createClassType, deleteClassType } = require('../db/queries/classTypeQueries');
+const { getClassTypes, getClassTypeById, createClassType, deleteClassType, updateClassType } = require('../db/queries/classTypeQueries');
 const { updateStudent } = require('../db/queries/studentQueries');
 const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
       const typeList = await getClassTypes();
 
       req.session.history = updateHistory(req.session.history, 'admin/');
-      res.render('../../client/views/pages/admin', { user: req.session.user, typeList });
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: undefined });
     } else {
       res.redirect('/admin/login');
     }
@@ -37,7 +37,7 @@ router.get('/schedule/:class_type_id', async (req, res) => {
       const classListCom = await sortClasses(classListInc);
       
       req.session.history = updateHistory(req.session.history, `admin/schedule/${req.params.class_type_id}`);
-      res.render('../../client/views/pages/admin_schedule', { user: req.session.user, formatDate, formatTime, classList: classListCom, classType });
+      res.render('../../client/views/pages/admin_schedule', { user: req.session.user, formatDate, formatTime, classList: classListCom.sort(c => c.start_datetime), classType });
     } else {
       res.redirect('/admin/login');
     }
@@ -88,7 +88,10 @@ router.post('/create/class_type', async (req, res) => {
     if (req.session.admin) {
       await createClassType(req.body);
 
-      res.redirect('/admin');
+      const typeList = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/');
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class type successfully created." });
     } else {
       res.redirect('/admin/login');
     }
@@ -112,13 +115,38 @@ router.get('/edit/class_type/:class_type_id', async (req, res) => {
   }
 });
 
-router.post('/edit/class_type/', async (req, res) => {
+router.get('/edit/class_type', async (req, res) => {
   try {
-    if (res.session.admin) {
-      // TODO modify database row
+    res.redirect('/admin');
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/edit/class_type', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classTypeData = {...req.body};
+      delete classTypeData.class_type_id;
+      await updateClassType(req.body.class_type_id, classTypeData);
+
+      // TODO possibly email affected users?
+
+      const typeList = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/');
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class type successfully edited." });
     } else {
       res.redirect('/admin/login');
     }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/delete/class_type', async (req, res) => {
+  try {
+    res.redirect('/admin');
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
@@ -160,7 +188,10 @@ router.post('/delete/class_type', async (req, res) => {
         }
       })
 
-      res.redirect('/admin');
+      const typeList = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/');
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class type successfully deleted." });
     } else {
       res.redirect('/admin/login');
     }
@@ -204,7 +235,10 @@ router.post('/create/class', async (req, res) => {
         max_students: req.body.student
       });
 
-      res.redirect('/admin');
+      const typeList = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/');
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class successfully created." });
     } else {
       res.redirect('/admin/login');
     }
@@ -220,7 +254,7 @@ router.get('/edit/class/:class_id', async (req, res) => {
       const classObjCom = await unpackageClassObjects([classObjInc]);
 
       req.session.history = updateHistory(req.session.history, 'admin/edit/class/form');
-      res.render('../../client/views/pages/admin_edit_class', { user: req.session.user, classObj: classObjCom[0] });
+      res.render('../../client/views/pages/admin_edit_class', { user: req.session.user, formatDate, formatTime, classObj: classObjCom[0] });
     } else {
       res.redirect('/admin/login');
     }
@@ -229,13 +263,48 @@ router.get('/edit/class/:class_id', async (req, res) => {
   }
 });
 
+router.get('/edit/class', async (req, res) => {
+  try {
+    res.redirect('/admin');
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/edit/class', async (req, res) => {
   try {
     if (req.session.admin) {
-      // TODO edit database row
+      const start_datetime = req.body.date.split('T');
+      start_datetime.splice(2, 0, '-07:00').splice(1, 1, `${req.body.date.split('T')[1]}:00`);
+      const end_datetime = req.body.date.split('T');
+      end_datetime.splice(1, 1);
+      end_datetime.push(req.body.time)
+      end_datetime.push('-07:00');
+
+      await updateClass(req.body.class_id, {
+        start_datetime: start_datetime.join(' '),
+        end_datetime: end_datetime.join(' '),
+        credit_cost: req.body.credit,
+        max_students: req.body.student
+      });
+
+      // TODO possibly email affected users?
+
+      const typeList = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/');
+      res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class successfully modified." });
     } else {
       res.redirect('/admin/login');
     }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/delete/class', async (req, res) => {
+  try {
+    res.redirect('/admin');
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
@@ -266,7 +335,10 @@ router.post('/delete/class', async (req, res) => {
 
         await deleteClass(req.body.class_id);
 
-        res.redirect('/admin');
+        const typeList = await getClassTypes();
+
+        req.session.history = updateHistory(req.session.history, 'admin/');
+        res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: "Class successfully deleted." });
       } else {
         console.log('Found a dependant registration, aborting.');
         res.redirect('/admin');

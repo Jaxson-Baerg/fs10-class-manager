@@ -51,6 +51,10 @@
     background: rgb(255, 255, 255, 0.5);
   }
 
+  .text-center {
+    text-align: center;
+  }
+
   .about-profile {
     display: flex;
   }
@@ -59,12 +63,18 @@
     padding: 1em;
   }
 
-  .text-center {
-    text-align: center;
-  }
-
   .jumbotron img {
     margin: 1em;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .about-profile {
+      flex-direction: column;
+    }
+
+    .jumbotron img {
+      margin: 0.2em;
+    }
   }
 
   .about-image-grid {

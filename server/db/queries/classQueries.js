@@ -39,6 +39,19 @@ const createClass = async ({ class_type_id, start_datetime, end_datetime, credit
   return data.rows[0];
 };
 
+const updateClass = async (class_id, classInfo) => {
+  // Dynamically set which columns to update on the class_type based on the query parameters
+  const setColumns = Object.keys(classInfo).map((property, index) => `${property}=$${index + 2}`).join(', ');
+
+  const queryDef = {
+    text: `UPDATE classes SET ${setColumns} WHERE class_id = $1 RETURNING *;`,
+    values: [class_id, ...Object.values(classInfo)]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 // Delete a class by it's id
 const deleteClass = async (class_id) => {
   const queryDef = {
@@ -55,5 +68,6 @@ module.exports = {
   getClassById,
   getClassesByClassType,
   createClass,
+  updateClass,
   deleteClass
 };

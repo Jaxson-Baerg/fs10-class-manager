@@ -28,6 +28,19 @@ const createClassType = async ({ name, description, image_url }) => {
   return data.rows[0];
 };
 
+const updateClassType = async (class_type_id, classTypeInfo) => {
+  // Dynamically set which columns to update on the class_type based on the query parameters
+  const setColumns = Object.keys(classTypeInfo).map((property, index) => `${property}=$${index + 2}`).join(', ');
+
+  const queryDef = {
+    text: `UPDATE class_types SET ${setColumns} WHERE class_type_id = $1 RETURNING *;`,
+    values: [class_type_id, ...Object.values(classTypeInfo)]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 const deleteClassType = async (class_type_id) => {
   const queryDef = {
     text: 'DELETE from class_types WHERE class_type_id = $1 RETURNING *;',
@@ -42,5 +55,6 @@ module.exports = {
   getClassTypes,
   getClassTypeById,
   createClassType,
+  updateClassType,
   deleteClassType
 };

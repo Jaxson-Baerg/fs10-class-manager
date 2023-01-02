@@ -31,7 +31,7 @@
                     <button type="submit" class="btn-link">Edit</button>
                   </form>
                   <% if (obj.time_to_class.hours > 0) { %>
-                    <form id="class_del" action="/admin/delete/class" method="POST">
+                    <form class="class_del" action="/admin/delete/class" method="POST">
                       <input name="class_id" value=<%= obj.class_id %> hidden />
                       <button class="btn-link" type="submit">Delete</button>
                     </form>
@@ -50,10 +50,12 @@
     </footer>
 
     <script>
-      $('#class_del').on('submit', e => {
-        if (!confirm('Are you sure you want to delete this class? This will refund all registered students.')) {
-          e.preventDefault();
-        }
+      $('.class_del').each(function (index, element) {
+        $(this).on('submit', e => {
+          if (!confirm('Are you sure you want to delete this class? This will refund all registered students.')) {
+            e.preventDefault();
+          }
+        });
       });
     </script>
 
