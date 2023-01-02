@@ -45,7 +45,14 @@
               <div class="portfolio-info card-center">
                 <h3><%= obj.name %> <%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? "(Finished)" : ""; %></h3>
                 <h6><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
-                <p><%= obj.description %></p>
+                <% if (obj.item_list.length > 0) { %>
+                  <h5>Items to bring:</h5>
+                  <ul>
+                    <% obj.item_list.forEach(item => { %>
+                      <li><%= item %></li>
+                    <% }); %>
+                  </ul>
+                <% } %>
                 <% if (obj.time_to_class.hours > -1) { %>
                   <form action="/schedule/cancel/confirm" method="POST" class="fix-to-bottom">
                     <input name="class_id" value=<%= obj.class_id %> hidden />

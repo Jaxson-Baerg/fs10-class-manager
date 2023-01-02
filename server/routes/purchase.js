@@ -7,7 +7,7 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
 const { updateStudent } = require('../db/queries/studentQueries');
 const { updateHistory } = require('../helpers/operationHelpers');
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
       }) : null;
 
       req.session.history = updateHistory(req.session.history, 'purchase/');
-      res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: undefined });
+      res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: undefined , stripe_pk: process.env.STRIPE_API_PUBLIC_KEY});
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });

@@ -28,8 +28,19 @@ const createClassType = async ({ name, description, image_url }) => {
   return data.rows[0];
 };
 
+const deleteClassType = async (class_type_id) => {
+  const queryDef = {
+    text: 'DELETE from class_types WHERE class_type_id = $1 RETURNING *;',
+    values: [class_type_id]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 module.exports = {
   getClassTypes,
   getClassTypeById,
-  createClassType
+  createClassType,
+  deleteClassType
 };

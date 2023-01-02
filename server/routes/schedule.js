@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+require('dotenv').config();
+
+const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
+
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
@@ -31,8 +35,12 @@ router.post('/register/confirm', async (req, res) => {
       if (req.session.user.credits > req.body.credits) {
         res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
       } else {
+        const subscriptions = req.session.user.customer_id ? await stripe.subscriptions.list({
+          customer: req.session.user.customer_id
+        }) : null;
+
         req.session.history = updateHistory(req.session.history, 'purchase/');
-        res.render('../../client/views/pages/purchase', { user: req.session.user, message: `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`});
+        res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`, strike_pk: process.env.STRIPE_API_PUBLIC_KEY});
       }
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');

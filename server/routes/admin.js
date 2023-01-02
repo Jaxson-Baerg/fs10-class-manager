@@ -3,10 +3,11 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const { getClassesByClassType, getClassById, createClass } = require('../db/queries/classQueries');
-const { getStudentsForClass, cancelRegistration, completeClass } = require('../db/queries/classStudentQueries');
-const { getClassTypes, getClassTypeById, createClassType } = require('../db/queries/classTypeQueries');
-const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
+const { getClassesByClassType, getClassById, createClass, deleteClass } = require('../db/queries/classQueries');
+const { getStudentsForClass, cancelRegistration, completeClass, getRegistrations } = require('../db/queries/classStudentQueries');
+const { getClassTypes, getClassTypeById, createClassType, deleteClassType } = require('../db/queries/classTypeQueries');
+const { updateStudent } = require('../db/queries/studentQueries');
+const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -96,6 +97,51 @@ router.post('/create/class_type', async (req, res) => {
   }
 });
 
+//
+// TODO send email to students affected?
+router.post('/delete/class_type', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      let invalid = false;
+      const classes = await getClassesByClassType(req.body.class_type_id);
+      const deleteClassTypeDependencies = async () => {
+        classes.forEach(async c => {
+          const registrations = await getRegistrations(c.class_id);
+          registrations.forEach(r => {
+            if (r.complete) invalid = true;
+          });
+
+          if (!invalid) {
+            const students = await getStudentsForClass(c.class_id);
+            const studentsCom = await getStudentList(students);
+            studentsCom.forEach(async s => {
+              await updateStudent(s.student_id, {
+                credits: s.credits + c.credit_cost
+              });
+              await cancelRegistration(c.class_id, s.student_id);
+            });
+
+            await deleteClass(c.class_id);
+          }
+        });
+      };
+      deleteClassTypeDependencies().then(async () => {
+        if (!invalid) {
+          await deleteClassType(req.body.class_type_id);
+        } else {
+          console.log('Found a dependant registration, aborting.');
+        }
+      })
+
+      res.redirect('/admin');
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Render the create class form page
 router.get('/create/class', async (req, res) => {
   try {
@@ -132,6 +178,44 @@ router.post('/create/class', async (req, res) => {
       });
 
       res.redirect('/admin');
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//
+// TODO email affected students?
+router.post('/delete/class', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classObj = await getClassById(req.body.class_id);
+
+      let invalid = false;
+      const registrations = await getRegistrations(req.body.class_id);
+      registrations.forEach(r => {
+        if (r.complete) invalid = true;
+      });
+      if (!invalid) { 
+        const students = await getStudentsForClass(req.body.class_id);
+        const studentsCom = await getStudentList(students);
+
+        studentsCom.forEach(async s => {
+          await updateStudent(s.student_id, {
+            credits: s.credits + classObj.credit_cost
+          });
+          await cancelRegistration(req.body.class_id, s.student_id);
+        });
+
+        await deleteClass(req.body.class_id);
+
+        res.redirect('/admin');
+      } else {
+        console.log('Found a dependant registration, aborting.');
+        res.redirect('/admin');
+      }
     } else {
       res.redirect('/admin/login');
     }
@@ -186,6 +270,17 @@ router.post('/login', async (req, res) => {
       req.session.history = updateHistory(req.session.history, 'admin/login');
       res.render('../../client/views/pages/admin_login', { user: req.session.user, message: "Password incorrect."})
     }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+// Email all students in a given class
+router.post('/email', async (req, res) => {
+  try {
+
   } catch(err) {
     res.status(500).json({ error: err.message });
   }

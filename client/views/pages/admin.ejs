@@ -24,6 +24,10 @@
                 <div class="fix-to-bottom">
                   <a href=<%= `/admin/schedule/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
                   <a href="">Edit</a>
+                  <form id="class_type_del" action="/admin/delete/class_type" method="POST">
+                    <input name="class_type_id" value=<%= type.class_type_id %> hidden />
+                    <button type="submit" class="btn-link">Delete</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -36,6 +40,14 @@
     <footer>
       <%- include('../partials/footer'); %>
     </footer>
+
+    <script>
+      $('#class_type_del').on('submit', e => {
+        if (!confirm('Are you sure you wish to delete this class type? This will delete all classes belonging to this type and refund all students registered for those classes.')) {
+          e.preventDefault();
+        }
+      });
+    </script>
 
   </body>
 </html>

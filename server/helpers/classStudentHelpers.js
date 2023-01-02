@@ -32,7 +32,9 @@ const unpackageClassObjects = async (classList) => {
     c = {
       ...c,
       name: classType.name,
-      description: classType.description
+      description: classType.description,
+      item_list: classType.item_list,
+      image_url: classType.image_url
     };
     classes.push(c);
   };

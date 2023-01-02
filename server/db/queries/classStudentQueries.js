@@ -1,5 +1,15 @@
 const db = require('../index');
 
+const getRegistrations = async (class_id) => {
+  const queryDef = {
+    text: 'SELECT * FROM class_students WHERE class_id = $1',
+    values: [class_id]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows;
+};
+
 // Get all the classes by the student id that is registered for them
 const getClassesForStudent = async (student_id) => {
   const queryDef = {
@@ -76,6 +86,7 @@ const cancelRegistration = async (class_id, student_id) => {
 };
 
 module.exports = {
+  getRegistrations,
   getClassesForStudent,
   getStudentsForClass,
   getComplete,
