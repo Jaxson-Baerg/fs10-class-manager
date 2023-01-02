@@ -59,7 +59,7 @@
 
     <footer>
       <%- include('../partials/footer'); %>
-      <span id="stripe_pk"><%= stripe_pk %></span>
+      <span id="stripe_pk" hidden><%= stripe_pk %></span>
       <script src="https://js.stripe.com/v3/"></script>
       <script>
         $(document).ready(() => {
