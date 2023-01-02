@@ -20,14 +20,6 @@
           <div class="col-lg-10">
             <form action="/purchase/checkout" method="POST" class="input-form card-center">
               <div class="form-group mt-3">
-                <label for="name">Name:</label>
-                <input name="name" type="text" class="form-control" placeholder="Your name" required />
-              </div>
-              <div class="form-group mt-3">
-                <label for="email">Email:</label>
-                <input name="email" type="email" class="form-control" placeholder="Your email" required />
-              </div>
-              <div class="form-group mt-3">
                 <label for="credit-options">Select Type:</label><br>
                 <select name="credit-options" required>
                   <% if (subscriptions.length === 0) { %>
