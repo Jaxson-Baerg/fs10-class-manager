@@ -66,15 +66,15 @@ const updateStudent = async (student_id, studentInfo) => {
   };
 
   const data = await db.query(queryDef);
-  return data.rows;
+  return data.rows[0];
 };
 
 // Create a student by the parameters
-const addStudent = async (first_name, last_name, email) => {
-  const unique_code = generateUniqueCode()
+const addStudent = async (first_name, last_name, email, mailing_list) => {
+  const unique_code = generateUniqueCode();
   const queryDef = {
-    text: `INSERT INTO students (first_name, last_name, email, unique_code, credits) VALUES ($1, $2, $3, $4, $5) RETURNING student_id, first_name, last_name, email, credits;`,
-    values: [first_name, last_name, email, unique_code, 0]
+    text: `INSERT INTO students (first_name, last_name, email, unique_code, credits, mailing_list) VALUES ($1, $2, $3, $4, $5, $6) RETURNING student_id, first_name, last_name, email, credits, mailing_list;`,
+    values: [first_name, last_name, email, unique_code, 0, mailing_list]
   };
 
   const data = await db.query(queryDef);

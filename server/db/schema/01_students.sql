@@ -6,5 +6,6 @@ CREATE TABLE students(
     email TEXT NOT NULL,
     unique_code TEXT NOT NULL,
     credits INT NOT NULL,
+    mailing_list BOOLEAN DEFAULT false NOT NULL,
     customer_id TEXT
 );

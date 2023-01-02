@@ -27,11 +27,13 @@
                 <% } %>
                 <div class="fix-to-bottom">
                   <a href=<%= `/admin/class/${obj.class_id}` %>>View Students</a>
-                  <button class="link-btn">Edit</button>
+                  <form action=<%= `/admin/edit/class/${obj.class_id}` %> method="GET">
+                    <button type="submit" class="btn-link">Edit</button>
+                  </form>
                   <% if (obj.time_to_class.hours > 0) { %>
                     <form id="class_del" action="/admin/delete/class" method="POST">
                       <input name="class_id" value=<%= obj.class_id %> hidden />
-                      <button class="link-btn" type="submit">Delete</button>
+                      <button class="btn-link" type="submit">Delete</button>
                     </form>
                   <% } %>
                 </div>

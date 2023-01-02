@@ -16,12 +16,14 @@
           <p class="alert alert-danger"><%= message %></p>
         <% } %>
 
-        <div class="row mt-5 justify-content-center">
+        <p class="alert alert-primary text-center">Individual Class Credit - $25<br>Monthly Subscription Option A - $100 - includes 5 class credits per month<br>Monthly Subscription Option B - $150 - includes 8 class credits per month</p>
+
+        <div class="row justify-content-center">
           <div class="col-lg-10">
             <form action="/purchase/checkout" method="POST" class="input-form card-center">
               <div class="form-group mt-3">
                 <label for="credit-options">Select Type:</label><br>
-                <select name="credit-options" required>
+                <select id="credit-options" name="credit-options" required>
                   <% if (subscriptions.length === 0) { %>
                     <option disabled selected value> -- select an option -- </option>
                     <option value="one-time">One-Time Purchase</option>
@@ -32,8 +34,23 @@
                 </select>
               </div>
               <div class="form-group mt-3">
-                <label for="credit-amount">Credit Amount:</label><br>
-                <input name="credit-amount" type="number" min="1" max="50" class="form-control" required />
+                <div id="one-time-credit-select" style="display: none;">
+                  <label for="credit-amount">Credit Amount:</label><br>
+                  <input id="onetime-credit-amount" name="credit-amount" type="number" min="1" max="50" class="form-control" required />
+                </div>
+                <div id="subscription-credit-select" style="display: none;">
+                  <label for="credit-amount">Credit Amount:</label><br>
+                  <select id="sub-credit-amount" name="credit-amount" required>
+                    <option disabled selected value="1"> -- select an option --</option>
+                    <option value="5">Option A (5/month)</option>
+                    <option value="8">Option B (8/month)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="alert alert-warning">
+                <h4>Total: </h4>
+                <h6 id="checkout-total">$0.00</h6>
               </div>
 
               <p>Credit or Debit card:</p>
@@ -41,9 +58,11 @@
               <div id="card-error" role="alert"></div>
 
               <div class="text-center">
-                <button type="submit">Checkout</button>
+                <button type="submit">Purchase</button>
               </div>
             </form>
+
+            <p class="alert alert-info fine-print"> Class credits are non-refundable and non-transferable.<br>Class credits don't have an expiry date.<br>Registration online is required for each class.<br>Must cancel a class more then 12hrs ahead, or forfeit that class credit.<br>Monthly Subscription fee will be charged on the same date each month as the date of original purchase.<br>Prices include GST.</p>
           </div>
         </div>
       </div>
@@ -51,9 +70,59 @@
 
     <footer>
       <%- include('../partials/footer'); %>
+      
+      <span id="one-time-credit-cost" hidden><%= credit_cost.one_time %></span>
+      <span id="sub-option-one-credit-cost" hidden><%= credit_cost.sub_option_one %></span>
+      <span id="sub-option-two-credit-cost" hidden><%= credit_cost.sub_option_two %></span>
+      <script>
+        // Credit & total updating logic
+        $(document).ready(() => {
+          const creditOptionEl = $('#credit-options');
+
+          const checkoutTotal = $('#checkout-total');
+
+          const creditSelectOneTimeEl = $('#one-time-credit-select');
+          const creditSelectSubEl = $('#subscription-credit-select');
+
+          const creditAmountOneTimeEl = $('#onetime-credit-amount');
+          const creditAmountSubEl = $('#sub-credit-amount');
+
+          creditOptionEl.change(function () {
+            if (creditOptionEl.val() === 'one-time') {
+              checkoutTotal.text(`$${((creditAmountOneTimeEl.val() * $('#one-time-credit-cost').text()) * 0.01).toFixed(2)}`);
+              creditSelectOneTimeEl.show();
+              creditSelectSubEl.hide();
+            } else {
+              if (creditAmountSubEl.val() === '5') {
+                checkoutTotal.text(`$${((5 * $('#sub-option-one-credit-cost').text()) * 0.01).toFixed(2)}`);
+              } else if (creditAmountSubEl.val() === '8') {
+                checkoutTotal.text(`$${((8 * $('#sub-option-two-credit-cost').text()) * 0.01).toFixed(2)}`);
+              } else {
+                checkoutTotal.text('$0.00');
+              }
+              creditSelectSubEl.show();
+              creditSelectOneTimeEl.hide();
+            }
+          });
+          
+          creditAmountOneTimeEl.change(function () {
+            checkoutTotal.text(`$${((creditAmountOneTimeEl.val() * $('#one-time-credit-cost').text()) * 0.01).toFixed(2)}`)
+          });
+
+          creditAmountSubEl.change(function () {
+            if (creditAmountSubEl.val() === '5') {
+              checkoutTotal.text(`$${((5 * $('#sub-option-one-credit-cost').text()) * 0.01).toFixed(2)}`);
+            } else if (creditAmountSubEl.val() === '8') {
+              checkoutTotal.text(`$${((8 * $('#sub-option-two-credit-cost').text()) * 0.01).toFixed(2)}`);
+            }
+          });
+        });
+      </script>
+
       <span id="stripe_pk" hidden><%= stripe_pk %></span>
       <script src="https://js.stripe.com/v3/"></script>
       <script>
+        // Stripe card element logic
         $(document).ready(() => {
           const stripe = Stripe($('#stripe_pk').text());
           const elements = stripe.elements();

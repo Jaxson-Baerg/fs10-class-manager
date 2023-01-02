@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
       }) : null;
 
       req.session.history = updateHistory(req.session.history, 'purchase/');
-      res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: undefined , stripe_pk: process.env.STRIPE_API_PUBLIC_KEY});
+      res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: undefined , stripe_pk: process.env.STRIPE_API_PUBLIC_KEY, credit_cost: { one_time: process.env.ONE_TIME_CREDIT_COST_CENTS, sub_option_one: process.env.SUB_OPTION_ONE_CREDIT_COST_CENTS, sub_option_two: process.env.SUB_OPTION_TWO_CREDIT_COST_CENTS }});
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
@@ -48,9 +48,10 @@ router.post('/checkout', async (req, res) => {
   try {
     if (req.session.user) {
       if (!req.session.user.customer_id) { // Create new stripe customer token if account doesn't have one already
+
         const customer = await stripe.customers.create({
-          name: req.body.name,
-          email: req.body.email,
+          name: req.session.user.first_name + ' ' + req.session.user.last_name,
+          email: req.session.user.email,
           source: req.body.stripeToken
         });
 
@@ -58,7 +59,7 @@ router.post('/checkout', async (req, res) => {
           customer_id: customer.id
         });
 
-        req.session.user = student[0];
+        req.session.user = student;
       }
 
       if (req.body['credit-options'] === 'one-time') { // One-time purchase logic
@@ -72,7 +73,7 @@ router.post('/checkout', async (req, res) => {
         student = await updateStudent(req.session.user.student_id, {
           credits: req.session.user.credits + Number(req.body['credit-amount'])
         });
-        req.session.user = student[0];
+        req.session.user = student;
 
         // email user
         const transporter = nodemailer.createTransport({
@@ -93,7 +94,8 @@ router.post('/checkout', async (req, res) => {
           credits: req.body['credit-amount'],
           cost: `$${((req.body['credit-amount'] * process.env.CREDIT_COST_CENTS) / 100).toFixed(2)}`,
           balance: req.session.user.credits,
-          subMsg: ''
+          subMsg: '',
+          host_url: process.env.HOST_URL
         };
         const htmlToSend = template(replacements);
   
@@ -125,7 +127,7 @@ router.post('/checkout', async (req, res) => {
         student = await updateStudent(req.session.user.student_id, {
           credits: req.session.user.credits + Number(req.body['credit-amount'])
         });
-        req.session.user = student[0];
+        req.session.user = student;
 
         // email user
         const transporter = nodemailer.createTransport({
@@ -146,7 +148,8 @@ router.post('/checkout', async (req, res) => {
           credits: req.body['credit-amount'],
           cost: `$${((req.body['credit-amount'] * process.env.CREDIT_COST_CENTS) / 100).toFixed(2)}`,
           balance: req.session.user.credits,
-          subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`
+          subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
+          host_url: process.env.HOST_URL
         };
         const htmlToSend = template(replacements);
   
@@ -166,6 +169,14 @@ router.post('/checkout', async (req, res) => {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
     }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/subscription/cancel', async (req, res) => {
+  try {
+    res.redirect('/account');
   } catch(err) {
     res.status(500).json({ error: err.message });
   }

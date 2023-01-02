@@ -23,7 +23,9 @@
                 <p><%= type.description.substr(0, 100) + '\u2026' %></p>
                 <div class="fix-to-bottom">
                   <a href=<%= `/admin/schedule/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
-                  <a href="">Edit</a>
+                  <form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
+                    <button type="submit" class="btn-link">Edit</button>
+                  </form>
                   <form id="class_type_del" action="/admin/delete/class_type" method="POST">
                     <input name="class_type_id" value=<%= type.class_type_id %> hidden />
                     <button type="submit" class="btn-link">Delete</button>

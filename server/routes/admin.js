@@ -97,6 +97,33 @@ router.post('/create/class_type', async (req, res) => {
   }
 });
 
+router.get('/edit/class_type/:class_type_id', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classTypeObj = await getClassTypeById(req.params.class_type_id);
+
+      req.session.history = updateHistory(req.session.history, 'admin/edit/class_type/form');
+      res.render('../../client/views/pages/admin_edit_class_type', { user: req.session.user, classTypeObj });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/edit/class_type/', async (req, res) => {
+  try {
+    if (res.session.admin) {
+      // TODO modify database row
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //
 // TODO send email to students affected?
 router.post('/delete/class_type', async (req, res) => {
@@ -178,6 +205,34 @@ router.post('/create/class', async (req, res) => {
       });
 
       res.redirect('/admin');
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/edit/class/:class_id', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classObjInc = await getClassById(req.params.class_id);
+      const classObjCom = await unpackageClassObjects([classObjInc]);
+
+      req.session.history = updateHistory(req.session.history, 'admin/edit/class/form');
+      res.render('../../client/views/pages/admin_edit_class', { user: req.session.user, classObj: classObjCom[0] });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/edit/class', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      // TODO edit database row
     } else {
       res.redirect('/admin/login');
     }

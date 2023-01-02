@@ -4,6 +4,6 @@ CREATE TABLE class_types(
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     item_list TEXT [],
-    inactive BOOLEAN DEFAULT false,
+    inactive BOOLEAN DEFAULT false NOT NULL,
     image_url TEXT NOT NULL
 );

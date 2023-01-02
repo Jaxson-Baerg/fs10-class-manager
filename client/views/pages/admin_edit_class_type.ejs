@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>Create a Class Type</h1>
+        <div class="row mt-5 justify-content-center">
+          <div class="col-lg-10">
+            <form id="edit-class-type" action="/admin/edit/class_type" method="POST" class="input-form">
+              <div class="form-group mt-3">
+                <input name="name" class="form-control" type="text" placeholder="Your Name" value=<%= classTypeObj.name %> required />
+              </div>
+              <div class="form-group mt-3">
+                <textarea name="description" class="form-control" type="text" placeholder="Your Description" maxlength="300" required><%= classTypeObj.description %></textarea>
+              </div>
+              <div class="form-group mt-3">
+                <label for="image_url">Upload a Photo:</label>
+                <input name="image_url" type="file" required />
+              </div>
+              <div class="text-center">
+                <button type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+    <script>
+      $('#edit-class-type').on('submit', e => {
+        if (!confirm('Are you sure? This action cannot be undone.')) {
+          e.preventDefault();
+        }
+      });
+    </script>
+
+  </body>
+</html>
