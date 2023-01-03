@@ -18,10 +18,10 @@ const getClassTypeById = async (class_type_id) => {
 };
 
 // Create a class type from the parameters
-const createClassType = async ({ name, description, image_url }) => {
+const createClassType = async ({ name, description, image_url, item_list }) => {
   const queryDef = {
-    text: 'INSERT INTO class_types (name, description, image_url) VALUES ($1, $2, $3) RETURNING *;',
-    values: [name, description, image_url]
+    text: 'INSERT INTO class_types (name, description, image_url, item_list) VALUES ($1, $2, $3, $4) RETURNING *;',
+    values: [name, description, image_url, item_list]
   };
 
   const data = await db.query(queryDef);

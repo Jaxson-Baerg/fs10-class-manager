@@ -86,7 +86,12 @@ router.get('/create/class_type', async (req, res) => {
 router.post('/create/class_type', async (req, res) => {
   try {
     if (req.session.admin) {
-      await createClassType(req.body);
+      await createClassType({
+        name: req.body.name,
+        description: req.body.description,
+        item_list: [req.body.item_list_one, req.body.item_list_two, req.body.item_list_three, req.body.item_list_four, req.body.item_list_five].filter(n => n),
+        image_url: req.body.image_url
+      });
 
       const typeList = await getClassTypes();
 
