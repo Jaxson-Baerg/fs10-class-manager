@@ -64,7 +64,7 @@ router.post('/checkout', async (req, res) => {
 
       if (req.body['credit-options'] === 'one-time') { // One-time purchase logic
         await stripe.charges.create({
-          amount: req.body['credit-amount'] * process.env.CREDIT_COST_CENTS,
+          amount: req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS,
           currency: 'cad',
           customer: req.session.user.customer_id
         });
@@ -92,7 +92,7 @@ router.post('/checkout', async (req, res) => {
         const replacements = {
           type: "one-time",
           credits: req.body['credit-amount'],
-          cost: `$${((req.body['credit-amount'] * process.env.CREDIT_COST_CENTS) / 100).toFixed(2)}`,
+          cost: `$${((req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS) / 100).toFixed(2)}`,
           balance: req.session.user.credits,
           subMsg: '',
           host_url: process.env.HOST_URL
@@ -111,21 +111,26 @@ router.post('/checkout', async (req, res) => {
         req.session.history = updateHistory(req.session.history, 'account/');
         res.render('../../client/views/pages/account', data);
       } else { // Subscription payment logic
+        let price_id;
+        let subCost;
+        if (req.body['credit-amount'][1] == 5) {
+          price_id = process.env.SUB_OPTION_ONE_PRICE_ID;
+          subCost = process.env.SUB_OPTION_ONE_CREDIT_COST_CENTS;
+        } else if (req.body['credit-amount'][1] == 8) {
+          price_id = process.env.SUB_OPTION_TWO_PRICE_ID;
+          subCost = process.env.SUB_OPTION_TWO_CREDIT_COST_CENTS;
+        }
+
         const subscription = await stripe.subscriptions.create({
-          items: [{
-              price_data: {
-                currency: 'cad',
-                product: 'prod_N58T3ntKku2YBZ',
-                recurring: { interval: 'month' },
-                unit_amount: req.body['credit-amount'] * process.env.CREDIT_COST_CENTS
-              }
-            }],
-          customer: req.session.user.customer_id
+          customer: req.session.user.customer_id,
+          items: [
+            {price: price_id}
+          ]
         });
 
         // add credits
         student = await updateStudent(req.session.user.student_id, {
-          credits: req.session.user.credits + Number(req.body['credit-amount'])
+          credits: req.session.user.credits + Number(req.body['credit-amount'][1])
         });
         req.session.user = student;
 
@@ -146,7 +151,7 @@ router.post('/checkout', async (req, res) => {
         const replacements = {
           type: "subscription",
           credits: req.body['credit-amount'],
-          cost: `$${((req.body['credit-amount'] * process.env.CREDIT_COST_CENTS) / 100).toFixed(2)}`,
+          cost: `$${((req.body['credit-amount'][1] * subCost) / 100).toFixed(2)}`,
           balance: req.session.user.credits,
           subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
           host_url: process.env.HOST_URL

@@ -20,15 +20,16 @@
 
         <div class="row justify-content-center">
           <div class="col-lg-10">
-            <form action="/purchase/checkout" method="POST" class="input-form card-center">
+            <form id="purchase" action="/purchase/checkout" method="POST" class="input-form card-center">
               <div class="form-group mt-3">
                 <label for="credit-options">Select Type:</label><br>
                 <select id="credit-options" name="credit-options" required>
-                  <% if (!subscriptions) { %>
+                  <% if (!subscriptions || subscriptions.length === 0) { %>
                     <option disabled selected value> -- select an option -- </option>
                     <option value="one-time">One-Time Purchase</option>
                     <option value="subscription">Subscription (monthly)</option>
                   <% } else { %>
+                    <option disabled selected value> -- select an option -- </option>
                     <option value="one-time">One-Time Purchase</option>
                   <% } %>
                 </select>
@@ -41,7 +42,7 @@
                 <div id="subscription-credit-select" style="display: none;">
                   <label for="credit-amount">Credit Amount:</label><br>
                   <select id="sub-credit-amount" name="credit-amount" required>
-                    <option disabled selected value="1"> -- select an option --</option>
+                    <option disabled selected value> -- select an option --</option>
                     <option value="5">Option A (5/month)</option>
                     <option value="8">Option B (8/month)</option>
                   </select>
@@ -58,7 +59,7 @@
               <div id="card-error" role="alert"></div>
 
               <div class="text-center">
-                <button type="submit">Purchase</button>
+                <button form="purchase" type="submit">Purchase</button>
               </div>
             </form>
 
@@ -91,7 +92,9 @@
             if (creditOptionEl.val() === 'one-time') {
               checkoutTotal.text(`$${((creditAmountOneTimeEl.val() * $('#one-time-credit-cost').text()) * 0.01).toFixed(2)}`);
               creditSelectOneTimeEl.show();
+              $('#onetime-credit-amount').prop('required', true);
               creditSelectSubEl.hide();
+              $('#sub-credit-amount').prop('required', false);
             } else {
               if (creditAmountSubEl.val() === '5') {
                 checkoutTotal.text(`$${((5 * $('#sub-option-one-credit-cost').text()) * 0.01).toFixed(2)}`);
@@ -101,7 +104,9 @@
                 checkoutTotal.text('$0.00');
               }
               creditSelectSubEl.show();
+              $('#sub-credit-amount').prop('required', true);
               creditSelectOneTimeEl.hide();
+              $('#onetime-credit-amount').prop('required', false);
             }
           });
           
@@ -159,6 +164,7 @@
 
           // Create token from card data
           form.addEventListener('submit', e => {
+            console.log('foo');
             e.preventDefault();
 
             stripe.createToken(card).then(res => {

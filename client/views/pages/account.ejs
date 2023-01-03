@@ -58,10 +58,14 @@
                     <% }); %>
                   </ul>
                 <% } %>
-                <% if (obj.time_to_class.hours > -1) { %>
+                <% if (obj.time_to_class.hours >= 0 || (!obj.time_to_class.hours && obj.time_to_class.days >= 0)) { %>
                   <form action="/schedule/cancel/confirm" method="POST" class="fix-to-bottom">
                     <input name="class_id" value=<%= obj.class_id %> hidden />
-                    <input name="credits" value=<%= !obj.time_to_class.days ? 0 : obj.credit_cost; %> hidden />
+                    <% if (obj.time_to_class.days) { %>
+                      <input name="credits" value=<%= obj.credit_cost %> hidden />
+                    <% } else { %>
+                      <input name="credits" value="0" hidden />
+                    <% } %>
                     <input name="hours_to_class" value=<%= obj.time_to_class.hours %> hidden />
                     <button type="submit">Cancel</button>
                     <span><%= !obj.time_to_class.days ? "Class is coming up! This won't refund you any credits." : `This will refund you ${obj.credit_cost} credits.`; %></span>

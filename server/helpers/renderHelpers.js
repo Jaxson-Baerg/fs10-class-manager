@@ -19,13 +19,22 @@ const getAccountPageData = async (user, message) => {
     customer: user.customer_id
   }) : { data: [] };
 
+  let subCost;
+  if (subscriptions.data[0]) {
+    if (subscriptions.data[0].plan.amount === 10000) {
+      subCost = 2000;
+    } else if (subscriptions.data[0].plan.amount === 15000) {
+      subCost = 1875;
+    }
+  }
+
   return {
     user,
     subscription: subscriptions.data[0] ? {
       id: subscriptions.data[0].id,
       next_invoice: new Date(subscriptions.data[0].current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0],
       price: `$${(subscriptions.data[0].plan.amount / 100).toFixed(2)}`,
-      credit_amount: subscriptions.data[0].plan.amount / process.env.CREDIT_COST_CENTS
+      credit_amount: subscriptions.data[0].plan.amount / subCost
     } : null,
     formatDate,
     formatTime,
