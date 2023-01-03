@@ -136,53 +136,61 @@ router.get('/register', async (req, res) => {
 // Register a new user into the database
 router.post('/register', async (req, res) => {
   try {
-    const student = await addStudent(req.body.first_name, req.body.last_name, req.body.email, req.body.mailing_list ? true : false);
-    if (student) {
-      req.session.user = student;
+    const studentObj = await getStudentByEmail(req.body.email);
+    if (!studentObj) {
+      const student = await addStudent(req.body.first_name, req.body.last_name, req.body.email, req.body.mailing_list ? true : false);
+      if (student) {
+        req.session.user = student;
 
-      if (req.session.user.mailing_list) {
-        req.session.user = await updateStudent(req.session.user.student_id, {
-          credits: req.session.user.credits + 1
+        if (req.session.user.mailing_list) {
+          req.session.user = await updateStudent(req.session.user.student_id, {
+            credits: req.session.user.credits + 1
+          });
+          // TODO mailchimp logic
+          console.log('add mailchimp setup here.');
+        }
+
+        // TODO send account register email
+        const transporter = nodemailer.createTransport({
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: true,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
         });
-        // TODO mailchimp logic
-        console.log('add mailchimp setup here.');
+
+        // Compile HTML for email styling and variable passing
+        const filePath = path.join(__dirname, '../views/email_account_register.html');
+        const source = fs.readFileSync(filePath, 'utf-8').toString();
+        const template = handlebars.compile(source);
+        const replacements = {
+          name: req.session.user.first_name,
+          host_url: process.env.HOST_URL
+        };
+        const htmlToSend = template(replacements);
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_FROM,
+          to: process.env.EMAIL_TO ?? student.email,
+          subject: process.env.COMPANY + ' Account Register',
+          html: htmlToSend
+        });
+
+        const data = await getAccountPageData(req.session.user, "Successfully created your account.");
+
+        req.session.history = updateHistory(req.session.history, 'account/');
+        res.render('../../client/views/pages/account', data);
+      } else {
+        res.render('../../client/views/pages/error', { message: "There was an error creating your account.", user: req.session.user });
       }
-
-      // TODO send account register email
-      const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: true,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      // Compile HTML for email styling and variable passing
-      const filePath = path.join(__dirname, '../views/email_account_register.html');
-      const source = fs.readFileSync(filePath, 'utf-8').toString();
-      const template = handlebars.compile(source);
-      const replacements = {
-        name: req.session.user.first_name,
-        host_url: process.env.HOST_URL
-      };
-      const htmlToSend = template(replacements);
-
-      await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: process.env.EMAIL_TO ?? student.email,
-        subject: process.env.COMPANY + ' Account Register',
-        html: htmlToSend
-      });
-
-      const data = await getAccountPageData(req.session.user, "Successfully created your account.");
-
-      req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', data);
     } else {
-      res.render('../../client/views/pages/error', { message: "There was an error creating your account.", user: req.session.user });
+      req.session.history = updateHistory(req.session.history, 'account/login');
+      res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "That email is already registered, please login." });
     }
+
+    
     
   } catch(err) {
     res.status(500).json({ error: err.message });
