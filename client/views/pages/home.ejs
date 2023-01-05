@@ -15,12 +15,12 @@
         <h2>Class Schedules</h2>
         <div class="row portfolio-container">
           <% typeList.forEach(type => { %>
-            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="div-sizing">
             <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
                 <div class="portfolio-info card-center">
                   <h1 class="card-text"><%= type.name %></h1>
-                  <!-- <p>(2 open classes!)</p> -->
-                  <a href=<%= `/schedule/${type.class_type_id}` %> class="fix-to-bottom"><button type="button" class="link-btn">View Schedule</button></a>
+                  <!-- TODO<p>(2 open classes!)</p> -->
+                  <a href=<%= `/schedule/${type.class_type_id}` %>><button type="button" class="link-btn">View Schedule</button></a>
                 </div>
             </div>
             </div>

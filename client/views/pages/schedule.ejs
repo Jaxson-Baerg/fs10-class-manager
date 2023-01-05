@@ -16,15 +16,17 @@
         <div class="row portfolio-container">
           <% if (classList.length > 0) { %>
             <% classList.forEach(obj => { %>
-              <div class="col-lg-4 col-md-6 div-sizing">
+              <div class="div-sizing">
                 <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
                   <div class="portfolio-info card-center">
-                    <h3><%= formatDate(obj.start_datetime); %></h3>
-                    <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
-                    <h5><%= obj.spots_remaining %> spots remaining!</h5>
-                    <h5><%= obj.credit_cost %> credit(s) to register.</h5>
+                    <h5><%= formatDate(obj.start_datetime); %></h5>
+                    <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
+                    <p><%= obj.spots_remaining %> spot(s) remaining!</p>
+                    <% if (obj.spots_remaining > 0) { %>
+                      <p><%= obj.credit_cost %> credit(s) to register.</p>
+                    <% } %>
                     <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
-                      <form action="/schedule/register/confirm" method="POST" class="fix-to-bottom">
+                      <form action="/schedule/register/confirm" method="POST">
                         <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
                         <input name="class_id" value=<%= obj.class_id %> hidden />
                         <input name="credits" value=<%= obj.credit_cost %> hidden />
@@ -33,7 +35,7 @@
                       </form>
                     <% } %>
                     <% if (obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1) { %>
-                      <h2 class="fix-to-bottom">Closed</h2>
+                      <h5>Closed</h5>
                     <% } %>
                   </div>
                 </div>

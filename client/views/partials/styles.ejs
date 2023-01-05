@@ -39,6 +39,7 @@
 
   main {
     padding-top: 132px;
+    margin-bottom: 5em;
   }
 
   .home-image {
@@ -89,16 +90,20 @@
   }
 
   .div-sizing {
+    margin: 0.5em;
     padding: 0.5em;
-    max-width: 33.333%;
-  }
-
-  .card-text {
-    font-size: 3vw;
+    height: 15em;
+    width: 15em;
   }
 
   .mobile-display {
     display: none;
+  }
+
+  @media only screen and (max-width: 850px) {
+    .footer-link-text {
+      display: none;
+    }
   }
 
   @media only screen and (max-width: 950px) {
@@ -136,18 +141,32 @@
 
   .card-center {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex-direction: column;
+  }
+
+  .account-card-center {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .admin-card p, h5 {
+    margin-bottom: 0;
+  }
+
+  #admin-view-students-button {
+    margin-top: 1em;
   }
 
   .portfolio-item {
     background-repeat: no-repeat;
     background-size: cover;
     border-radius: 10px;
-    min-height: 20em;
     box-shadow: 2px 2px 5px rgb(117, 117, 117);
     transition: all 0.1s ease-in-out 0s;
+    height: inherit;
+    width: inherit;
   }
 
   .portfolio-item:hover {
@@ -169,6 +188,11 @@
     position: absolute;
     bottom: 1em;
     margin: 0;
+  }
+
+  .fixed-bottom {
+    z-index: unset;
+    margin-top: 10em;
   }
 
   .link-btn {
@@ -257,6 +281,49 @@
   .fine-print {
     margin: 2em;
     text-align: center;
+  }
+
+  /* Popup container */
+  .popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  /* The actual popup (appears on top) */
+  .popuptext {
+    display: none;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    margin-left: 77px;
+    margin-top: 115px;
+  }
+
+  #cancel-form {
+    margin-top: auto;
+  }
+
+  /* Popup arrow */
+  .popuptext::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #555 transparent;
+  }
+
+  .popuptext ul {
+    padding: 0;
+    margin-bottom: 0;
   }
 
   footer {

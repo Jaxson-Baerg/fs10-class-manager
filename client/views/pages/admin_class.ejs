@@ -31,28 +31,28 @@
           </form>
           <div class="row portfolio-container">
             <% studentList.forEach(obj => { %>
-              <div class="col-lg-4 col-md-6 div-sizing">
+              <div class="div-sizing">
               <div class="portfolio-item wow">
-                <div class="portfolio-info card-center">
-                  <h3 class="card-text"><%= obj.first_name %> <%= obj.last_name %></h3>
-                  <p>Email: <%= obj.email %></p>
-                  <p>Credits: <%= obj.credits %></p>
-                  <div class="student-buttons d-flex fix-to-bottom">
-                    <% if (!completeList[obj.student_id]) { %>
-                      <form action="/admin/checkin" method="POST">
-                        <input name="class_id" value=<%= classObj.class_id %> hidden />
-                        <input name="student_id" value=<%= obj.student_id %> hidden />
-                        <button type="submit">Check In</button>
-                      </form>
-                    <% } else { %>
-                      <p>Checked in!</p>
-                    <% } %>
-                    <form action="/admin/cancel" method="POST" onsubmit="cancelHandler(<%= classObj.credit_cost %>)">
+                <div class="portfolio-info card-center admin-card">
+                  <div>
+                    <h4 class="card-text"><%= obj.first_name %> <%= obj.last_name %></h4>
+                    <p><%= obj.email %></p>
+                    <p>Credits: <%= obj.credits %></p>
+                  </div>
+                  <% if (!completeList[obj.student_id]) { %>
+                    <form action="/admin/checkin" method="POST">
                       <input name="class_id" value=<%= classObj.class_id %> hidden />
                       <input name="student_id" value=<%= obj.student_id %> hidden />
-                      <button type="submit">Cancel Registration</button>
+                      <button type="submit">Check In</button>
                     </form>
-                  </div>
+                  <% } else { %>
+                    <p>Checked in!</p>
+                  <% } %>
+                  <form action="/admin/cancel" method="POST" onsubmit="cancelHandler(<%= classObj.credit_cost %>)">
+                    <input name="class_id" value=<%= classObj.class_id %> hidden />
+                    <input name="student_id" value=<%= obj.student_id %> hidden />
+                    <button type="submit" class="btn-link">Cancel Registration</button>
+                  </form>
                 </div>
               </div>
               </div>

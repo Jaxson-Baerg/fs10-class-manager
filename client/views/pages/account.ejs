@@ -45,21 +45,23 @@
         <% } %>
         <div class="row portfolio-container">
           <% classes.forEach(obj => { %>
-            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="div-sizing">
             <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info card-center">
+              <div class="portfolio-info account-card-center">
                 <h3><%= obj.name %> <%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? "(Finished)" : ""; %></h3>
                 <h6><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
                 <% if (obj.item_list.length > 0) { %>
-                  <h5>Items to bring:</h5>
-                  <ul>
-                    <% obj.item_list.forEach(item => { %>
-                      <li><%= item %></li>
-                    <% }); %>
-                  </ul>
+                  <h5>Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
+                  <span id=<%= `popup-${obj.class_id}` %> class="popuptext">
+                    <ul>
+                      <% obj.item_list.forEach(item => { %>
+                        <li><%= item %></li>
+                      <% }); %>
+                    </ul>
+                  </span>
                 <% } %>
                 <% if (obj.time_to_class.hours >= 0 || (!obj.time_to_class.hours && obj.time_to_class.days >= 0)) { %>
-                  <form action="/schedule/cancel/confirm" method="POST" class="fix-to-bottom">
+                  <form action="/schedule/cancel/confirm" method="POST" id="cancel-form">
                     <input name="class_id" value=<%= obj.class_id %> hidden />
                     <% if (obj.time_to_class.days) { %>
                       <input name="credits" value=<%= obj.credit_cost %> hidden />
@@ -68,7 +70,6 @@
                     <% } %>
                     <input name="hours_to_class" value=<%= obj.time_to_class.hours %> hidden />
                     <button type="submit">Cancel</button>
-                    <span><%= !obj.time_to_class.days ? "Class is coming up! This won't refund you any credits." : `This will refund you ${obj.credit_cost} credits.`; %></span>
                   </form>
                 <% } %>
               </div>
@@ -89,6 +90,17 @@
           e.preventDefault();
         }
       });
+
+      const popup = e => {
+        const popupBtn = $(`#${e.target.id}`);
+        if (popupBtn.hasClass('fa-chevron-down')) {
+          popupBtn.attr('class', 'fa-solid fa-chevron-up popup');
+        } else {
+          popupBtn.attr('class', 'fa-solid fa-chevron-down popup');
+        }
+
+        $(`#popup-${e.target.id.split('-')[2]}`).toggle();
+      };
     </script>
 
   </body>

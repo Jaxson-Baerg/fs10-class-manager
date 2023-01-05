@@ -20,12 +20,11 @@
         <a href="/admin/create/class"><button type="button" class="btn link-btn">Create Class</button></a>
         <div class="row portfolio-container">
           <% typeList.forEach(type => { %>
-            <div class="col-lg-4 col-md-6 div-sizing">
+            <div class="div-sizing">
             <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
               <div class="portfolio-info card-center">
                 <h2 class="card-text"><%= type.name %></h2>
-                <p><%= type.description.substr(0, 100) + '\u2026' %></p>
-                <div class="fix-to-bottom">
+                <div>
                   <a href=<%= `/admin/schedule/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
                   <form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
                     <button type="submit" class="btn-link">Edit</button>
