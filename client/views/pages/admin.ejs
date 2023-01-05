@@ -25,7 +25,7 @@
               <div class="portfolio-info card-center">
                 <h2 class="card-text"><%= type.name %></h2>
                 <div>
-                  <a href=<%= `/admin/schedule/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
+                  <a href=<%= `/admin/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
                   <form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
                     <button type="submit" class="btn-link">Edit</button>
                   </form>

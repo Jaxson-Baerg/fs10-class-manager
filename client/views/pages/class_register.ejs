@@ -18,7 +18,7 @@
         <% } %>
         <p>You have <%= user.credits %> credits in your account.</p>
 
-        <a href=<%= `/schedule/${class_type_id}` %>>Go Back</a>
+        <a href=<%= `/schedule/class/${class_type_id}` %>>Go Back</a>
         <form action="/schedule/register" method="POST">
           <input name="class_id" value=<%= class_id %> hidden />
           <input name="credits" value=<%= credits %> hidden />

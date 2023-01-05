@@ -66,7 +66,8 @@ router.post('/checkout', async (req, res) => {
         await stripe.charges.create({
           amount: req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS,
           currency: 'cad',
-          customer: req.session.user.customer_id
+          customer: req.session.user.customer_id,
+          description: `One-time charge for ${req.body['credit-amount']} credits. ($${(process.env.ONE_TIME_CREDIT_COST_CENTS / 100).toFixed(2)}/credit)`
         });
 
         // add credits

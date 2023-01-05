@@ -14,7 +14,7 @@ const { getClassTypeById } = require('../db/queries/classTypeQueries');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
 // Render the schedule page for a given class type
-router.get('/:class_type_id', async (req, res) => {
+router.get('/class/:class_type_id/', async (req, res) => {
   try {
     const classType = await getClassTypeById(req.params.class_type_id);
     let classList = await getClassesByClassType(req.params.class_type_id);
@@ -29,6 +29,14 @@ router.get('/:class_type_id', async (req, res) => {
     
     req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
     res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined, classType });
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/register/confirm', async (req, res) => {
+  try {
+    res.redirect('/');
   } catch(err) {
     res.status(500).json({ error: err.message });
   }
@@ -66,21 +74,51 @@ router.post('/register/confirm', async (req, res) => {
   }
 });
 
+router.get('/register', async (req, res) => {
+  try {
+    if (req.session.user) {
+      res.redirect('/account');
+    } else {
+      res.redirect('/');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Process class registration and redirect to account page
 router.post('/register', async (req, res) => {
   try {
     if (req.session.user) {
-      await registerStudent(req.body.class_id, req.session.user.student_id);
-      await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
-      req.session.user = await getStudentById(req.session.user.student_id);
+      const studentClasses = await getClassesForStudent(req.session.user.student_id);
 
-      const data = await getAccountPageData(req.session.user, "Successfully registered.");
+      if (studentClasses.filter(e => e.class_id === req.body.class_id).length < 1) {
+        await registerStudent(req.body.class_id, req.session.user.student_id);
+        await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
+        req.session.user = await getStudentById(req.session.user.student_id);
 
-      req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', data);
+        const data = await getAccountPageData(req.session.user, "Successfully registered.");
+
+        req.session.history = updateHistory(req.session.history, 'account/');
+        res.render('../../client/views/pages/account', data);
+      } else {
+        res.redirect('/account');
+      }
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/cancel/confirm', async (req, res) => {
+  try {
+    if (req.session.user) {
+      res.redirect('/account');
+    } else {
+      res.redirect('/');
     }
   } catch(err) {
     res.status(500).json({ error: err.message });
@@ -92,6 +130,18 @@ router.post('/cancel/confirm', async (req, res) => {
   try {
     if (req.session.user) {
       res.render('../../client/views/pages/class_cancel' , { user: req.session.user, class_id: req.body.class_id, credits: req.body.credits});
+    } else {
+      res.redirect('/');
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/cancel', async (req, res) => {
+  try {
+    if (req.session.user) {
+      res.redirect('/account');
     } else {
       res.redirect('/');
     }
