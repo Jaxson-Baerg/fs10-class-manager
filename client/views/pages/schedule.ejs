@@ -14,30 +14,34 @@
         <h1><%= classType.name %></h1>
         <p><%= classType.description %></p>
         <div class="row portfolio-container">
-          <% classList.forEach(obj => { %>
-            <div class="col-lg-4 col-md-6 div-sizing">
-            <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info card-center">
-                <h3><%= formatDate(obj.start_datetime); %></h3>
-                <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
-                <h5><%= obj.spots_remaining %> spots remaining!</h5>
-                <h5><%= obj.credit_cost %> credit(s) to register.</h5>
-                <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
-                  <form action="/schedule/register/confirm" method="POST" class="fix-to-bottom">
-                    <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
-                    <input name="class_id" value=<%= obj.class_id %> hidden />
-                    <input name="credits" value=<%= obj.credit_cost %> hidden />
-                    <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
-                    <button type="submit">Register</button>
-                  </form>
-                <% } %>
-                <% if (obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1) { %>
-                  <h2 class="fix-to-bottom">Closed</h2>
-                <% } %>
+          <% if (classList.length > 0) { %>
+            <% classList.forEach(obj => { %>
+              <div class="col-lg-4 col-md-6 div-sizing">
+                <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                  <div class="portfolio-info card-center">
+                    <h3><%= formatDate(obj.start_datetime); %></h3>
+                    <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
+                    <h5><%= obj.spots_remaining %> spots remaining!</h5>
+                    <h5><%= obj.credit_cost %> credit(s) to register.</h5>
+                    <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
+                      <form action="/schedule/register/confirm" method="POST" class="fix-to-bottom">
+                        <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
+                        <input name="class_id" value=<%= obj.class_id %> hidden />
+                        <input name="credits" value=<%= obj.credit_cost %> hidden />
+                        <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
+                        <button type="submit">Register</button>
+                      </form>
+                    <% } %>
+                    <% if (obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1) { %>
+                      <h2 class="fix-to-bottom">Closed</h2>
+                    <% } %>
+                  </div>
+                </div>
               </div>
-            </div>
-            </div>
-          <% }); %>
+            <% }); %>
+          <% } else { %>
+            <h4>There are currently no scheduled <%= classType.name %> classes that you can register for.</h4>
+          <% } %>
         </div>
       </div>
     </main>
