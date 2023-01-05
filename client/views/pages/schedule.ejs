@@ -22,11 +22,12 @@
                 <h3><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h3>
                 <h5><%= obj.spots_remaining %> spots remaining!</h5>
                 <h5><%= obj.credit_cost %> credit(s) to register.</h5>
-                <% if (obj.time_to_class.hours > -1 || obj.spots_remaining < 1) { %>
+                <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
                   <form action="/schedule/register/confirm" method="POST" class="fix-to-bottom">
                     <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
                     <input name="class_id" value=<%= obj.class_id %> hidden />
                     <input name="credits" value=<%= obj.credit_cost %> hidden />
+                    <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
                     <button type="submit">Register</button>
                   </form>
                 <% } %>
