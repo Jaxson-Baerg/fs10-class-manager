@@ -140,13 +140,13 @@ router.post('/register', async (req, res) => {
             host_url: process.env.HOST_URL
           }
         );
-        
+
         await sendEmail(
           'email_admin_account_register.html',
           process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
           'Account Registered',
           {
-            name: `${req.session.user.first_name} ${res.session.user.last_name}`,
+            name: `${req.session.user.first_name} ${req.session.user.last_name}`,
             email: req.session.user.email
           }
         );
