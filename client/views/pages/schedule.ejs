@@ -12,7 +12,7 @@
     <main>
       <div class="jumbotron">
         <h1><%= classType.name %></h1>
-        <p><%= classType.description %></p>
+        <p><%- classType.description %></p>
         <div class="row portfolio-container">
           <% if (classList.length > 0) { %>
             <% classList.forEach(obj => { %>
