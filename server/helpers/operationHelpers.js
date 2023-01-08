@@ -1,3 +1,10 @@
+const nodemailer = require('nodemailer');
+const path = require('path');
+const fs = require('fs');
+const handlebars = require('handlebars');
+
+require('dotenv').config();
+
 // Format the timestamp given into a human readable date string
 const formatDate = (timestamp) => { // 2022-12-15T14:30:00.000Z
   const dateStr = `${timestamp}`; // "Thu Dec 15 2022 07:30:00 GMT-0700 (Mountain Standard Time)"
@@ -35,9 +42,40 @@ const sortClasses = (classes) => {
   return classes;
 };
 
+const sendEmail = async (file, email_to, subject, data) => {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  // Compile HTML for email styling and variable passing
+  const filePath = path.join(__dirname, `../views/${file}`);
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    ...data
+  };
+  const htmlToSend = template(replacements);
+
+  const result = await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: email_to,
+    subject: process.env.COMPANY + ` ${subject}`,
+    html: htmlToSend
+  });
+
+  return result;
+};
+
 module.exports = {
   formatDate,
   formatTime,
   updateHistory,
-  sortClasses
+  sortClasses,
+  sendEmail
 };

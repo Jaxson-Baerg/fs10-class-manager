@@ -48,7 +48,7 @@
             <div class="div-sizing">
             <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
               <div class="portfolio-info account-card-center">
-                <h3><%= obj.name %> <%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? "(Finished)" : ""; %></h3>
+                <h3><%= obj.name %></h3>
                 <h6><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
                 <% if (obj.item_list.length > 0) { %>
                   <h5>Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
@@ -71,6 +71,8 @@
                     <input name="hours_to_class" value=<%= obj.time_to_class.hours %> hidden />
                     <button type="submit">Cancel</button>
                   </form>
+                <% } else { %>
+                  <h4 class="fixed-to-bottom">(Finished)</h4>
                 <% } %>
               </div>
             </div>

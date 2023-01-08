@@ -1,8 +1,4 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
-const path = require('path');
-const fs = require('fs');
-const handlebars = require('handlebars');
 const router = express.Router();
 
 require('dotenv').config();
@@ -10,7 +6,7 @@ require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
 const { updateStudent } = require('../db/queries/studentQueries');
-const { updateHistory } = require('../helpers/operationHelpers');
+const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
 // Render the purchase page (might modify later for subscription page)
@@ -77,35 +73,19 @@ router.post('/checkout', async (req, res) => {
         req.session.user = student;
 
         // email user
-        const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST,
-          port: process.env.EMAIL_PORT,
-          secure: true,
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        const filePath = path.join(__dirname, '../views/email_receipt.html');
-        const source = fs.readFileSync(filePath, 'utf-8').toString();
-        const template = handlebars.compile(source);
-        const replacements = {
-          type: "one-time",
-          credits: req.body['credit-amount'],
-          cost: `$${((req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS) / 100).toFixed(2)}`,
-          balance: req.session.user.credits,
-          subMsg: '',
-          host_url: process.env.HOST_URL
-        };
-        const htmlToSend = template(replacements);
-  
-        await transporter.sendMail({
-          from: process.env.EMAIL_FROM,
-          to: process.env.EMAIL_TO ?? student.email,
-          subject: process.env.COMPANY + ' Purchase Receipt',
-          html: htmlToSend
-        });
+        await sendEmail(
+          'email_receipt',
+          process.env.EMAIL_TO ?? student.email,
+          'Purchase Receipt',
+          {
+            type: "one-time",
+            credits: req.body['credit-amount'],
+            cost: `$${((req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS) / 100).toFixed(2)}`,
+            balance: req.session.user.credits,
+            subMsg: '',
+            host_url: process.env.HOST_URL
+          }
+        );
 
         const data = await getAccountPageData(req.session.user, "One-time payment successful.");
 
@@ -136,35 +116,19 @@ router.post('/checkout', async (req, res) => {
         req.session.user = student;
 
         // email user
-        const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST,
-          port: process.env.EMAIL_PORT,
-          secure: true,
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        const filePath = path.join(__dirname, '../views/email_receipt.html');
-        const source = fs.readFileSync(filePath, 'utf-8').toString();
-        const template = handlebars.compile(source);
-        const replacements = {
-          type: "subscription",
-          credits: req.body['credit-amount'],
-          cost: `$${((req.body['credit-amount'][1] * subCost) / 100).toFixed(2)}`,
-          balance: req.session.user.credits,
-          subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
-          host_url: process.env.HOST_URL
-        };
-        const htmlToSend = template(replacements);
-  
-        await transporter.sendMail({
-          from: process.env.EMAIL_FROM,
-          to: process.env.EMAIL_TO ?? student.email,
-          subject: process.env.COMPANY + ' Subscription Receipt',
-          html: htmlToSend
-        });
+        await sendEmail(
+          'email_receipt',
+          process.env.EMAIL_TO ?? student.email,
+          'Subscription Receipt',
+          {
+            type: "subscription",
+            credits: req.body['credit-amount'],
+            cost: `$${((req.body['credit-amount'][1] * subCost) / 100).toFixed(2)}`,
+            balance: req.session.user.credits,
+            subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
+            host_url: process.env.HOST_URL
+          }
+        );
 
         const data = await getAccountPageData(req.session.user, "Subscription payment successful.");
 

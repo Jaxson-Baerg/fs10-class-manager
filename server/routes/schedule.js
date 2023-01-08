@@ -6,10 +6,10 @@ require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
-const { getClassesByClassType } = require('../db/queries/classQueries');
+const { getClassesByClassType, getClassById } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
-const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
+const { formatDate, formatTime, updateHistory, sortClasses, sendEmail } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
@@ -97,6 +97,22 @@ router.post('/register', async (req, res) => {
         await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
         req.session.user = await getStudentById(req.session.user.student_id);
 
+        const classObjInc = await getClassById(req.body.class_id);
+        const classList = await unpackageClassObjects([classObjInc]);
+
+        await sendEmail(
+          'email_admin_class_register.html',
+          process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
+          'Class Registration',
+          {
+            name: `${req.session.user.first_name} ${req.session.user.last_name}`,
+            email: req.session.user.email,
+            class_type: classList[0].name,
+            day: formatDate(classList[0].start_datetime),
+            time: formatTime(classList[0].start_datetime, true)
+          }
+        );
+
         const data = await getAccountPageData(req.session.user, "Successfully registered.");
 
         req.session.history = updateHistory(req.session.history, 'account/');
@@ -157,6 +173,22 @@ router.post('/cancel', async (req, res) => {
       await cancelRegistration(req.body.class_id, req.session.user.student_id);
       await updateStudent(req.session.user.student_id, { credits: Number(req.session.user.credits) + Number(req.body.credits) });
       req.session.user = await getStudentById(req.session.user.student_id);
+
+      const classObjInc = await getClassById(req.body.class_id);
+      const classList = await unpackageClassObjects([classObjInc]);
+
+      await sendEmail(
+        'email_admin_class_cancel.html',
+        process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
+        'Class Cancellation',
+        {
+          name: `${req.session.user.first_name} ${req.session.user.last_name}`,
+          email: req.session.user.email,
+          class_type: classList[0].name,
+          day: formatDate(classList[0].start_datetime),
+          time: formatTime(classList[0].start_datetime, true)
+        }
+      );
 
       const data = await getAccountPageData(req.session.user, "Successfully cancelled class registration.");
 

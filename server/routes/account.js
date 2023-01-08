@@ -1,14 +1,10 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
-const path = require('path');
-const fs = require('fs');
-const handlebars = require('handlebars');
 const router = express.Router();
 
 require('dotenv').config();
 
 const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
-const { updateHistory } = require('../helpers/operationHelpers');
+const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
 // Render the user's account page if they are logged in
@@ -52,31 +48,15 @@ router.post('/login/email', async (req, res) => {
       const unique_code = generateUniqueCode();
       await updateStudent(student.student_id, { unique_code });
 
-      const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: true,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      // Compile HTML for email styling and variable passing
-      const filePath = path.join(__dirname, '../views/email_code.html');
-      const source = fs.readFileSync(filePath, 'utf-8').toString();
-      const template = handlebars.compile(source);
-      const replacements = {
-        code: unique_code
-      };
-      const htmlToSend = template(replacements);
-
-      await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: process.env.EMAIL_TO ?? student.email,
-        subject: process.env.COMPANY + ' Login Code',
-        html: htmlToSend
-      });
+      // Send unique login code to user's email
+      await sendEmail(
+        'email_code.html',
+        process.env.EMAIL_TO ?? student.email,
+        'Login Code',
+        {
+          code: unique_code
+        }
+      );
 
       res.render('../../client/views/pages/account_code_login', { user: req.session.user, student, message: undefined });
     } else {
@@ -147,36 +127,29 @@ router.post('/register', async (req, res) => {
             credits: req.session.user.credits + 1
           });
           // TODO mailchimp logic
-          console.log('add mailchimp setup here.');
+          console.log(`add mailchimp setup here for ${req.session.user.first_name} ${req.session.user.last_name}.`);
         }
 
-        // TODO send account register email
-        const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST,
-          port: process.env.EMAIL_PORT,
-          secure: true,
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        // Compile HTML for email styling and variable passing
-        const filePath = path.join(__dirname, '../views/email_account_register.html');
-        const source = fs.readFileSync(filePath, 'utf-8').toString();
-        const template = handlebars.compile(source);
-        const replacements = {
-          name: req.session.user.first_name,
-          host_url: process.env.HOST_URL
-        };
-        const htmlToSend = template(replacements);
-
-        await transporter.sendMail({
-          from: process.env.EMAIL_FROM,
-          to: process.env.EMAIL_TO ?? student.email,
-          subject: process.env.COMPANY + ' Account Register',
-          html: htmlToSend
-        });
+        // send account register email to user and admin
+        await sendEmail(
+          'email_account_register.html',
+          process.env.EMAIL_TO ?? student.email,
+          'Account Register',
+          {
+            name: `${req.session.user.first_name} ${req.session.user.last_name}`,
+            host_url: process.env.HOST_URL
+          }
+        );
+        
+        await sendEmail(
+          'email_admin_account_register.html',
+          process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
+          'Account Registered',
+          {
+            name: `${req.session.user.first_name} ${res.session.user.last_name}`,
+            email: req.session.user.email
+          }
+        );
 
         const data = await getAccountPageData(req.session.user, "Successfully created your account.");
 
