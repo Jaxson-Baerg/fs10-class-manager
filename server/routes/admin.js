@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 });
 
 // Render all classes in a given class type
-router.get('/schedule/:class_type_id', async (req, res) => {
+router.get('/schedule/class/:class_type_id', async (req, res) => {
   try {
     if (req.session.admin) {
       const classType = await getClassTypeById(req.params.class_type_id);
