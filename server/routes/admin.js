@@ -133,6 +133,12 @@ router.post('/edit/class_type', async (req, res) => {
     if (req.session.admin) {
       const classTypeData = {...req.body};
       delete classTypeData.class_type_id;
+
+      if (!classTypeData.image_url) {
+        const tmpClassType = await getClassTypeById(req.body.class_type_id);
+        classTypeData.image_url = tmpClassType.image_url;
+      }
+
       await updateClassType(req.body.class_type_id, classTypeData);
 
       // TODO possibly email affected users?

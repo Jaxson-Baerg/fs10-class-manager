@@ -23,7 +23,7 @@
               </div>
 
               <div class="form-group mt-3">
-                <label for="image_url">Upload a Photo:</label>
+                <label for="image_url">Upload a New Photo (Optional):</label>
                 <input name="image_url" type="file" />
               </div>
               <input name="class_type_id" value=<%= classTypeObj.class_type_id %> hidden />
@@ -42,7 +42,7 @@
 
     <script>
       $('#edit-class-type').on('submit', e => {
-        if (!confirm('Are you sure? This action cannot be undone and could surprise or confused some of your users.')) {
+        if (!confirm('Are you sure? This action cannot be undone and could surprise or confuse some of your users.')) {
           e.preventDefault();
         }
       });
