@@ -18,7 +18,8 @@
         
         <div class="account-box">
           <div>
-            <h2>Hello, <%= user.first_name %></h2>
+            <h2><%= user.first_name %> <%= user.last_name %></h2>
+            <h3><%= user.email %></h3>
             <h5>You have <%= user.credits %> credits.</h5>
             <h5>You have completed <%= numComClasses %> classes.</h5>
           </div>
@@ -68,7 +69,6 @@
                     <% } else { %>
                       <input name="credits" value="0" hidden />
                     <% } %>
-                    <input name="hours_to_class" value=<%= obj.time_to_class.hours %> hidden />
                     <button type="submit">Cancel</button>
                   </form>
                 <% } else { %>

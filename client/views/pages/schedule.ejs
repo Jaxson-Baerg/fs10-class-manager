@@ -21,9 +21,9 @@
                   <div class="portfolio-info card-center">
                     <h5><%= formatDate(obj.start_datetime); %></h5>
                     <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
-                    <p><%= obj.spots_remaining %> spot(s) remaining!</p>
+                    <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
                     <% if (obj.spots_remaining > 0) { %>
-                      <p><%= obj.credit_cost %> credit(s) to register.</p>
+                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
                     <% } %>
                     <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
                       <form action="/schedule/register/confirm" method="POST">

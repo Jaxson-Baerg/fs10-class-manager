@@ -11,7 +11,7 @@
     
     <script type="text/javascript">
       const cancelHandler = (credits) => {
-        if (!confirm(`This will refund ${credits} credit(s) to their account, are you sure?`)) {
+        if (!confirm(`This will refund ${credits} credit${credits > 1 ? 's' : ''} to their account, are you sure?`)) {
           event.preventDefault();
         }
       };
@@ -23,7 +23,7 @@
         <h3><%= formatDate(classObj.start_datetime); %></h3>
         <h3><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h3>
         <p><%= classObj.spots_remaining %> spots remaining!</p>
-        <p><%= classObj.credit_cost %> credit(s) to register.</p>
+        <p><%= classObj.credit_cost %> credit<%= classObj.credit_cost > 1 ? 's' : '' %> to register.</p>
         <% if (studentList.length !== 0) { %>
           <form action="/admin/email" method="POST">
             <input name="student_list" value=<%= studentList %> hidden />
