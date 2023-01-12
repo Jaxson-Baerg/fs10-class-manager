@@ -18,14 +18,14 @@
         
         <div class="account-box">
           <div>
-            <h2><%= user.first_name %> <%= user.last_name %></h2>
-            <h3><%= user.email %></h3>
-            <h5>You have <%= user.credits %> credits.</h5>
-            <h5>You have completed <%= numComClasses %> classes.</h5>
+            <h2 class="account-page-font"><%= user.first_name %> <%= user.last_name %></h2>
+            <h3 class="account-page-font"><%= user.email %></h3>
+            <h5 class="account-page-font">You have <%= user.credits %> credits.</h5>
+            <h5 class="account-page-font">You have completed <%= numComClasses %> classes.</h5>
           </div>
           <div id="sub-box-div">
             <% if (subscription) { %>
-              <h5>Subscription:</h5>
+              <h5 class="account-page-font">Subscription:</h5>
               <div class="sub-box">
                 <p>Next payment:<br><%= subscription.next_invoice %></p>
                 <div>
@@ -40,9 +40,9 @@
           </div>
         </div>
         <% if (classes.length > 0) { %>
-          <h5>Your scheduled classes:</h5>
+          <h5 class="account-page-font">Your scheduled classes:</h5>
         <% } else { %>
-          <h5>You have no scheduled classes.</h5>
+          <h5 class="account-page-font">You have no scheduled classes.</h5>
         <% } %>
         <div class="row portfolio-container">
           <% classes.forEach(obj => { %>
@@ -50,9 +50,9 @@
             <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
               <div class="portfolio-info account-card-center">
                 <h3><%= obj.name %></h3>
-                <h6><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
+                <h6 class="account-page-font"><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
                 <% if (obj.item_list.length > 0) { %>
-                  <h5>Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
+                  <h5 class="account-page-font">Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
                   <span id=<%= `popup-${obj.class_id}` %> class="popuptext">
                     <ul>
                       <% obj.item_list.forEach(item => { %>
