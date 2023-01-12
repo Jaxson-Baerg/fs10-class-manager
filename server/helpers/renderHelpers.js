@@ -44,6 +44,34 @@ const getAccountPageData = async (user, message) => {
   };
 };
 
+const getPurchasePageData = async (user, message) => {
+
+  const subscriptions = user.customer_id ? await stripe.subscriptions.list({
+    customer: user.customer_id
+  }) : { data: [] };
+
+  const cancelledSubscriptions = user.customer_id ? await stripe.subscriptions.list({
+    customer: user.customer_id,
+    status: 'canceled'
+  }) : { data: [] };
+
+  // if (new Date() - new Date(cancelledSubscriptions.data[0].start_date * 1000) < 2592000000) {
+
+  return {
+    user,
+    subscriptions: subscriptions.data,
+    cancelledSubscriptions: cancelledSubscriptions.data,
+    message,
+    stripe_pk: process.env.STRIPE_API_PUBLIC_KEY,
+    credit_cost: {
+      one_time: process.env.ONE_TIME_CREDIT_COST_CENTS,
+      sub_option_one: process.env.SUB_OPTION_ONE_CREDIT_COST_CENTS,
+      sub_option_two: process.env.SUB_OPTION_TWO_CREDIT_COST_CENTS
+    }
+  };
+};
+
 module.exports = {
-  getAccountPageData
+  getAccountPageData,
+  getPurchasePageData
 };

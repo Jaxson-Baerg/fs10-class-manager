@@ -11,7 +11,7 @@ const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedC
 const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses, sendEmail } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
-const { getAccountPageData } = require('../helpers/renderHelpers');
+const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
 
 // Render the schedule page for a given class type
 router.get('/class/:class_type_id/', async (req, res) => {
@@ -52,12 +52,10 @@ router.post('/register/confirm', async (req, res) => {
           if (req.session.user.credits >= req.body.credits) {
             res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
           } else {
-            const subscriptions = req.session.user.customer_id ? await stripe.subscriptions.list({
-              customer: req.session.user.customer_id
-            }) : { data: null };
+            const data = await getPurchasePageData(req.session.user, `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`);
 
             req.session.history = updateHistory(req.session.history, 'purchase/');
-            res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`, stripe_pk: process.env.STRIPE_API_PUBLIC_KEY, credit_cost: { one_time: process.env.ONE_TIME_CREDIT_COST_CENTS, sub_option_one: process.env.SUB_OPTION_ONE_CREDIT_COST_CENTS, sub_option_two: process.env.SUB_OPTION_TWO_CREDIT_COST_CENTS }});
+            res.render('../../client/views/pages/purchase', data);
           }
         } else {
           res.redirect('/');

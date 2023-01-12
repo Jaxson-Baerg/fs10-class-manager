@@ -7,18 +7,16 @@ const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
 const { updateStudent } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
-const { getAccountPageData } = require('../helpers/renderHelpers');
+const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
 
 // Render the purchase page (might modify later for subscription page)
 router.get('/', async (req, res) => {
   try {
     if (req.session.user) {
-      const subscriptions = req.session.user.customer_id ? await stripe.subscriptions.list({
-        customer: req.session.user.customer_id
-      }) : { data: null };
+      const data = await getPurchasePageData(req.session.user);
 
       req.session.history = updateHistory(req.session.history, 'purchase/');
-      res.render('../../client/views/pages/purchase', { user: req.session.user, subscriptions: subscriptions.data, message: undefined , stripe_pk: process.env.STRIPE_API_PUBLIC_KEY, credit_cost: { one_time: process.env.ONE_TIME_CREDIT_COST_CENTS, sub_option_one: process.env.SUB_OPTION_ONE_CREDIT_COST_CENTS, sub_option_two: process.env.SUB_OPTION_TWO_CREDIT_COST_CENTS }});
+      res.render('../../client/views/pages/purchase', data);
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
@@ -92,7 +90,9 @@ router.post('/checkout', async (req, res) => {
 
         req.session.history = updateHistory(req.session.history, 'account/');
         res.render('../../client/views/pages/account', data);
+        
       } else { // Subscription payment logic
+
         let price_id;
         let subCost;
         if (req.body['credit-amount'][1] == 5) {

@@ -24,7 +24,7 @@
               <div class="form-group mt-3">
                 <label for="credit-options">Select Type:</label><br>
                 <select id="credit-options" name="credit-options" required>
-                  <% if (!subscriptions || subscriptions.length === 0) { %>
+                  <% if ((!subscriptions || subscriptions.length === 0) && (!cancelledSubscriptions || cancelledSubscriptions.length === 0)) { %>
                     <option disabled selected value> -- select an option -- </option>
                     <option value="one-time">One-Time Purchase</option>
                     <option value="subscription">Subscription (monthly)</option>
