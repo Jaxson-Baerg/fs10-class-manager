@@ -25,10 +25,7 @@
         <p><%= classObj.spots_remaining %> spots remaining!</p>
         <p><%= classObj.credit_cost %> credit<%= classObj.credit_cost > 1 ? 's' : '' %> to register.</p>
         <% if (studentList.length !== 0) { %>
-          <form action="/admin/email" method="POST">
-            <input name="student_list" value=<%= studentList %> hidden />
-            <button type="submit">Email Students</button>
-          </form>
+	  <a href="mailto:<% studentList.forEach(obj => { %><%= obj.email %>,<% }); %>">Email Students</a>
           <div class="row portfolio-container">
             <% studentList.forEach(obj => { %>
               <div class="div-sizing">
@@ -36,7 +33,7 @@
                 <div class="portfolio-info card-center admin-card">
                   <div>
                     <h4 class="card-text"><%= obj.first_name %> <%= obj.last_name %></h4>
-                    <p><%= obj.email %></p>
+		    <p><a href="mailto:<%= obj.email %>"><%= obj.email %></a></p>
                     <p>Credits: <%= obj.credits %></p>
                   </div>
                   <% if (!completeList[obj.student_id]) { %>
