@@ -3,15 +3,14 @@ const router = express.Router();
 
 require('dotenv').config();
 
-const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
-
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType, getClassById } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
-const { getSpotsRemaining, getClassList, unpackageClassObjects } = require('../helpers/classStudentHelpers');
+const { getSpotsRemaining, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses, sendEmail } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
 const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
+const { scheduleEmail } = require('../helpers/scheduledFunctions');
 
 // Render the schedule page for a given class type
 router.get('/class/:class_type_id/', async (req, res) => {
@@ -98,6 +97,29 @@ router.post('/register', async (req, res) => {
         const classObjInc = await getClassById(req.body.class_id);
         const classList = await unpackageClassObjects([classObjInc]);
 
+        // schedule 24h reminder email
+        const classDate = new Date(classList[0].start_datetime);
+        classDate.setDate(classDate.getDate() - 1);
+        scheduleEmail(classDate, {
+          file: 'email_class_reminder.html',
+          subject: 'Class Reminder',
+          email_to: process.env.EMAIL_TO ?? req.session.user.email,
+          class_type: classList[0].name
+        });
+
+        // send user email
+        await sendEmail(
+          'email_class_register.html',
+          process.env.EMAIL_TO ?? req.session.user.email,
+          'Class Confirmation',
+          {
+            class_type: classList[0].name,
+            day: formatDate(classList[0].start_datetime),
+            time: formatTime(classList[0].start_datetime, true)
+          }
+        );
+
+        // send admin email
         await sendEmail(
           'email_admin_class_register.html',
           process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
