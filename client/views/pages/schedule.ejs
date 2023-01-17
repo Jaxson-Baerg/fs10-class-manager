@@ -25,7 +25,7 @@
                     <% if (obj.spots_remaining > 0) { %>
                       <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
                     <% } %>
-                    <% if (obj.time_to_class.hours > -1 && obj.spots_remaining > 0) { %>
+                    <% if (obj.time_to_class.days > -1 && obj.spots_remaining > 0) { %>
                       <form action="/schedule/register/confirm" method="POST">
                         <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
                         <input name="class_id" value=<%= obj.class_id %> hidden />
