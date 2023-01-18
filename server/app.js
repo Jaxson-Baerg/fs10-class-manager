@@ -11,6 +11,7 @@ const accountRouter = require('./routes/account');
 const purchaseRouter = require('./routes/purchase');
 const aboutRouter = require('./routes/about');
 const adminRouter = require('./routes/admin');
+const { initScheduledJobs } = require('./helpers/scheduledFunctions');
 
 const app = express();
 
@@ -39,6 +40,9 @@ app.use('/account', accountRouter);
 app.use('/purchase', purchaseRouter);
 app.use('/about', aboutRouter);
 app.use('/admin', adminRouter);
+
+// Run node-cron init function
+initScheduledJobs();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

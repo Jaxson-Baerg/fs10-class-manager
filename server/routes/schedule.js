@@ -10,7 +10,6 @@ const { getSpotsRemaining, unpackageClassObjects } = require('../helpers/classSt
 const { formatDate, formatTime, updateHistory, sortClasses, sendEmail } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
 const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
-const { scheduleEmail } = require('../helpers/scheduledFunctions');
 
 // Render the schedule page for a given class type
 router.get('/class/:class_type_id/', async (req, res) => {
@@ -96,16 +95,6 @@ router.post('/register', async (req, res) => {
 
         const classObjInc = await getClassById(req.body.class_id);
         const classList = await unpackageClassObjects([classObjInc]);
-
-        // schedule 24h reminder email
-        const classDate = new Date(classList[0].start_datetime);
-        classDate.setDate(classDate.getDate() - 1);
-        scheduleEmail(classDate, {
-          file: 'email_class_reminder.html',
-          subject: 'Class Reminder',
-          email_to: process.env.EMAIL_TO ?? req.session.user.email,
-          class_type: classList[0].name
-        });
 
         // send user email
         await sendEmail(
