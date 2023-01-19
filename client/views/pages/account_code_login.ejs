@@ -13,12 +13,13 @@
       <div class="jumbotron">
         <h1>Login</h1>
         <% if(message) { %>
-          <p class="alert alert-success"><%= message %></p>
+          <p class="alert alert-danger"><%= message %></p>
         <% } %>
         <p>Enter the code sent to your email:</p>
         <div class="row mt-5 justify-content-center">
           <div class="col-lg-10">
             <form id="code" action="/account/login" method="POST" class="input-form">
+              <input type="hidden" name="email" value="<%= email %>" />
               <div class="form-group mt-3">
                 <input id="code" name="code" class="form-control" type="password" placeholder="Your Code" required />
               </div>
@@ -27,7 +28,7 @@
               </div>
             </form>
             <form id="resend" action="/account/login/email" method="POST">
-              <input name="email" value=<%= student.email %> hidden />
+              <input type="hidden" name="email" value="<%= email %>" />
               <button type="submit" form="resend" class="btn btn-link">Resend Code</button>
             </form>
           </div>
