@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     req.session.history = updateHistory(req.session.history, 'about/');
     res.render('../../client/views/pages/about', { user: req.session.user });
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

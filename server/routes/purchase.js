@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -34,6 +35,7 @@ router.get('/checkout', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -142,6 +144,7 @@ router.post('/checkout', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -150,6 +153,7 @@ router.get('/subscription/cancel', async (req, res) => {
   try {
     res.redirect('/account');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -170,6 +174,7 @@ router.post('/subscription/cancel', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -179,6 +184,7 @@ router.get('/invoice/:customer_token', async (req, res) => {
   try {
     
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

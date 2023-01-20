@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to access your account page." });
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -36,6 +37,7 @@ router.get('/login', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -64,6 +66,7 @@ router.post('/login/email', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "There is no account with this email."});
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -80,9 +83,10 @@ router.post('/login', async (req, res) => {
       req.session.history = updateHistory(req.session.history, 'account/');
       res.render('../../client/views/pages/account', data);
     } else {
-      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student, message: "Incorrect code." });
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student: { email: req.body.email }, message: "Incorrect code." });
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -95,6 +99,7 @@ router.get('/logout', async (req, res) => {
     }
     res.redirect('/');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -109,6 +114,7 @@ router.get('/register', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -166,6 +172,7 @@ router.post('/register', async (req, res) => {
     
     
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

@@ -28,6 +28,7 @@ router.get('/class/:class_type_id/', async (req, res) => {
     req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
     res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined, classType });
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -36,6 +37,7 @@ router.get('/register/confirm', async (req, res) => {
   try {
     res.redirect('/');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -66,6 +68,7 @@ router.post('/register/confirm', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -78,6 +81,7 @@ router.get('/register', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -146,6 +150,7 @@ router.post('/register', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -158,6 +163,7 @@ router.get('/cancel/confirm', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -171,6 +177,7 @@ router.post('/cancel/confirm', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -183,6 +190,7 @@ router.get('/cancel', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -219,6 +227,7 @@ router.post('/cancel', async (req, res) => {
       res.redirect('/');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

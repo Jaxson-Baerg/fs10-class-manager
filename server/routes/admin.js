@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -42,6 +43,7 @@ router.get('/schedule/class/:class_type_id', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -64,6 +66,7 @@ router.get('/class/:class_id', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -78,6 +81,7 @@ router.get('/create/class_type', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -101,6 +105,7 @@ router.post('/create/class_type', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -116,6 +121,7 @@ router.get('/edit/class_type/:class_type_id', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -124,6 +130,7 @@ router.get('/edit/class_type', async (req, res) => {
   try {
     res.redirect('/admin');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -151,6 +158,7 @@ router.post('/edit/class_type', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -159,6 +167,7 @@ router.get('/delete/class_type', async (req, res) => {
   try {
     res.redirect('/admin');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -207,6 +216,7 @@ router.post('/delete/class_type', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -223,6 +233,7 @@ router.get('/create/class', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -254,6 +265,7 @@ router.post('/create/class', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -270,6 +282,7 @@ router.get('/edit/class/:class_id', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -278,6 +291,7 @@ router.get('/edit/class', async (req, res) => {
   try {
     res.redirect('/admin');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -309,6 +323,7 @@ router.post('/edit/class', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -317,6 +332,7 @@ router.get('/delete/class', async (req, res) => {
   try {
     res.redirect('/admin');
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -358,6 +374,7 @@ router.post('/delete/class', async (req, res) => {
       res.redirect('/admin/login');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -369,6 +386,7 @@ router.post('/checkin/', async (req, res) => {
 
     res.redirect(`/admin/class/${req.body.class_id}`);
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -380,6 +398,7 @@ router.post('/cancel', async (req, res) => {
 
     res.redirect(`/admin/class/${req.body.class_id}`);
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -394,6 +413,7 @@ router.get('/login', async (req, res) => {
       res.redirect('/admin');
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -409,6 +429,7 @@ router.post('/login', async (req, res) => {
       res.render('../../client/views/pages/admin_login', { user: req.session.user, message: "Password incorrect."})
     }
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -420,6 +441,7 @@ router.post('/email', async (req, res) => {
   try {
 
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

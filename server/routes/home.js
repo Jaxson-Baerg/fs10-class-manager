@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
     req.session.history = updateHistory(req.session.history, '/');
     res.render('../../client/views/pages/home', { typeList, user: req.session.user });
   } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
   }
 });

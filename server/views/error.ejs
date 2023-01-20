@@ -1,3 +1,46 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../client/views/partials/head'); %>
+  </head>
+
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <div class="nav-container d-flex align-items-center">
+
+        <h1 class="nav-title desktop-display"><a href="/">FortySix10 Fitness</a></h1>
+        <a href="/"><img class="nav-logo" src="../../public/images/nav_logo.png" width="100" height="100"></a>
+      
+        <div class="nav-link-container">
+          <nav id="navbar" class="navbar order-last order-lg-0">
+            <ul>
+              <li>
+                <a class="nav-link" href="/">Home</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>Oh no!</h1>
+        <h3>Something went wrong, please try again.</h3>
+        <button onclick="toggle()">Show Error</button>
+        <div class="dev-error">
+          <h3><%= message %></h3>
+          <p><%= error.status %></p>
+          <p><%= error.stack %></p>
+        </div>
+      </div>
+    </main>
+  </body>
+
+  <script>
+    const toggle = () => {
+      $('.dev-error').toggle();
+    };
+  </script>
+</html>
