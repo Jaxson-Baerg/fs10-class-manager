@@ -114,18 +114,6 @@ router.post('/register', async (req, res) => {
 
         // send admin email
         await sendEmail(
-          'email_class_register.html',
-          process.env.EMAIL_TO ?? req.session.user.email,
-          'Class Confirmation',
-          {
-            name: `${req.session.user.first_name} ${req.session.user.last_name}`,
-            email: req.session.user.email,
-            class_type: classList[0].name,
-            day: formatDate(classList[0].start_datetime),
-            time: formatTime(classList[0].start_datetime, true)
-          }
-        );
-        await sendEmail(
           'email_admin_class_register.html',
           process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
           'Class Registration',

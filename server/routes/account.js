@@ -60,7 +60,7 @@ router.post('/login/email', async (req, res) => {
         }
       );
 
-      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student, message: undefined });
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, email: student.email, message: undefined });
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "There is no account with this email."});

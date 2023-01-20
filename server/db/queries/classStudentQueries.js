@@ -24,7 +24,7 @@ const getClassesForStudent = async (student_id) => {
 // Get all the students by the class id that are registered in it
 const getStudentsForClass = async (class_id) => {
   const queryDef = {
-    text: 'SELECT student_id FROM class_students WHERE class_id = $1;',
+    text: 'SELECT students.* FROM class_students join students using (student_id) WHERE class_id = $1;',
     values: [class_id]
   };
 

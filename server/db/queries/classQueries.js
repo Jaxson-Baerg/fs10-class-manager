@@ -2,7 +2,7 @@ const db = require('../index');
 
 // Get all classes with time from present until the class appended
 const getClasses = async () => {
-  const data = await db.query('SELECT *, start_datetime - NOW() AS time_to_class FROM classes;');
+  const data = await db.query('SELECT *, start_datetime - NOW() AS time_to_class FROM classes join class_types using(class_type_id);');
   return data.rows;
 };
 
