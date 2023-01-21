@@ -83,7 +83,7 @@ router.post('/login', async (req, res) => {
       req.session.history = updateHistory(req.session.history, 'account/');
       res.render('../../client/views/pages/account', data);
     } else {
-      res.render('../../client/views/pages/account_code_login', { user: req.session.user, student: { email: req.body.email }, message: "Incorrect code." });
+      res.render('../../client/views/pages/account_code_login', { user: req.session.user, email: req.body.email, message: "Incorrect code." });
     }
   } catch(err) {
     console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);

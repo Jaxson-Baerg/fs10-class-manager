@@ -22,14 +22,13 @@
               <input type="hidden" name="email" value="<%= email %>" />
               <div class="form-group mt-3">
                 <input id="code" name="code" class="form-control" type="password" placeholder="Your Code" required />
-                <input hidden name="email" value=<%= student.email %> />
               </div>
               <div class="text-center">
                 <button type="submit" form="code">Submit</button>
               </div>
             </form>
             <form id="resend" class="d-flex justify-content-center" action="/account/login/email" method="POST">
-              <input hidden name="email" value=<%= student.email %> />
+              <input hidden name="email" value="<%= email %>" />
               <button type="submit" form="resend" class="btn btn-link">Resend Code</button>
             </form>
           </div>
