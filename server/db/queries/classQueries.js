@@ -36,7 +36,6 @@ const getClassesByClassType = async (class_type_id, student_id) => {
   sql += ', (classes.max_students - (SELECT count(*) FROM class_students WHERE class_id=classes.class_id)) spots_remaining';
   sql += ' FROM classes';
   sql += ' WHERE class_type_id = $1 and start_datetime >= current_date order by start_datetime';
-  console.log(sql);
   let queryDef = {};
   if (student_id > 0) {
     queryDef = { text: sql, values: [class_type_id, student_id] };
