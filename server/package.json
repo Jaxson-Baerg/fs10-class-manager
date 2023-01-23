@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "nodemon node ./bin/www",
     "start": "node ./bin/www",
-    "db:reset": "node ./db/reset.js"
+    "db:reset": "node ./db/reset.js",
+    "db:restore": "node ./db/restore.js"
   },
   "keywords": [],
   "author": "",
