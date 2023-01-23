@@ -1,15 +1,25 @@
 const db = require('../index');
 
-// Get all classes with time from present until the class appended
+// Get all classes with time based attributes
 const getClasses = async () => {
-  const data = await db.query('SELECT *, start_datetime - NOW() AS time_to_class FROM classes join class_types using(class_type_id);');
+  const data = await db.query(
+      "SELECT *, (start_datetime > current_timestamp) can_register"+
+      ", (start_datetime > current_timestamp + interval '12 hours') can_cancel"+
+      ", (start_datetime > current_timestamp + interval '24 hours' AND start_datetime <= current_timestamp + interval '25 hours') send_reminder"+
+      " FROM classes join class_types using(class_type_id)"+
+      " ORDER BY start_datetime;"
+    );
   return data.rows;
 };
 
-// Get a class by it's id with time from present until the class appended
+// Get a class by it's id with time based attributes
 const getClassById = async (class_id) => {
+  const sql = 
+      "SELECT *, (start_datetime > current_timestamp) can_register"+
+      ", (start_datetime > current_timestamp + interval '12 hours') can_cancel"+
+      " FROM classes WHERE class_id = $1;";
   const queryDef = {
-    text: 'SELECT *, start_datetime - NOW() AS time_to_class FROM classes WHERE class_id = $1;',
+    text: sql,
     values: [class_id]
   };
 

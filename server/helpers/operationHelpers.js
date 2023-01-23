@@ -33,7 +33,7 @@ const updateHistory = (history, url) => {
 // Sort past classes to the end of the array
 const sortClasses = (classes) => {
   classes.forEach(c => {
-    if (c.time_to_class.hours < 0) {
+    if (!c.can_register) {
       classes.splice(classes.indexOf(c), 1);
       classes.push(c);
     }

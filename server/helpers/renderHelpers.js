@@ -38,7 +38,7 @@ const getAccountPageData = async (user, message) => {
     } : null,
     formatDate,
     formatTime,
-    classes: classListCom.sort(c => c.start_datetime),
+    classes: classListCom.sort(c => c.start_datetime).reverse(),
     numComClasses,
     message
   };

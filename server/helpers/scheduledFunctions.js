@@ -12,7 +12,7 @@ const initScheduledJobs = () => {
     const classes = await getClasses();
 
     classes.forEach(async c => {
-      if (c.time_to_class.days === 1 && !c.time_to_class.hours) {
+      if (c.send_reminder) {
 
         const students = await getStudentsForClass(c.class_id);
 

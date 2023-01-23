@@ -34,11 +34,9 @@ router.get('/schedule/class/:class_type_id', async (req, res) => {
       const classType = await getClassTypeById(req.params.class_type_id);
 
       const classList = await getClassesByClassType(req.params.class_type_id);
-      const classListInc = await getSpotsRemaining(classList);
-      const classListCom = await sortClasses(classListInc);
       
       req.session.history = updateHistory(req.session.history, `admin/schedule/${req.params.class_type_id}`);
-      res.render('../../client/views/pages/admin_schedule', { user: req.session.user, formatDate, formatTime, classList: classListCom.sort(c => c.start_datetime), classType });
+      res.render('../../client/views/pages/admin_schedule', { user: req.session.user, formatDate, formatTime, classList: classList, classType });
     } else {
       res.redirect('/admin/login');
     }

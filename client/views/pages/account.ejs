@@ -47,11 +47,11 @@
         <div class="row portfolio-container">
           <% classes.forEach(obj => { %>
             <div class="div-sizing">
-            <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+            <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
               <div class="portfolio-info account-card-center">
                 <h3><%= obj.name %></h3>
                 <h6 class="account-page-font"><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
-                <% if (obj.item_list.length > 0 && (obj.time_to_class.hours >= 0 || (!obj.time_to_class.hours && obj.time_to_class.days >= 0))) { %>
+                <% if (obj.item_list.length > 0 && obj.can_register) { %>
                   <h5 class="account-page-font">Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
                   <span id=<%= `popup-${obj.class_id}` %> class="popuptext">
                     <ul>
@@ -61,10 +61,10 @@
                     </ul>
                   </span>
                 <% } %>
-                <% if (obj.time_to_class.hours >= 0 || (!obj.time_to_class.hours && obj.time_to_class.days >= 0)) { %>
+                <% if (obj.can_register) { %>
                   <form action="/schedule/cancel/confirm" method="POST" id="cancel-form">
                     <input name="class_id" value=<%= obj.class_id %> hidden />
-                    <% if (obj.time_to_class.days) { %>
+                    <% if (obj.can_cancel) { %>
                       <input name="credits" value=<%= obj.credit_cost %> hidden />
                     <% } else { %>
                       <input name="credits" value="0" hidden />

@@ -13,7 +13,7 @@ const getRegistrations = async (class_id) => {
 // Get all the classes by the student id that is registered for them
 const getClassesForStudent = async (student_id) => {
   const queryDef = {
-    text: 'SELECT class_id FROM class_students WHERE student_id = $1;',
+    text: 'SELECT class_id FROM class_students JOIN classes USING(class_id) WHERE student_id = $1 AND start_datetime >= current_date;',
     values: [student_id]
   };
 
