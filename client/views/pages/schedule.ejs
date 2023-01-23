@@ -12,8 +12,11 @@
     <main>
       <div class="jumbotron">
         <h1><%= classType.name %></h1>
-        <p><%- classType.description %></p>
-        <div class="row portfolio-container">
+        <p>
+          <img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
+          <%- classType.description %>
+        </p>
+        <div class="row portfolio-container" style="clear: both">
           <% if (classList.length > 0) { %>
             <% classList.forEach(obj => { %>
               <div class="div-sizing">
