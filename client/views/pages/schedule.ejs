@@ -17,15 +17,12 @@
           <% if (classList.length > 0) { %>
             <% classList.forEach(obj => { %>
               <div class="div-sizing">
-                <div class="<%= obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1 ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
                   <div class="portfolio-info card-center">
                     <h5><%= formatDate(obj.start_datetime); %></h5>
                     <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
                     <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
-                    <% if (obj.spots_remaining > 0) { %>
-                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
-                    <% } %>
-                    <% if ((obj.time_to_class.days > -1 || !obj.time_to_class.days) && obj.spots_remaining > 0) { %>
+                    <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
                       <form action="/schedule/register/confirm" method="POST">
                         <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
                         <input name="class_id" value=<%= obj.class_id %> hidden />
@@ -33,9 +30,14 @@
                         <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
                         <button type="submit">Register</button>
                       </form>
+                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
                     <% } %>
-                    <% if (obj.time_to_class.days < 0 || obj.time_to_class.hours < 0 || obj.time_to_class.minutes < 0 || obj.spots_remaining < 1) { %>
-                      <h5>Closed</h5>
+                    <% if (obj.registered) { %>
+                      <h5>You are registered!</h5>
+                    <% } else if (!obj.can_register) { %>
+                      <h5>Registration is now closed</h5>
+                    <% } else if (obj.spots_remaining < 1) { %>
+                      <h5>Class is full</h5>
                     <% } %>
                   </div>
                 </div>

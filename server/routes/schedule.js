@@ -15,18 +15,10 @@ const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHe
 router.get('/class/:class_type_id/', async (req, res) => {
   try {
     const classType = await getClassTypeById(req.params.class_type_id);
-    let classList = await getClassesByClassType(req.params.class_type_id);
-    if (req.session.user) {
-      const studentClasses = await getClassesForStudent(req.session.user.student_id);
-      studentClasses.forEach(studentClass => {
-        classList = classList.filter(c => c.class_id !== studentClass.class_id);
-      });
-    }
-    const classListInc = await getSpotsRemaining(classList);
-    const classListCom = await sortClasses(classListInc);
+    let classList = await getClassesByClassType(req.params.class_type_id, req.session.user ? req.session.user.student_id : undefined);
     
     req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
-    res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classListCom, formatDate, formatTime, confirm: undefined, classType });
+    res.render('../../client/views/pages/schedule', { user: req.session.user, classList: classList, formatDate, formatTime, confirm: undefined, classType });
   } catch(err) {
     console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });

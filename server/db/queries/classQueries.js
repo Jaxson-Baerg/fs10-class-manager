@@ -18,11 +18,22 @@ const getClassById = async (class_id) => {
 };
 
 // Get all classes by their class type id
-const getClassesByClassType = async (class_type_id) => {
-  const queryDef = {
-    text: 'SELECT *, start_datetime - NOW() AS time_to_class FROM classes WHERE class_type_id = $1;',
-    values: [class_type_id]
-  };
+const getClassesByClassType = async (class_type_id, student_id) => {
+  let sql = "SELECT *, (start_datetime > current_timestamp) can_register, (start_datetime > current_timestamp + interval '12 hours') can_cancel";
+  if (student_id > 0) {
+    sql += ', (SELECT EXISTS (SELECT * FROM class_students WHERE class_id=classes.class_id AND student_id=$2)) registered';
+  }
+  sql += ', (classes.max_students - (SELECT count(*) FROM class_students WHERE class_id=classes.class_id)) spots_remaining';
+  sql += ' FROM classes';
+  sql += ' WHERE class_type_id = $1 and start_datetime >= current_date order by start_datetime';
+  console.log(sql);
+  let queryDef = {};
+  if (student_id > 0) {
+    queryDef = { text: sql, values: [class_type_id, student_id] };
+  }
+  else {
+    queryDef = { text: sql, values: [class_type_id] };
+  }
 
   const data = await db.query(queryDef);
   return data.rows;
