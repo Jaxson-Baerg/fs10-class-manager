@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const chalk = require('chalk');
 
 const { getClassTypes } = require('../db/queries/classTypeQueries');
 const { updateHistory } = require('../helpers/operationHelpers');
