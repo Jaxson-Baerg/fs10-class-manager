@@ -10,26 +10,6 @@
     </header>
 
     <main>
-      <section id="portfolio" class="section-bg">
-        <div class="container">
-          <div class="section-title">
-            <h2>Class Schedules</h2>
-          </div>
-          <div class="row portfolio-container">
-            <% typeList.forEach(type => { %>
-              <div class="div-sizing">
-              <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
-                  <div class="portfolio-info card-center">
-                    <h1 class="card-text"><%= type.name %></h1>
-                    <!-- TODO<p>(2 open classes!)</p> -->
-                    <a href=<%= `/schedule/class/${type.class_type_id}` %>><button type="button" class="link-btn">View Schedule</button></a>
-                  </div>
-              </div>
-              </div>
-            <% }); %>
-          </div>
-        </div>
-      </section>
       <section id="testimonials" class="testimonials section-bg">
         <div class="container">
           <div class="section-title">

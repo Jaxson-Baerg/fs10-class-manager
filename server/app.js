@@ -11,6 +11,7 @@ const scheduleRouter = require('./routes/schedule');
 const accountRouter = require('./routes/account');
 const purchaseRouter = require('./routes/purchase');
 const aboutRouter = require('./routes/about');
+const testimonialsRouter = require('./routes/testimonials');
 const adminRouter = require('./routes/admin');
 const { initScheduledJobs } = require('./helpers/scheduledFunctions');
 
@@ -40,6 +41,7 @@ app.use('/schedule', scheduleRouter);
 app.use('/account', accountRouter);
 app.use('/purchase', purchaseRouter);
 app.use('/about', aboutRouter);
+app.use('/testimonials', testimonialsRouter);
 app.use('/admin', adminRouter);
 
 // Run node-cron init function
