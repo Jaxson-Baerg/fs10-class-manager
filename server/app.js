@@ -11,6 +11,7 @@ const scheduleRouter = require('./routes/schedule');
 const accountRouter = require('./routes/account');
 const purchaseRouter = require('./routes/purchase');
 const adminRouter = require('./routes/admin');
+const stripeRouter = require('./routes/stripe');
 const { initScheduledJobs } = require('./helpers/scheduledFunctions');
 
 const app = express();
@@ -24,6 +25,7 @@ app.get('/public/images/:image_url', (req, res) => {
 app.set('view engine', 'ejs');
 
 app.use(logger('dev')); // Logs requests to the server
+app.use('/stripe', express.raw({ type: "*/*" })); // force raw json for stripe webhooks
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -39,6 +41,7 @@ app.use('/schedule', scheduleRouter);
 app.use('/account', accountRouter);
 app.use('/purchase', purchaseRouter);
 app.use('/admin', adminRouter);
+app.use('/stripe', stripeRouter);
 
 // Run node-cron init function
 initScheduledJobs();
