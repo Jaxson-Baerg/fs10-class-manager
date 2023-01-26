@@ -6,9 +6,9 @@
     mobileNavBtn.toggleClass('bi-list bi-x fa-xmark');
   });
   $('.nav-link').on('click', () => {
-    $('#navbar').toggleClass('navbar-mobile');
+    $('#navbar').toggleClass('navbar-mobile', false);
     const mobileNavBtn = $('.mobile-nav-toggle');
-    mobileNavBtn.toggleClass('fa-bars');
-    mobileNavBtn.toggleClass('bi-list bi-x fa-xmark');
+    mobileNavBtn.toggleClass('fa-bars', true);
+    mobileNavBtn.toggleClass('bi-list bi-x fa-xmark', false);
   });
 </script>
