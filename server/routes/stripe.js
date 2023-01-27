@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const chalk = require('chalk');
 const stripe = require('stripe');
+const { addSubscriptionCredits } = require('../helpers/operationHelpers');
 
 const endpointSecret = process.env.STRIPE_SECRET;
 
@@ -15,8 +16,15 @@ router.post('/', async (req, res) => {
     const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
 
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        console.log('foo');
+      case 'invoice.paid':
+        console.log(chalk.green('Subscription payment success'));
+        addSubscriptionCredits(event.data.object);
+        break;
+      case 'invoice.payment_failed':
+        console.log(chalk.red('Subscription payment failed'));
+        break;
+      case 'invoice.upcoming':
+        console.log(chalk.yellow('Subscription payment upcoming.'));
         break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
