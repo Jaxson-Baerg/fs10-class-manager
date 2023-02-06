@@ -2,6 +2,9 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 const handlebars = require('handlebars');
+const chalk = require('chalk');
+
+const { getStudentByStripeId, updateStudent } = require('../db/queries/studentQueries');
 
 require('dotenv').config();
 
@@ -72,10 +75,38 @@ const sendEmail = async (file, email_to, subject, data) => {
   return result;
 };
 
+const addSubscriptionCredits = async (invoice) => {
+  try {
+    const student = await getStudentByStripeId(invoice.customer);
+
+    const add_credits = (invoice.amount_paid == 10000 ? 5 : 8);
+    const student_updated = await updateStudent(student.student_id, { credits: student.credits + add_credits });
+
+    // email user
+    await sendEmail(
+      'email_receipt.html',
+      process.env.EMAIL_TO ?? student.email,
+      'Subscription Receipt',
+      {
+        type: "subscription",
+        credits: add_credits,
+        cost: `$${((invoice.amount_paid) / 100).toFixed(2)}`,
+        balance: student_updated.credits,
+        subMsg: `You may view or cancel your subscription anytime on your account page.`,
+        host_url: process.env.HOST_URL,
+        plural: 's'
+      }
+    );
+  } catch(err) {
+    console.log(chalk.red.bold(`Error while adding subscription credits (${err.status}): `) + " " + err.message);
+  }
+};
+
 module.exports = {
   formatDate,
   formatTime,
   updateHistory,
   sortClasses,
-  sendEmail
+  sendEmail,
+  addSubscriptionCredits
 };

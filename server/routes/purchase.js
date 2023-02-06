@@ -113,27 +113,8 @@ router.post('/checkout', async (req, res) => {
           ]
         });
 
-        // add credits
-        student = await updateStudent(req.session.user.student_id, {
-          credits: req.session.user.credits + Number(req.body['credit-amount'][1])
-        });
-        req.session.user = student;
-
-        // email user
-        await sendEmail(
-          'email_receipt.html',
-          process.env.EMAIL_TO ?? student.email,
-          'Subscription Receipt',
-          {
-            type: "subscription",
-            credits: req.body['credit-amount'],
-            cost: `$${((req.body['credit-amount'][1] * subCost) / 100).toFixed(2)}`,
-            balance: req.session.user.credits,
-            subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
-            host_url: process.env.HOST_URL,
-            plural: req.body['credit-amount'] > 1 ? 's' : ''
-          }
-        );
+        // add credits for display on account page - credits are added to account and email receipt sent via webhook
+        req.session.user.credits += Number(req.body['credit-amount'][1]);
 
         const data = await getAccountPageData(req.session.user, "Subscription payment successful.");
 

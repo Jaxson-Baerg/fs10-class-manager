@@ -55,6 +55,17 @@ const getStudentByCode = async (code) => {
   return data.rows[0];
 }
 
+// Get a student by its stripe customer id
+const getStudentByStripeId = async (customer_id) => {
+  const queryDef = {
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id FROM students WHERE customer_id = $1;',
+    values: [customer_id]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 // Update a student's info by the parameters
 const updateStudent = async (student_id, studentInfo) => {
   // Dynamically set which columns to update on the student based on the query parameters
@@ -88,6 +99,7 @@ module.exports = {
   getStudentById,
   getStudentCodeById,
   getStudentByCode,
+  getStudentByStripeId,
   updateStudent,
   addStudent
 };
