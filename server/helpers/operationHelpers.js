@@ -79,7 +79,8 @@ const addSubscriptionCredits = async (invoice) => {
   try {
     const student = await getStudentByStripeId(invoice.customer);
 
-    await updateStudent(student.student_id, { credits: student.credits + (invoice.amount_paid == 100000 ? 5 : 8) });
+    const add_credits = (invoice.amount_paid == 10000 ? 5 : 8);
+    const student_updated = await updateStudent(student.student_id, { credits: student.credits + add_credits });
 
     // email user
     await sendEmail(
@@ -88,9 +89,9 @@ const addSubscriptionCredits = async (invoice) => {
       'Subscription Receipt',
       {
         type: "subscription",
-        credits: (invoice.amount_paid == 100000 ? 5 : 8),
+        credits: add_credits,
         cost: `$${((invoice.amount_paid) / 100).toFixed(2)}`,
-        balance: student.credits + (invoice.amount_paid == 100000 ? 5 : 8),
+        balance: student_updated.credits,
         subMsg: `You may view or cancel your subscription anytime on your account page.`,
         host_url: process.env.HOST_URL,
         plural: 's'
