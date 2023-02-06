@@ -80,6 +80,22 @@ const addSubscriptionCredits = async (invoice) => {
     const student = await getStudentByStripeId(invoice.customer);
 
     await updateStudent(student.student_id, { credits: student.credits + (invoice.amount_paid == 100000 ? 5 : 8) });
+
+    // email user
+    await sendEmail(
+      'email_receipt.html',
+      process.env.EMAIL_TO ?? student.email,
+      'Subscription Receipt',
+      {
+        type: "subscription",
+        credits: (invoice.amount_paid == 100000 ? 5 : 8),
+        cost: `$${((invoice.amount_paid) / 100).toFixed(2)}`,
+        balance: student.credits + (invoice.amount_paid == 100000 ? 5 : 8),
+        subMsg: `You may view or cancel your subscription anytime on your account page.`,
+        host_url: process.env.HOST_URL,
+        plural: 's'
+      }
+    );
   } catch(err) {
     console.log(chalk.red.bold(`Error while adding subscription credits (${err.status}): `) + " " + err.message);
   }
