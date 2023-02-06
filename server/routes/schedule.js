@@ -180,30 +180,38 @@ router.get('/cancel', async (req, res) => {
 router.post('/cancel', async (req, res) => {
   try {
     if (req.session.user) {
-      await cancelRegistration(req.body.class_id, req.session.user.student_id);
-      await updateStudent(req.session.user.student_id, { credits: Number(req.session.user.credits) + Number(req.body.credits) });
-      req.session.user = await getStudentById(req.session.user.student_id);
+      const classes = await getClassesForStudent(req.session.user.student_id);
+      if (classes.filter(c => c.class_id == req.body.class_id).length > 0) {
+        await cancelRegistration(req.body.class_id, req.session.user.student_id);
+        await updateStudent(req.session.user.student_id, { credits: Number(req.session.user.credits) +    Number(req.body.credits) });
+        req.session.user = await getStudentById(req.session.user.student_id);
 
-      const classObjInc = await getClassById(req.body.class_id);
-      const classList = await unpackageClassObjects([classObjInc]);
+        const classObjInc = await getClassById(req.body.class_id);
+        const classList = await unpackageClassObjects([classObjInc]);
 
-      await sendEmail(
-        'email_admin_class_cancel.html',
-        process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
-        'Class Cancellation',
-        {
-          name: `${req.session.user.first_name} ${req.session.user.last_name}`,
-          email: req.session.user.email,
-          class_type: classList[0].name,
-          day: formatDate(classList[0].start_datetime),
-          time: formatTime(classList[0].start_datetime, true)
-        }
-      );
+        await sendEmail(
+          'email_admin_class_cancel.html',
+          process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
+          'Class Cancellation',
+          {
+            name: `${req.session.user.first_name} ${req.session.user.last_name}`,
+            email: req.session.user.email,
+            class_type: classList[0].name,
+            day: formatDate(classList[0].start_datetime),
+            time: formatTime(classList[0].start_datetime, true)
+          }
+        );
 
-      const data = await getAccountPageData(req.session.user, "Successfully cancelled class registration.");
+        const data = await getAccountPageData(req.session.user, "Successfully cancelled class registration.");
 
-      req.session.history = updateHistory(req.session.history, 'account/');
-      res.render('../../client/views/pages/account', data);
+        req.session.history = updateHistory(req.session.history, 'account/');
+        res.render('../../client/views/pages/account', data);
+      } else {
+        const data = await getAccountPageData(req.session.user, "Error while cancelling: Not registered.");
+
+        req.session.history = updateHistory(req.session.history, 'account/');
+        res.render('../../client/views/pages/account', data);
+      }
     } else {
       res.redirect('/');
     }
