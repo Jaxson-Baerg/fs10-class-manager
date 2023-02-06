@@ -129,7 +129,7 @@ router.post('/checkout', async (req, res) => {
             credits: req.body['credit-amount'],
             cost: `$${((req.body['credit-amount'][1] * subCost) / 100).toFixed(2)}`,
             balance: req.session.user.credits,
-            subMsg: `You will be reminded three days before the renewal day on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
+            subMsg: `Your next charge will be on ${new Date(subscription.current_period_end * 1000).toString().split(/ \d{2}:\d{2}:\d{2} /)[0]} and each month afterwards. You may view or cancel your subscription anytime on your account page.`,
             host_url: process.env.HOST_URL,
             plural: req.body['credit-amount'] > 1 ? 's' : ''
           }
