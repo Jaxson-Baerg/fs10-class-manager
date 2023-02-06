@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const stripe = require('stripe');
 const { addSubscriptionCredits } = require('../helpers/operationHelpers');
 
-const endpointSecret = process.env.STRIPE_SECRET;
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // stripe webhook
 router.post('/', async (req, res) => {
