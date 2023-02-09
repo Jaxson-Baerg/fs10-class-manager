@@ -39,6 +39,8 @@ router.get('/register/confirm', async (req, res) => {
 router.post('/register/confirm', async (req, res) => {
   try {
     if (req.session.user) {
+      req.session.user = await getStudentById(req.session.user.student_id);
+
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
       if (studentClasses.filter(e => e.class_id === req.body.class_id).length < 1) {
         if (req.body.spots_remaining > 0) {

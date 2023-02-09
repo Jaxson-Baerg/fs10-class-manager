@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   try {
     if (req.session.user) {
       req.session.user = await getStudentById(req.session.user.student_id);
-      
+
       const data = await getAccountPageData(req.session.user);
 
       req.session.history = updateHistory(req.session.history, 'account/');

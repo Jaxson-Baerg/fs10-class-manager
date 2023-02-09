@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
-const { updateStudent } = require('../db/queries/studentQueries');
+const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
 
@@ -14,6 +14,8 @@ const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHe
 router.get('/', async (req, res) => {
   try {
     if (req.session.user) {
+      req.session.user = await getStudentById(req.session.user.student_id);
+
       const data = await getPurchasePageData(req.session.user);
 
       req.session.history = updateHistory(req.session.history, 'purchase/');
