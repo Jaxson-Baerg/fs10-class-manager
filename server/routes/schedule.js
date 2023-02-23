@@ -87,7 +87,7 @@ router.post('/register', async (req, res) => {
     if (req.session.user) {
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
 
-      if (studentClasses.filter(e => e.class_id === req.body.class_id).length < 1) {
+      if (studentClasses.filter(c => c.class_id == req.body.class_id).length < 1) {
         await registerStudent(req.body.class_id, req.session.user.student_id);
         await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
         req.session.user = await getStudentById(req.session.user.student_id);
@@ -126,7 +126,10 @@ router.post('/register', async (req, res) => {
         req.session.history = updateHistory(req.session.history, 'account/');
         res.render('../../client/views/pages/account', data);
       } else {
-        res.redirect('/account');
+        const data = await getAccountPageData(req.session.user, "Already registered!");
+
+        req.session.history = updateHistory(req.session.history, 'account/');
+        res.render('../../client/views/pages/account', data);
       }
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
