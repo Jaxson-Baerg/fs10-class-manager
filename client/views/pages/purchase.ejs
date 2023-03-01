@@ -36,11 +36,11 @@
               </div>
               <div class="form-group mt-3">
                 <div id="one-time-credit-select" style="display: none;">
-                  <label for="credit-amount">Credit Amount:</label><br>
-                  <input id="onetime-credit-amount" name="credit-amount" type="number" min="1" max="50" class="form-control" required />
+                  <label for="credit-amount">Enter # of Credits:</label>
+                  <input id="onetime-credit-amount" name="credit-amount" type="number" size="2" min="1" max="50" class="form-control" required />
                 </div>
                 <div id="subscription-credit-select" style="display: none;">
-                  <label for="credit-amount">Credit Amount:</label><br>
+                  <label for="credit-amount">Subscription Option:</label><br>
                   <select id="sub-credit-amount" name="credit-amount" required>
                     <option disabled selected value> -- select an option --</option>
                     <option value="5">Option A (5/month)</option>
@@ -50,11 +50,13 @@
               </div>
 
               <div class="alert alert-warning">
-                <h4>Total: </h4>
-                <h6 id="checkout-total">$0.00</h6>
+                <p>Total: <span id="checkout-total">$0.00</span></p>
               </div>
 
-              <p>Credit or Debit card:</p>
+              <p id="e-transfer">To pay by e-transfer, send payment to <a href='mailto:lisa@fortysix10fitness.ca'>lisa@fortysix10fitness.ca</a>. Your credits will be added to your account within 12 hours.</p>
+
+              <p>Pay by Credit or Debit card:</p>
+              <p id="subscription-notice" style="display: none;"><i>your card will be charged automatically each month</i></p>
               <div id="card-element"></div>
               <div id="card-error" role="alert"></div>
 
@@ -95,6 +97,9 @@
           const creditAmountOneTimeEl = $('#onetime-credit-amount');
           const creditAmountSubEl = $('#sub-credit-amount');
 
+          const eTransfer = $('#e-transfer');
+          const subscriptionNotice = $('#subscription-notice');
+
           creditOptionEl.change(function () {
             if (creditOptionEl.val() === 'one-time') {
               checkoutTotal.text(`$${((creditAmountOneTimeEl.val() * $('#one-time-credit-cost').text()) * 0.01).toFixed(2)}`);
@@ -102,6 +107,8 @@
               $('#onetime-credit-amount').prop('required', true);
               creditSelectSubEl.hide();
               $('#sub-credit-amount').prop('required', false);
+              eTransfer.show();
+              subscriptionNotice.hide();
             } else {
               if (creditAmountSubEl.val() === '5') {
                 checkoutTotal.text(`$${((5 * $('#sub-option-one-credit-cost').text()) * 0.01).toFixed(2)}`);
@@ -114,6 +121,8 @@
               $('#sub-credit-amount').prop('required', true);
               creditSelectOneTimeEl.hide();
               $('#onetime-credit-amount').prop('required', false);
+              eTransfer.hide();
+              subscriptionNotice.show();
             }
           });
           
