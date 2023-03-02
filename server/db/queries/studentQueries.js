@@ -14,7 +14,7 @@ const getStudents = async () => {
 // Get a single student by its email
 const getStudentByEmail = async (email) => {
   const queryDef = {
-    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id FROM students WHERE email = $1;',
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id, unique_code FROM students WHERE email = $1;',
     values: [email]
   };
 

@@ -48,8 +48,11 @@ router.post('/login/email', async (req, res) => {
   try {
     const student = await getStudentByEmail(req.body.email);
     if (student) {
-      const unique_code = generateUniqueCode();
-      await updateStudent(student.student_id, { unique_code });
+      let unique_code = student.unique_code;
+      if (!unique_code) {
+        unique_code = generateUniqueCode();
+        await updateStudent(student.student_id, { unique_code });
+      }
 
       // Send unique login code to user's email
       await sendEmail(
@@ -78,6 +81,9 @@ router.post('/login', async (req, res) => {
     const student = await getStudentByCode(req.body.code);
     if (student) {
       req.session.user = student;
+
+      const unique_code = '';
+      await updateStudent(student.student_id, { unique_code });
 
       const data = await getAccountPageData(req.session.user, "Successfully logged in.");
 
