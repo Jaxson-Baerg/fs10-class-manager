@@ -54,15 +54,18 @@ router.post('/login/email', async (req, res) => {
         await updateStudent(student.student_id, { unique_code });
       }
 
-      // Send unique login code to user's email
-      await sendEmail(
-        'email_code.html',
-        process.env.EMAIL_TO ?? student.email,
-        'Login Code',
-        {
-          code: unique_code
-        }
-      );
+      if (!req.session.login_code_sent || req.body.resend_login_code) {
+        req.session.login_code_sent = 1;
+        // Send unique login code to user's email
+        await sendEmail(
+          'email_code.html',
+          process.env.EMAIL_TO ?? student.email,
+          'Login Code',
+          {
+            code: unique_code
+          }
+        );
+      }
 
       res.render('../../client/views/pages/account_code_login', { user: req.session.user, email: student.email, message: undefined });
     } else {

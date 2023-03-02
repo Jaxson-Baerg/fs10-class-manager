@@ -29,6 +29,7 @@
             </form>
             <form id="resend" class="d-flex justify-content-center" action="/account/login/email" method="POST">
               <input hidden name="email" value="<%= email %>" />
+              <input hidden name="resend_login_code" value="1" />
               <button type="submit" form="resend" class="btn btn-link">Resend Code</button>
             </form>
           </div>
