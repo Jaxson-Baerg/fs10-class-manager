@@ -9,11 +9,11 @@
       var calendarEl = document.getElementById('calendar');
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: (window.innerWidth > 800) ? 'dayGridWeek' : 'dayGridDay',
+        initialView: (window.innerWidth > 800) ? 'timeGridWeek' : 'dayGridDay',
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth dayGridWeek dayGridDay'
+          right: 'dayGridMonth timeGridWeek dayGridDay'
         },
         events: [
         <% classList.forEach(event => { %>
