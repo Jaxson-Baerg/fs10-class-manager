@@ -2,6 +2,35 @@
 <html lang="en">
   <head>
     <%- include('../partials/head'); %>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    console.log(window.innerWidth);
+      var calendarEl = document.getElementById('calendar');
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: (window.innerWidth > 800) ? 'dayGridWeek' : 'dayGridDay',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth dayGridWeek dayGridDay'
+        },
+        events: [
+        <% classList.forEach(event => { %>
+          <% if (event.can_register) { %>
+          {
+            title: '<%= event.name %>',
+            start: '<%= event.event_date %>',
+            url: '<%= `/schedule/class/${event.class_type_id}` %>',
+          },
+          <% } %>
+        <% }); %>
+        ]
+      });
+
+      calendar.render();
+    });
+    </script>
   </head>
   <body>
 
@@ -27,7 +56,7 @@ Mind, body and soul.</h2>
       <section id="class-schedules" class="section-bg">
         <div class="container">
           <div class="section-title">
-            <h2>Class Schedules</h2>
+            <h2>Class Options</h2>
           </div>
           <div class="row portfolio-container">
             <% typeList.forEach(type => { %>
@@ -36,12 +65,17 @@ Mind, body and soul.</h2>
                   <div class="portfolio-info card-center">
                     <h1 class="card-text"><%= type.name %></h1>
                     <!-- TODO<p>(2 open classes!)</p> -->
-                    <a href=<%= `/schedule/class/${type.class_type_id}` %>><button type="button" class="link-btn">View Schedule</button></a>
+                    <a href=<%= `/schedule/class/${type.class_type_id}` %>><button type="button" class="link-btn">More Info</button></a>
                   </div>
               </div>
               </div>
             <% }); %>
           </div>
+        </div>
+      </section>
+      <section id="calendar" class="section-bg">
+        <div class="container">
+          <div class="row portfolio-container" id="calendar"></div>
         </div>
       </section>
       <section id="testimonials" class="testimonials">
