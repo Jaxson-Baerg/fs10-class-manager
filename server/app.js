@@ -10,6 +10,7 @@ const homeRouter = require('./routes/home');
 const scheduleRouter = require('./routes/schedule');
 const accountRouter = require('./routes/account');
 const purchaseRouter = require('./routes/purchase');
+const pricingRouter = require('./routes/pricing');
 const adminRouter = require('./routes/admin');
 const stripeRouter = require('./routes/stripe');
 const { initScheduledJobs } = require('./helpers/scheduledFunctions');
@@ -40,6 +41,7 @@ app.use('/', homeRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/account', accountRouter);
 app.use('/purchase', purchaseRouter);
+app.use('/pricing', pricingRouter);
 app.use('/admin', adminRouter);
 app.use('/stripe', stripeRouter);
 
