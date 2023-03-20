@@ -22,6 +22,8 @@ app.get('/public/images/:image_url', (req, res) => {
   res.sendFile(__dirname + `/public/images/${req.params.image_url}`);
 });
 
+app.use(express.static('public'));
+
 // view engine setup
 app.set('view engine', 'ejs');
 
