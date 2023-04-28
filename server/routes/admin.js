@@ -242,11 +242,9 @@ router.post('/create/class', async (req, res) => {
   try {
     if (req.session.admin) {
       const start_datetime = req.body.date.split('T');
-      start_datetime.splice(2, 0, '-07:00').splice(1, 1, `${req.body.date.split('T')[1]}:00`);
+      start_datetime.splice(1, 1, `${req.body.date.split('T')[1]}:00`);
       const end_datetime = req.body.date.split('T');
-      end_datetime.splice(1, 1);
-      end_datetime.push(req.body.time)
-      end_datetime.push('-07:00');
+      end_datetime.splice(1, 1, req.body.time);
 
       await createClass({
         class_type_id: req.body.type,
@@ -299,11 +297,9 @@ router.post('/edit/class', async (req, res) => {
   try {
     if (req.session.admin) {
       const start_datetime = req.body.date.split('T');
-      start_datetime.splice(2, 0, '-07:00').splice(1, 1, `${req.body.date.split('T')[1]}:00`);
+      start_datetime.splice(1, 1, `${req.body.date.split('T')[1]}:00`);
       const end_datetime = req.body.date.split('T');
-      end_datetime.splice(1, 1);
-      end_datetime.push(req.body.time)
-      end_datetime.push('-07:00');
+      end_datetime.splice(1, 1, req.body.time);
 
       await updateClass(req.body.class_id, {
         start_datetime: start_datetime.join(' '),
