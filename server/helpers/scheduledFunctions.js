@@ -3,7 +3,7 @@ const cron = require('node-cron');
 require('dotenv').config();
 
 const { getClasses } = require('../db/queries/classQueries');
-const { sendEmail } = require('./operationHelpers');
+const { formatDate, formatTime, sendEmail } = require('./operationHelpers');
 const { getStudentsForClass } = require('../db/queries/classStudentQueries');
 
 const initScheduledJobs = () => {
@@ -23,7 +23,9 @@ const initScheduledJobs = () => {
             process.env.EMAIL_TO ?? s.email,
             "Class Reminder",
             {
-              class_type: c.name
+              class_type: c.name,
+              day: formatDate(c.start_datetime),
+              time: formatTime(c.start_datetime, true)
             }
           )
         });
