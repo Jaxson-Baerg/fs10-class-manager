@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "nodemon node ./bin/www",
     "start": "node ./bin/www",
+    "db:start": "cd .. && ./docker-postgres.sh",
     "db:reset": "node ./db/reset.js",
     "db:restore": "node ./db/restore.js"
   },
