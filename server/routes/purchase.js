@@ -71,7 +71,7 @@ router.post('/checkout', async (req, res) => {
 
         // add credits
         student = await updateStudent(req.session.user.student_id, {
-          credits: req.session.user.credits + Number(req.body['credit-amount'])
+          credits: req.session.user.credits + (Number(req.body['credit-amount']) * 2)
         });
         req.session.user = student;
 
