@@ -60,6 +60,11 @@ router.post('/checkout', async (req, res) => {
 
         req.session.user = student;
       }
+      else {
+        const customer = await stripe.customers.update(req.session.user.customer_id, {
+          source: req.body.stripeToken
+        });
+      }
 
       if (req.body['credit-options'] === 'one-time') { // One-time purchase logic
         await stripe.charges.create({
