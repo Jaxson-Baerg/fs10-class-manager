@@ -17,7 +17,7 @@
         },
         events: [
         <% classList.forEach(event => { %>
-          <% if (event.can_register) { let name = event.name; name = name.replace(/&nbsp;/ig, ''); name = name.replace(/&amp;/ig, '&'); %>
+          <% if (event.can_register) { let name = event.name; name = name.replace(/&nbsp;/ig, ''); name = name.replace(/&amp;/ig, 'and'); %>
           {
             title: '<%= name %>',
             start: '<%= event.event_date %>',
