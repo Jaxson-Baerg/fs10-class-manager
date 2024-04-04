@@ -19,7 +19,7 @@
         <% classList.forEach(event => { %>
           <% if (event.can_register) { %>
           {
-            title: '<%= event.name %>',
+            title: '<%- event.name %>',
             start: '<%= event.event_date %>',
             url: '<%= `/schedule/class/${event.class_type_id}` %>',
           },
