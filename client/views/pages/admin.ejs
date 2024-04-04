@@ -23,7 +23,7 @@
             <div class="div-sizing">
             <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
               <div class="portfolio-info card-center">
-                <h2 class="card-text"><%= type.name %></h2>
+                <h2 class="card-text"><%- type.name %></h2>
                 <div>
                   <a href=<%= `/admin/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
                   <form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
