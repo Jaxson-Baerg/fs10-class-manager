@@ -46,21 +46,32 @@ const getAccountPageData = async (user, message) => {
 
 const getPurchasePageData = async (user, message) => {
 
+  let enableSubscription = true;
+
   const subscriptions = user.customer_id ? await stripe.subscriptions.list({
     customer: user.customer_id
   }) : { data: [] };
+
+  if (subscriptions.data && subscriptions.data.length > 0) {
+    enableSubscription = false;
+  }
 
   const cancelledSubscriptions = user.customer_id ? await stripe.subscriptions.list({
     customer: user.customer_id,
     status: 'canceled'
   }) : { data: [] };
 
-  // if (new Date() - new Date(cancelledSubscriptions.data[0].start_date * 1000) < 2592000000) {
+  if (cancelledSubscriptions.data && cancelledSubscriptions.data.length > 0) {
+    cancelledSubscriptions.data.forEach((sub) => {
+      if (new Date() - new Date(sub.start_date * 1000) < 2592000000) {
+        enableSubscription = false;
+      }
+    });
+  }
 
   return {
     user,
-    subscriptions: subscriptions.data,
-    cancelledSubscriptions: cancelledSubscriptions.data,
+    enableSubscription,
     message,
     stripe_pk: process.env.STRIPE_API_PUBLIC_KEY,
     credit_cost: {
