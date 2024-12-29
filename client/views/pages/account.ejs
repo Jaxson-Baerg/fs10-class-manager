@@ -49,7 +49,7 @@
             <div class="div-sizing">
             <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
               <div class="portfolio-info account-card-center">
-                <h3><%- obj.name %></h3>
+		<h3><a href=<%= `/schedule/class/${obj.class_type_id}` %>><%- obj.name %></a></h3>
                 <h6 class="account-page-font"><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
                 <% if (obj.item_list.length > 0 && obj.can_register) { %>
                   <h5 class="account-page-font">Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
