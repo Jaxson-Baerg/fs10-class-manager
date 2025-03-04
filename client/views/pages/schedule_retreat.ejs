@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head', {title: classType.name}); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1><%- classType.name.replace(/&nbsp;/ig, '') %></h1>
+        <p>
+          <img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
+          <%- classType.description %>
+        </p>
+        <div class="row portfolio-container" style="clear: both">
+          <% if (classList.length > 0) { %>
+            <% classList.forEach(obj => { %>
+              <div class="div-sizing">
+                <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                  <div class="portfolio-info card-center">
+                    <h5><%= formatDate(obj.start_datetime); %></h5>
+                    <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
+                    <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
+                    <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
+                      <form id=<%= obj.class_id %> class="event-info">
+                        <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
+                        <input name="class_id" value=<%= obj.class_id %> hidden />
+                        <input name="credits" value=<%= obj.credit_cost %> hidden />
+                        <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
+                        <input name="to_include" type="checkbox">
+                      </form>
+                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
+                    <% } %>
+                    <% if (obj.registered) { %>
+                      <h5>You are registered!</h5>
+                    <% } else if (!obj.can_register) { %>
+                      <h5>Registration is now closed</h5>
+                    <% } else if (obj.spots_remaining < 1) { %>
+                      <h5>Class is full</h5>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <h4><%= classType.name %> is not available to register at this time.</h4>
+          <% } %>
+        </div>
+        <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
+            <button type="submit" style="margin-top: 20px">Register</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>
+<script>
+    const submitForm = document.getElementById("retreat-submit");
+    submitForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const forms = document.querySelectorAll(".event-info");
+
+        // Populate the submitting form with the data from the selected event forms
+        forms.forEach(form => {
+            if (form.children[4].checked) {
+                for (let i = 0; i < form.children.length - 1; i++) {
+                    const child = form.children[i];
+                    let newField = document.createElement("input");
+                    newField.type = "hidden";
+                    newField.name = form.children[1].value + "-" + child.name;
+                    newField.value = child.value;
+                    this.appendChild(newField);
+                }
+            }
+        });
+
+        this.submit();
+    });
+</script>

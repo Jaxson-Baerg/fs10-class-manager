@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <% if (credits > 1) { %>
+          <p>Registering for these retreat events will cost <%= credits %> credits. Are you sure?</p>
+        <% } else { %>
+          <p>Registering for these retreat events will cost <%= credits %> credit. Are you sure?</p>
+        <% } %>
+        <p>You have <%= user.credits %> credits in your account.</p>
+
+        <a href=<%= `/schedule/class/${class_type_id}` %>>Go Back</a>
+        <form action="/schedule/retreat/register" method="POST">
+            <% events.forEach(event => { %>
+                <input name="<%= event.class_id %>class_id" value=<%= event.class_id %> hidden />
+            <% }); %>
+            <input name="credits" value=<%= credits %> hidden />
+            <button type="submit">Confirm Registration</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>

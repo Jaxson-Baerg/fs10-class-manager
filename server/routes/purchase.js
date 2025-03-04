@@ -83,7 +83,7 @@ router.post('/checkout', async (req, res) => {
         // email user
         await sendEmail(
           'email_receipt.html',
-          process.env.EMAIL_TO ?? student.email,
+          process.env.EMAIL_TO || student.email,
           'Purchase Receipt',
           {
             type: "one-time",

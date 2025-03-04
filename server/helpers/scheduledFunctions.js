@@ -20,7 +20,7 @@ const initScheduledJobs = () => {
           console.log(`sending class reminder for ${c.name} to ${s.email}.`);
           await sendEmail(
             'email_class_reminder.html',
-            process.env.EMAIL_TO ?? s.email,
+            process.env.EMAIL_TO || s.email,
             "Class Reminder",
             {
               class_type: c.name,

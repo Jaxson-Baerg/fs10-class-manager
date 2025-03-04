@@ -59,7 +59,7 @@ router.post('/login/email', async (req, res) => {
         // Send unique login code to user's email
         await sendEmail(
           'email_code.html',
-          process.env.EMAIL_TO ?? student.email,
+          process.env.EMAIL_TO || student.email,
           'Login Code',
           {
             code: unique_code
@@ -150,7 +150,7 @@ router.post('/register', async (req, res) => {
         // send account register email to user and admin
         await sendEmail(
           'email_account_register.html',
-          process.env.EMAIL_TO ?? student.email,
+          process.env.EMAIL_TO || student.email,
           'Account Register',
           {
             name: `${req.session.user.first_name} ${req.session.user.last_name}`,
@@ -160,7 +160,7 @@ router.post('/register', async (req, res) => {
 
         await sendEmail(
           'email_admin_account_register.html',
-          process.env.EMAIL_TO ?? process.env.EMAIL_FROM,
+          process.env.EMAIL_TO || process.env.EMAIL_FROM,
           'Account Registered',
           {
             name: `${req.session.user.first_name} ${req.session.user.last_name}`,
