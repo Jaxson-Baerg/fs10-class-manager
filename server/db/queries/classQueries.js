@@ -49,10 +49,10 @@ const getClassesByClassType = async (class_type_id, student_id) => {
 };
 
 // Create a class from parameters
-const createClass = async ({ class_type_id, start_datetime, end_datetime, credit_cost, max_students }) => {
+const createClass = async ({ class_type_id, description, start_datetime, end_datetime, credit_cost, max_students }) => {
   const queryDef = {
-    text: `INSERT INTO classes (class_type_id, start_datetime, end_datetime, credit_cost, max_students) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
-    values: [class_type_id, start_datetime, end_datetime, credit_cost, max_students]
+    text: `INSERT INTO classes (class_type_id, description, start_datetime, end_datetime, credit_cost, max_students) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
+    values: [class_type_id, description, start_datetime, end_datetime, credit_cost, max_students]
   };
 
   const data = await db.query(queryDef);

@@ -248,6 +248,7 @@ router.post('/create/class', async (req, res) => {
 
       await createClass({
         class_type_id: req.body.type,
+        description: req.body.description,
         start_datetime: start_datetime.join(' '),
         end_datetime: end_datetime.join(' '),
         credit_cost: req.body.credit,
@@ -302,6 +303,7 @@ router.post('/edit/class', async (req, res) => {
       end_datetime.splice(1, 1, req.body.time);
 
       await updateClass(req.body.class_id, {
+        description: req.body.description,
         start_datetime: start_datetime.join(' '),
         end_datetime: end_datetime.join(' '),
         credit_cost: req.body.credit,
