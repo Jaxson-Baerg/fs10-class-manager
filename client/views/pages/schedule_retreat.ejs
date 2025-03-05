@@ -52,7 +52,7 @@
                                             <form id=<%= obj.class_id + 'form' %> class="event-info">
                                                 <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
                                                 <input name="class_id" value=<%= obj.class_id %> hidden />
-                                                <input name="credits" value=<%= obj.credit_cost %> hidden />
+                                                <input name="credits" class="retreat-class-credits" value=<%= obj.credit_cost %> hidden />
                                                 <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
 
                                                 <label class="retreat-class-label">
@@ -81,9 +81,14 @@
                     <h4><%= classType.name %> is not available to register at this time.</h4>
                 <% } %>
             </div>
-            <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
-                <button id="register-button" type="submit" disabled>Register</button>
-            </form>
+            <div class="retreat-register-footer">
+                <span>
+                    <h5 class="total-credits-display">Total Credit Cost: 0</h5>
+                </span>
+                <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
+                    <button id="register-button" type="submit" disabled>Register</button>
+                </form>
+            </div>
         </div>
     </main>
 
@@ -140,8 +145,12 @@
             const checkboxes = document.getElementsByClassName("retreat-class-checkbox");
             
             let regAllowed = false;
+            let totalCreditis = 0;
             for (let cb of checkboxes) {
-                if (cb.checked) regAllowed = true;
+                if (cb.checked) {
+                    totalCreditis += Number(cb.parentElement.parentElement.getElementsByClassName("retreat-class-credits")[0].value);
+                    regAllowed = true;
+                }
             };
 
             if (regAllowed) {
@@ -153,6 +162,8 @@
                 regBtn.style.background = "rgb(180, 221, 235)";
                 regBtn.style.cursor = "not-allowed";
             }
+
+            document.getElementsByClassName("total-credits-display")[0].innerHTML = `Total Credit Cost: ${totalCreditis}`;
         });
     }
 </script>
