@@ -1,61 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head', {title: classType.name}); %>
-  </head>
-  <body class="container">
+  	<head>
+    	<%- include('../partials/head', {title: classType.name}); %>
+ 	</head>
+  	<body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+    	<%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
-        <h1><%- classType.name.replace(/&nbsp;/ig, '') %></h1>
-        <p>
-          <img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
-          <%- classType.description %>
-        </p>
-        <div class="row portfolio-container" style="clear: both">
-          <% if (classList.length > 0) { %>
-            <% classList.forEach(obj => { %>
-              <div class="div-sizing">
-                <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-                  <div class="portfolio-info card-center">
-                    <h5><%= formatDate(obj.start_datetime); %></h5>
-                    <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
-                    <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
-                    <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
-                      <form action="/schedule/register/confirm" method="POST">
-                        <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
-                        <input name="class_id" value=<%= obj.class_id %> hidden />
-                        <input name="credits" value=<%= obj.credit_cost %> hidden />
-                        <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
-                        <button type="submit">Register</button>
-                      </form>
-                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
-                    <% } %>
-                    <% if (obj.registered) { %>
-                      <h5>You are registered!</h5>
-                    <% } else if (!obj.can_register) { %>
-                      <h5>Registration is now closed</h5>
-                    <% } else if (obj.spots_remaining < 1) { %>
-                      <h5>Class is full</h5>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-            <% }); %>
-          <% } else { %>
-            <h4>There are currently no scheduled <%= classType.name %> classes that you can register for.</h4>
-          <% } %>
-        </div>
-      </div>
+      	<div class="jumbotron">
+        	<h1><%- classType.name.replace(/&nbsp;/ig, '') %></h1>
+        	<p>
+          		<img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
+          		<%- classType.description %>
+        	</p>
+
+        	<div class="row portfolio-container" style="clear: both">
+          		<% if (classList.length > 0) { %>
+            		<% classList.forEach(obj => { %>
+              			<div class="div-sizing">
+                			<div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                  				<div class="portfolio-info card-center">
+
+                    				<div>
+                      					<h5><%= formatDate(obj.start_datetime); %></h5>
+                      					<h6>
+                        					<%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %>
+                      					</h6>
+                    				</div>
+
+                    				<p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
+
+                    				<% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
+                      					<form action="/schedule/register/confirm" method="POST">
+                        					<input name="class_type_id" value=<%= obj.class_type_id %> hidden />
+                        					<input name="class_id" value=<%= obj.class_id %> hidden />
+                        					<input name="credits" value=<%= obj.credit_cost %> hidden />
+                        					<input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
+                        					<button type="submit">Register</button>
+                      					</form>
+                      					<p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
+                    				<% } %>
+
+                    				<% if (obj.registered) { %>
+                      					<h5>You are registered!</h5>
+                    				<% } else if (!obj.can_register) { %>
+                      					<h5>Registration is now closed</h5>
+                    				<% } else if (obj.spots_remaining < 1) { %>
+                      					<h5>Class is full</h5>
+                    				<% } %>
+
+                  				</div>
+                			</div>
+              			</div>
+            		<% }); %>
+          		<% } else { %>
+            		<h4>There are currently no scheduled <%= classType.name %> classes that you can register for.</h4>
+          		<% } %>
+        	</div>
+      	</div>
     </main>
 
     <footer>
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
-  </body>
+  	</body>
 </html>

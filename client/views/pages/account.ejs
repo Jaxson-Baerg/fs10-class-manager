@@ -1,109 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body class="container">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+        <%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
-        <h1>My Account</h1>
-        <% if(message) { %>
-          <p class="alert alert-success"><%= message %></p>
-        <% } %>
-        
-        <div class="account-box">
-          <div>
-            <h2 class="account-page-font"><%= user.first_name %> <%= user.last_name %></h2>
-            <h3 class="account-page-font"><%= user.email %></h3>
-            <h5 class="account-page-font">You have <%= user.credits %> credits.</h5>
-            <h5 class="account-page-font">You have completed <%= numComClasses %> classes.</h5>
-          </div>
-          <div id="sub-box-div">
-            <% if (subscription) { %>
-              <h5 class="account-page-font">Subscription:</h5>
-              <div class="sub-box">
-                <p>Next payment:<br><%= subscription.next_invoice %></p>
-                <div>
-                  <p><%= subscription.credit_amount %> credits.</p>
-                  <p><%= subscription.price %></p>
-                  <form id="sub-cancel" action="/purchase/subscription/cancel" method="POST">
-                    <button type="submit">Cancel</button>
-                  </form>
-                </div>
-              </div>
+        <div class="jumbotron">
+            <h1>My Account</h1>
+            <% if(message) { %>
+                <p class="alert alert-success"><%= message %></p>
             <% } %>
-          </div>
-        </div>
-        <% if (classes.length > 0) { %>
-          <h5 class="account-page-font">Your scheduled classes:</h5>
-        <% } else { %>
-          <h5 class="account-page-font">You have no scheduled classes.</h5>
-        <% } %>
-        <div class="row portfolio-container">
-          <% classes.forEach(obj => { %>
-            <div class="div-sizing">
-            <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info account-card-center">
-		<h3><a href=<%= `/schedule/class/${obj.class_type_id}` %>><%- obj.name %></a></h3>
-                <h6 class="account-page-font"><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
-                <% if (obj.item_list.length > 0 && obj.can_register) { %>
-                  <h5 class="account-page-font">Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
-                  <span id=<%= `popup-${obj.class_id}` %> class="popuptext">
-                    <ul>
-                      <% obj.item_list.forEach(item => { %>
-                        <li><%= item %></li>
-                      <% }); %>
-                    </ul>
-                  </span>
-                <% } %>
-                <% if (obj.can_register) { %>
-                  <form action="/schedule/cancel/confirm" method="POST" id="cancel-form">
-                    <input name="class_id" value=<%= obj.class_id %> hidden />
-                    <% if (obj.can_cancel) { %>
-                      <input name="credits" value=<%= obj.credit_cost %> hidden />
-                    <% } else { %>
-                      <input name="credits" value="0" hidden />
-                    <% } %>
-                    <button type="submit">Cancel</button>
-                  </form>
-                <% } else { %>
-                  <h4 class="fixed-to-bottom">(Finished)</h4>
-                <% } %>
-              </div>
-            </div>
-            </div>
-          <% }); %>
-        </div>
-      </div>
+        
+        	<div class="account-box">
+          		<div>
+            		<h2 class="account-page-font"><%= user.first_name %> <%= user.last_name %></h2>
+            		<h3 class="account-page-font"><%= user.email %></h3>
+            		<h5 class="account-page-font">You have <%= user.credits %> credits.</h5>
+            		<h5 class="account-page-font">You have completed <%= numComClasses %> classes.</h5>
+          		</div>
+
+          		<div id="sub-box-div">
+            		<% if (subscription) { %>
+              			<h5 class="account-page-font">Subscription:</h5>
+              			<div class="sub-box">
+                			<p>Next payment:<br><%= subscription.next_invoice %></p>
+                			<div>
+                  				<p><%= subscription.credit_amount %> credits.</p>
+                  				<p><%= subscription.price %></p>
+                  				<form id="sub-cancel" action="/purchase/subscription/cancel" method="POST">
+                    				<button type="submit">Cancel</button>
+                  				</form>
+                			</div>
+              			</div>
+            		<% } %>
+          		</div>
+        	</div>
+
+        	<% if (classes.length > 0) { %>
+          		<h5 class="account-page-font">Your scheduled classes:</h5>
+        	<% } else { %>
+          		<h5 class="account-page-font">You have no scheduled classes.</h5>
+        	<% } %>
+
+        	<div class="row portfolio-container">
+          		<% classes.forEach(obj => { %>
+            		<div class="div-sizing">
+            			<div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+              				<div class="portfolio-info account-card-center">
+
+		            			<h3><a href=<%= `/schedule/class/${obj.class_type_id}` %>><%- obj.name %></a></h3>
+                				<h6 class="account-page-font"><%= formatDate(obj.start_datetime); %> ~ <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h6>
+                				
+								<% if (obj.item_list.length > 0 && obj.can_register) { %>
+                  					<h5 class="account-page-font">Items to bring <i id=<%= `popup-toggle-${obj.class_id}` %> class="fa-solid fa-chevron-down popup" onclick="popup(event)"></i></h5>
+                  					<span id=<%= `popup-${obj.class_id}` %> class="popuptext">
+                    					<ul>
+                      						<% obj.item_list.forEach(item => { %>
+                        						<li><%= item %></li>
+                      						<% }); %>
+                    					</ul>
+                  					</span>
+                				<% } %>
+								
+                				<% if (obj.can_register) { %>
+                  					<form action="/schedule/cancel/confirm" method="POST" id="cancel-form">
+                    					<input name="class_id" value=<%= obj.class_id %> hidden />
+                    					<% if (obj.can_cancel) { %>
+                      						<input name="credits" value=<%= obj.credit_cost %> hidden />
+                    					<% } else { %>
+                      						<input name="credits" value="0" hidden />
+                    					<% } %>
+                    					<button type="submit">Cancel</button>
+                  					</form>
+                				<% } else { %>
+                  					<h4 class="fixed-to-bottom">(Finished)</h4>
+                				<% } %>
+
+              				</div>
+            			</div>
+            		</div>
+          		<% }); %>
+        	</div>
+      	</div>
     </main>
 
     <footer class="fixed-bottom">
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
     <script>
-      $('#sub-cancel').on('submit', e => {
-        if (!window.confirm('Are you sure you wish to cancel your subscription? (You will keep your unused credits, but you can only sign up for a subscription once every 30 days)')) {
-          e.preventDefault();
-        }
-      });
+      	$('#sub-cancel').on('submit', e => {
+        	if (!window.confirm('Are you sure you wish to cancel your subscription? (You will keep your unused credits, but you can only sign up for a subscription once every 30 days)')) {
+          		e.preventDefault();
+        	}
+      	});
 
-      const popup = e => {
-        const popupBtn = $(`#${e.target.id}`);
-        if (popupBtn.hasClass('fa-chevron-down')) {
-          popupBtn.attr('class', 'fa-solid fa-chevron-up popup');
-        } else {
-          popupBtn.attr('class', 'fa-solid fa-chevron-down popup');
-        }
+      	const popup = e => {
+        	const popupBtn = $(`#${e.target.id}`);
+        	if (popupBtn.hasClass('fa-chevron-down')) {
+          		popupBtn.attr('class', 'fa-solid fa-chevron-up popup');
+        	} else {
+          		popupBtn.attr('class', 'fa-solid fa-chevron-down popup');
+        	}
 
-        $(`#popup-${e.target.id.split('-')[2]}`).toggle();
-      };
+        	$(`#popup-${e.target.id.split('-')[2]}`).toggle();
+      	};
     </script>
 
-  </body>
+  	</body>
 </html>
