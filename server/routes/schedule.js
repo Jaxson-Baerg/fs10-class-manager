@@ -250,34 +250,35 @@ router.post('/retreat/register', async (req, res) => {
         for (let i = 0; i < req.body.length - 1; i++) {
           await registerStudent(req.body[i], req.session.user.student_id);
 
-          // const classObjInc = await getClassById(req.body[i]);
-          // const classList = await unpackageClassObjects([classObjInc]);
+          const classObjInc = await getClassById(req.body[i]);
+          const classList = await unpackageClassObjects([classObjInc]);
 
-          // // send user email
-          // await sendEmail(
-          //   'email_class_register.html',
-          //   process.env.EMAIL_TO || req.session.user.email,
-          //   'Class Confirmation',
-          //   {
-          //     class_type: classList[0].name,
-          //     day: formatDate(classList[0].start_datetime),
-          //     time: formatTime(classList[0].start_datetime, true)
-          //   }
-          // );
+          // send user email
+          await sendEmail(
+            'email_class_register.html',
+            process.env.EMAIL_TO || req.session.user.email,
+            'Class Confirmation',
+            {
+              class_type: classList[0].name,
+              day: formatDate(classList[0].start_datetime),
+              time: formatTime(classList[0].start_datetime, true),
+              description: classList[0].description
+            }
+          );
 
-          // // send admin email
-          // await sendEmail(
-          //   'email_admin_class_register.html',
-          //   process.env.EMAIL_TO || process.env.EMAIL_FROM,
-          //   'Class Registration',
-          //   {
-          //     name: `${req.session.user.first_name} ${req.session.user.last_name}`,
-          //     email: req.session.user.email,
-          //     class_type: classList[0].name,
-          //     day: formatDate(classList[0].start_datetime),
-          //     time: formatTime(classList[0].start_datetime, true)
-          //   }
-          // );
+          // send admin email
+          await sendEmail(
+            'email_admin_class_register.html',
+            process.env.EMAIL_TO || process.env.EMAIL_FROM,
+            'Class Registration',
+            {
+              name: `${req.session.user.first_name} ${req.session.user.last_name}`,
+              email: req.session.user.email,
+              class_type: classList[0].name,
+              day: formatDate(classList[0].start_datetime),
+              time: formatTime(classList[0].start_datetime, true)
+            }
+          );
         }
         await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
         req.session.user = await getStudentById(req.session.user.student_id);
