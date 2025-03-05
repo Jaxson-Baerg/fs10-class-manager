@@ -19,40 +19,54 @@
         <div class="row portfolio-container" style="clear: both">
           <% if (classList.length > 0) { %>
             <% classList.forEach(obj => { %>
-              <div class="div-sizing">
-                <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-                  <div class="portfolio-info card-center">
-                    <h3><%= obj.description %></h3>
-                    <h5><%= formatDate(obj.start_datetime); %></h5>
-                    <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
-                    <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
-                    <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
-                      <form id=<%= obj.class_id %> class="event-info">
-                        <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
-                        <input name="class_id" value=<%= obj.class_id %> hidden />
-                        <input name="credits" value=<%= obj.credit_cost %> hidden />
-                        <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
-                        <input name="to_include" type="checkbox">
-                      </form>
-                      <p><%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %> to register.</p>
-                    <% } %>
-                    <% if (obj.registered) { %>
-                      <h5>You are registered!</h5>
-                    <% } else if (!obj.can_register) { %>
-                      <h5>Registration is now closed</h5>
-                    <% } else if (obj.spots_remaining < 1) { %>
-                      <h5>Class is full</h5>
-                    <% } %>
-                  </div>
+                <label for=<%= obj.class_id + 'checkbox' %>>
+                <div id="<%= obj.class_id + 'tile' %>" class="div-sizing">
+                    <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                        <div class="portfolio-info card-center">
+                            <h5><%= formatDate(obj.start_datetime); %></h5>
+                            <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
+                            <div id="<%= obj.class_id + 'short' %>" class="tile-info" <%= obj.description.length > 20 ? "" : "hidden" %>>
+                                <p><%= obj.description.substring(0, 35); %>...</p>
+                                <button class="retreat-info-button" onclick="enlargeTile('<%= obj.class_id %>')">Read more</button>
+                            </div>
+                            <div id="<%= obj.class_id + 'long' %>" class="tile-info" <%= obj.description.length > 20 ? "hidden" : "" %>>
+                                <p><%= obj.description %></p>
+                                <% if (obj.description.length > 20) { %>
+                                    <button class="retreat-info-button" onclick="shrinkTile('<%= obj.class_id %>')">Collapse</button>
+                                <% } %>
+                                <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
+                            </div>
+                            <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
+                                <form id=<%= obj.class_id %> class="event-info">
+                                    <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
+                                    <input name="class_id" value=<%= obj.class_id %> hidden />
+                                    <input name="credits" value=<%= obj.credit_cost %> hidden />
+                                    <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
+                                    <label class="retreat-class-label">
+                                        <input id=<%= obj.class_id + 'checkbox' %> name="to_include" class="retreat-class-checkbox" type="checkbox">
+                                        <span class="retreat-class-checkmark"></span>
+                                        <%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %>
+                                    </label>
+                                </form>
+                            <% } %>
+                            <% if (obj.registered) { %>
+                                <h5>You are registered!</h5>
+                            <% } else if (!obj.can_register) { %>
+                                <h5>Registration is now closed</h5>
+                            <% } else if (obj.spots_remaining < 1) { %>
+                                <h5>Class is full</h5>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                </label>
             <% }); %>
           <% } else { %>
             <h4><%= classType.name %> is not available to register at this time.</h4>
           <% } %>
         </div>
         <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
-            <button type="submit" style="margin-top: 20px">Register</button>
+            <button id="register-button" type="submit" style="margin-top: 20px">Register</button>
         </form>
       </div>
     </main>
