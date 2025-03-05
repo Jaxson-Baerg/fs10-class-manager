@@ -240,22 +240,22 @@ router.post('/retreat/register', async (req, res) => {
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
       // Ensure none of the events are registered for and that they have spots remaining
       let flag = false;
-      for (let i = 0; i < req.body.length - 1; i++) {
-        if (studentClasses.filter(e => e.class_id === req.body[i]).length) {
+      for (let i = 0; i < Object.keys(req.body).length - 1; i++) {
+        if (studentClasses.filter(e => e.class_id === req.body[Object.keys(req.body)[i]]).length) {
           flag = true;
         }
       };
 
       if (!flag) {
-        for (let i = 0; i < req.body.length - 1; i++) {
-          await registerStudent(req.body[i], req.session.user.student_id);
+        for (let i = 0; i < Object.keys(req.body).length - 1; i++) {
+          await registerStudent(req.body[Object.keys(req.body)[i]], req.session.user.student_id);
 
-          const classObjInc = await getClassById(req.body[i]);
+          const classObjInc = await getClassById(req.body[Object.keys(req.body)[i]]);
           const classList = await unpackageClassObjects([classObjInc]);
 
           // send user email
           await sendEmail(
-            'email_class_register.html',
+            'email_retreat_class_register.html',
             process.env.EMAIL_TO || req.session.user.email,
             'Class Confirmation',
             {

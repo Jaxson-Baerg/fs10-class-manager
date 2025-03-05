@@ -101,7 +101,7 @@
 
         // Populate the submitting form with the data from the selected event forms
         forms.forEach(form => {
-            if (form.children[4].checked) {
+            if (form.getElementsByClassName("retreat-class-checkbox")[0].checked) {
                 for (let i = 0; i < form.children.length - 1; i++) {
                     const child = form.children[i];
                     let newField = document.createElement("input");
@@ -130,5 +130,29 @@
         tile.style.height = "";
         document.getElementById(id + "short").hidden = false;
         document.getElementById(id + "long").hidden = true;
+    }
+
+    // Logic to enable register button if one or more classes are checked, and disable it otherwise
+    const inputs = document.getElementsByClassName("retreat-class-checkbox");
+    for (let input of inputs) {
+        input.addEventListener("change", () => {
+            const regBtn = document.getElementById("register-button");
+            const checkboxes = document.getElementsByClassName("retreat-class-checkbox");
+            
+            let regAllowed = false;
+            for (let cb of checkboxes) {
+                if (cb.checked) regAllowed = true;
+            };
+
+            if (regAllowed) {
+                regBtn.disabled = false;
+                regBtn.style.background = "#3498db";
+                regBtn.style.cursor = "pointer"
+            } else {
+                regBtn.disabled = true;
+                regBtn.style.background = "rgb(180, 221, 235)";
+                regBtn.style.cursor = "not-allowed";
+            }
+        });
     }
 </script>
