@@ -367,4 +367,73 @@
     display: none;
   }
 
+  /* Retreat class tiles */
+  .tile-info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .tile-info p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .retreat-class-label {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 5px;
+  }
+
+  .retreat-class-checkbox {
+    appearance: none;
+    background: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+    margin-right: 5px;
+  }
+
+  .retreat-class-checkbox::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em rgb(31, 136, 36);
+  }
+
+  .retreat-class-checkbox:checked::before {
+    transform: scale(1);
+  }
+
+  .retreat-info-button {
+    background: #3498db;
+    border: 0;
+    font-size: small;
+    padding: 5px 10px;
+    color: #fff;
+    transition: 0.4s;
+    border-radius: 4px;
+  }
+
+  #retreat-submit {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  #retreat-submit button {
+    font-size: large;
+    padding: 20px 48px;
+  }
+
 </style>

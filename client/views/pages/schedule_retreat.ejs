@@ -10,7 +10,7 @@
     </header>
 
     <main>
-      <div class="jumbotron">
+      <div id="retreat-jumbotron" class="jumbotron">
         <h1><%- classType.name.replace(/&nbsp;/ig, '') %></h1>
         <p>
           <img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
@@ -66,7 +66,7 @@
           <% } %>
         </div>
         <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
-            <button id="register-button" type="submit" style="margin-top: 20px">Register</button>
+            <button id="register-button" type="submit">Register</button>
         </form>
       </div>
     </main>
@@ -99,4 +99,20 @@
 
         this.submit();
     });
+
+    function enlargeTile(id) {
+        const tile = document.getElementById(id + "tile");
+        tile.style.width = "100%";
+        tile.style.height = "fit-content";
+        document.getElementById(id + "long").hidden = false;
+        document.getElementById(id + "short").hidden = true;
+    }
+
+    function shrinkTile(id) {
+        const tile = document.getElementById(id + "tile")
+        tile.style.width = "";
+        tile.style.height = "";
+        document.getElementById(id + "short").hidden = false;
+        document.getElementById(id + "long").hidden = true;
+    }
 </script>
