@@ -85,7 +85,7 @@ const addSubscriptionCredits = async (invoice) => {
     // email user
     await sendEmail(
       'email_receipt.html',
-      process.env.EMAIL_TO ?? student.email,
+      process.env.EMAIL_TO || student.email,
       'Subscription Receipt',
       {
         type: "subscription",

@@ -23,6 +23,11 @@
                 <h6><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h6>
               </div>
 
+              <div class="form-group mt-3">
+                <label for="description">Class Description (Can be left blank):</label>
+                <textarea id="description" name="description" class="form-control"><%= classObj.description %></textarea>
+              </div>
+
               <div class="row">
                 <div class="col-md-6 form-group">
                   <label for="date">Start Time:</label>

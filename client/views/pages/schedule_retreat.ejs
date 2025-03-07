@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head', {title: classType.name}); %>
+    </head>
+    <body class="container">
+
+    <header id="header" class="fixed-top">
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div id="retreat-jumbotron" class="jumbotron">
+            <h1><%- classType.name.replace(/&nbsp;/ig, '') %></h1>
+            <p>
+                <img src="../../public/images/<%= classType.image_url %>" width="50%" style="float: right;" />
+                <%- classType.description %>
+            </p>
+
+            <div class="row portfolio-container" style="clear: both">
+                <% if (classList.length > 0) { %>
+                    <% classList.forEach(obj => { %>
+                        <label for=<%= obj.class_id + 'checkbox' %>>
+                            <div id="<%= obj.class_id + 'tile' %>" class="div-sizing">
+                                <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+                                    <div class="portfolio-info card-center">
+
+                                        <div>
+                                            <h5><%= formatDate(obj.start_datetime); %></h5>
+                                            <h6>
+                                                <%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %>
+                                            </h6>
+                                        </div>
+
+                                        <!-- Displays a shortened class description and an expand button -->
+                                        <div id="<%= obj.class_id + 'short' %>" class="tile-info" <%= obj.description.length > 20 ? "" : "hidden" %>>
+                                            <p><%= obj.description.substring(0, 60); %>...</p>
+                                            <button class="retreat-info-button" onclick="enlargeTile('<%= obj.class_id %>')">Read more</button>
+                                        </div>
+
+                                        <!-- Displays the full class description and a collapse button if the tile was expanded -->
+                                        <div id="<%= obj.class_id + 'long' %>" class="tile-info" <%= obj.description.length > 20 ? "hidden" : "" %>>
+                                            <p><%= obj.description %></p>
+                                            <% if (obj.description.length > 20) { %>
+                                                <button class="retreat-info-button" onclick="shrinkTile('<%= obj.class_id %>')">Collapse</button>
+                                            <% } %>
+                                            <p><%= obj.spots_remaining %> spot<%= obj.spots_remaining > 1 ? 's' : '' %> remaining!</p>
+                                        </div>
+
+                                        <!-- Checkbox form with populated class data -->
+                                        <% if (obj.can_register && obj.spots_remaining > 0 && !obj.registered) { %>
+                                            <form id=<%= obj.class_id + 'form' %> class="event-info">
+                                                <input name="class_type_id" value=<%= obj.class_type_id %> hidden />
+                                                <input name="class_id" value=<%= obj.class_id %> hidden />
+                                                <input name="credits" class="retreat-class-credits" value=<%= obj.credit_cost %> hidden />
+                                                <input name="spots_remaining" value=<%= obj.spots_remaining %> hidden />
+
+                                                <label class="retreat-class-label">
+                                                    <input id=<%= obj.class_id + 'checkbox' %> name="to_include" class="retreat-class-checkbox" type="checkbox">
+                                                    <span class="retreat-class-checkmark"></span>
+                                                    <%= obj.credit_cost %> credit<%= obj.credit_cost > 1 ? 's' : '' %>
+                                                </label>
+
+                                            </form>
+                                        <% } %>
+
+                                        <% if (obj.registered) { %>
+                                            <h5>You are registered!</h5>
+                                        <% } else if (!obj.can_register) { %>
+                                            <h5>Registration is now closed</h5>
+                                        <% } else if (obj.spots_remaining < 1) { %>
+                                            <h5>Class is full</h5>
+                                        <% } %>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    <% }); %>
+                <% } else { %>
+                    <h4><%= classType.name %> is not available to register at this time.</h4>
+                <% } %>
+            </div>
+            <div class="retreat-register-footer">
+                <span>
+                    <h5 class="total-credits-display">Total Credit Cost: 0</h5>
+                </span>
+                <form id="retreat-submit" action="/schedule/register/retreat/confirm" method="POST">
+                    <button id="register-button" type="submit" disabled>Register</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+    </body>
+</html>
+<script>
+    const submitForm = document.getElementById("retreat-submit");
+    submitForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const forms = document.querySelectorAll(".event-info");
+
+        // Populate the submitting form with the data from the selected event forms
+        forms.forEach(form => {
+            if (form.getElementsByClassName("retreat-class-checkbox")[0].checked) {
+                for (let i = 0; i < form.children.length - 1; i++) {
+                    const child = form.children[i];
+                    let newField = document.createElement("input");
+                    newField.type = "hidden";
+                    newField.name = form.children[1].value + "-" + child.name;
+                    newField.value = child.value;
+                    this.appendChild(newField);
+                }
+            }
+        });
+
+        this.submit();
+    });
+
+    function enlargeTile(id) {
+        const tile = document.getElementById(id + "tile");
+        tile.style.width = "100%";
+        tile.style.height = "fit-content";
+        document.getElementById(id + "long").hidden = false;
+        document.getElementById(id + "short").hidden = true;
+    }
+
+    function shrinkTile(id) {
+        const tile = document.getElementById(id + "tile")
+        tile.style.width = "";
+        tile.style.height = "";
+        document.getElementById(id + "short").hidden = false;
+        document.getElementById(id + "long").hidden = true;
+    }
+
+    // Logic to enable register button if one or more classes are checked, and disable it otherwise
+    const inputs = document.getElementsByClassName("retreat-class-checkbox");
+    for (let input of inputs) {
+        input.addEventListener("change", () => {
+            const regBtn = document.getElementById("register-button");
+            const checkboxes = document.getElementsByClassName("retreat-class-checkbox");
+            
+            let regAllowed = false;
+            let totalCreditis = 0;
+            for (let cb of checkboxes) {
+                if (cb.checked) {
+                    totalCreditis += Number(cb.parentElement.parentElement.getElementsByClassName("retreat-class-credits")[0].value);
+                    regAllowed = true;
+                }
+            };
+
+            if (regAllowed) {
+                regBtn.disabled = false;
+                regBtn.style.background = "#3498db";
+                regBtn.style.cursor = "pointer"
+            } else {
+                regBtn.disabled = true;
+                regBtn.style.background = "rgb(180, 221, 235)";
+                regBtn.style.cursor = "not-allowed";
+            }
+
+            document.getElementsByClassName("total-credits-display")[0].innerHTML = `Total Credit Cost: ${totalCreditis}`;
+        });
+    }
+</script>
