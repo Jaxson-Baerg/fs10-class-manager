@@ -221,13 +221,13 @@ router.post('/delete/class_type', async (req, res) => {
 });
 
 // Render the create class form page
-router.get('/create/class', async (req, res) => {
+router.get('/create/class/:class_type_id', async (req, res) => {
   try {
     if (req.session.admin) {
       const classTypes = await getClassTypes();
 
       req.session.history = updateHistory(req.session.history, 'admin/create/class');
-      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes });
+      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes, selectedId: req.params.class_type_id });
     } else {
       res.redirect('/admin/login');
     }

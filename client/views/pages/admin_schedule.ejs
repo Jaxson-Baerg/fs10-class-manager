@@ -1,62 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body class="container">
+    <head>
+      <%- include('../partials/head'); %>
+  	</head>
+  	<body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+      	<%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
-        <h1><%- classType.name %></h1>
-        <p><%- classType.description %></p>
-        <div class="row portfolio-container">
-          <% classList.forEach(obj => { %>
-            <div class="div-sizing">
-            <div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
-              <div class="portfolio-info card-center admin-card">
-                <h5><%= formatDate(obj.start_datetime); %></h5>
-                <h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
-                <p>Spots Remaining: <%= obj.spots_remaining %></p>
-                <p>Credit Cost: <%= obj.credit_cost %></p>
-                <div id="admin-view-students-button" class="card-center">
-                  <a href=<%= `/admin/class/${obj.class_id}` %>><button type="button" class="btn link-btn">View Students</button></a>
-                  <div class="d-flex">
-                    <form action=<%= `/admin/edit/class/${obj.class_id}` %> method="GET">
-                      <button type="submit" class="btn-link">Edit</button>
-                    </form>
-                    <% if (obj.can_register) { %>
-                      <form class="class_del" action="/admin/delete/class" method="POST">
-                        <input name="class_id" value=<%= obj.class_id %> hidden />
-                        <button class="btn-link" type="submit">Delete</button>
-                      </form>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-          <% }); %>
-        </div>
-      </div>
+      	<div class="jumbotron">
+	        <h1 class="text-center"><%- classType.name %></h1>
+		
+			<form action=<%= `/admin/create/class/${classType.class_type_id}` %> class="flex">
+				<input name="class_type_id" value="<%= classType.class_type_id %>" hidden>
+				<button type="submit" class="btn link-btn">Create Class</button>
+			</form>
+
+        	<p><%- classType.description %></p>
+        	
+			<div class="row portfolio-container">
+          		<% classList.forEach(obj => { %>
+            		<div class="div-sizing">
+            			<div class="<%= !obj.can_register ? 'portfolio-item wow closed-class' : 'portfolio-item wow open-class'; %>" >
+              				<div class="portfolio-info card-center admin-card">
+
+                				<h5><%= formatDate(obj.start_datetime); %></h5>
+                				<h5><%= formatTime(obj.start_datetime, false); %> - <%= formatTime(obj.end_datetime, true); %></h5>
+                				<p>Spots Remaining: <%= obj.spots_remaining %></p>
+                				<p>Credit Cost: <%= obj.credit_cost %></p>
+
+                				<div id="admin-view-students-button" class="card-center">
+
+                  					<a href=<%= `/admin/class/${obj.class_id}` %>><button type="button" class="btn link-btn">View Students</button></a>
+
+                  					<div class="d-flex">
+
+                    					<form action=<%= `/admin/edit/class/${obj.class_id}` %> method="GET">
+                      						<button type="submit" class="btn-link">Edit</button>
+                    					</form>
+
+                    					<% if (obj.can_register) { %>
+                      						<form class="class_del" action="/admin/delete/class" method="POST">
+                        						<input name="class_id" value=<%= obj.class_id %> hidden />
+                        						<button class="btn-link" type="submit">Delete</button>
+                      						</form>
+                    					<% } %>
+
+                  					</div>
+                				</div>
+              				</div>
+            			</div>
+            		</div>
+          		<% }); %>
+        	</div>
+      	</div>
     </main>
 
     <footer>
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
     <script>
-      $('.class_del').each(function (index, element) {
-        $(this).on('submit', e => {
-          if (!confirm('Are you sure you want to delete this class? This will refund all registered students.')) {
-            e.preventDefault();
-          }
-        });
-      });
+      	$('.class_del').each(function (index, element) {
+	        $(this).on('submit', e => {
+          		if (!confirm('Are you sure you want to delete this class? This will refund all registered students.')) {
+            		e.preventDefault();
+          		}
+        	});
+      	});
     </script>
 
-  </body>
+  	</body>
 </html>

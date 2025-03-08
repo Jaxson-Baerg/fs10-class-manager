@@ -1,62 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body class="container">
+    <head>
+    	<%- include('../partials/head'); %>
+  	</head>
+  	<body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+    	<%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
-        <h1>Admin</h1>
-        <div class="row mt-5 justify-content-center">
-          <div class="col-lg-10">
-            <form action="/admin/create/class" method="POST" class="input-form">
-              <div class="form-group mt-3">
-                <label for="type">Choose the type of class:</label><br>
-                <select id="type" name="type" required >
-                  <% classTypes.forEach(c => { %>
-                    <option value=<%= c.class_type_id %>><%= c.name %></option>
-                  <% }) %>
-                </select>
-              </div>
-              <div class="form-group mt-3">
-                <label for="description">Class Description (Can be left blank):</label>
-                <textarea id="description" name="description" class="form-control" placeholder="Items to bring: water bottle, yoga mat, ..."></textarea>
-              </div>
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <label for="date">Start Time:</label>
-                  <input id="date" name="date" class="form-control" type="datetime-local" required />
-                </div>
-                <div class="col-md-6 form-group">
-                  <label for="time">End Time:</label>
-                  <input id="time" name="time" class="form-control" type="time" required/>
-                </div>
-              </div>
-              <div class="form-group mt-3">
-                <label for="credit">Credit Cost:</label>
-                <input id="credit" name="credit" class="form-control" type="number" min="1" placeholder="Credit Cost" required />
-              </div>
-              <div class="form-group mt-3">
-                <label for="student">Max Students:</label>
-                <input id="student" name="student" class="form-control" type="number" min="1" placeholder="Max Students" required />
-              </div>
-              <div class="text-center">
-                <button type="submit">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      	<div class="jumbotron">
+			<div class="section-title">
+	        	<h1 class="text-center">Admin</h1>
+				<h2 class="text-center">Create a Class</h2>
+			</div>
+
+        	<div class="row justify-content-center">
+          		<div class="col-lg-10">
+
+		            <form action="/admin/create/class" method="POST" class="input-form">
+
+              			<div class="form-group mt-3">
+                			<label for="type">Choose the type of class:</label><br>
+                			<select id="type" name="type" required >
+                  				<% classTypes.forEach(c => { %>
+                    				<% if (selectedId == c.class_type_id) { %>
+                      					<option value=<%= c.class_type_id %> selected="selected"><%= c.name %></option>
+                    				<% } else { %>
+                      					<option value=<%= c.class_type_id %>><%= c.name %></option>
+                    				<% } %>
+                  				<% }) %>
+                			</select>
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<label for="description">Class Description (Can be left blank):</label>
+                			<textarea id="description" name="description" class="form-control" placeholder="Items to bring: water bottle, yoga mat, ..."></textarea>
+              			</div>
+
+              			<div class="row">
+                			<div class="col-md-6 form-group">
+                  				<label for="date">Start Time:</label>
+                  				<input id="date" name="date" class="form-control" type="datetime-local" required />
+                			</div>
+                			<div class="col-md-6 form-group">
+                  				<label for="time">End Time:</label>
+                  				<input id="time" name="time" class="form-control" type="time" required/>
+                			</div>
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<label for="credit">Credit Cost:</label>
+                			<input id="credit" name="credit" class="form-control" type="number" min="1" placeholder="Credit Cost" required />
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<label for="student">Max Students:</label>
+                			<input id="student" name="student" class="form-control" type="number" min="1" placeholder="Max Students" required />
+              			</div>
+
+              			<div class="text-center">
+                			<button type="submit">Submit</button>
+              			</div>
+
+            		</form>
+          		</div>
+        	</div>
+      	</div>
     </main>
 
     <footer>
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
-  </body>
+  	</body>
 </html>
