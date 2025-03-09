@@ -1,76 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body class="container">
+  	<head>
+    	<%- include('../partials/head'); %>
+  	</head>
+  	<body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+      	<%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
+      	<div class="jumbotron">
         
-        <a href="/admin"><button type="button" class="btn link-btn"><&nbsp;&nbsp;Back</button></a>
+	        <a href="/admin"><button type="button" class="btn link-btn"><&nbsp;&nbsp;Back</button></a>
 
-        <h1>Admin</h1>
-        <div class="row mt-5 justify-content-center">
-          <div class="col-lg-10">
-            <form id="edit-class" action="/admin/edit/class" method="POST" class="input-form">
-              <h5>Class Type: <%= classObj.name %></h5>
+        	<div class="section-title">
+	        	<h1 class="text-center">Admin</h1>
+				<h2 class="text-center">Edit a Class</h2>
+			</div>
 
-              <div class="alert alert-warning">
-                <h5>Current Setting:</h5>
-                <h6><%= formatDate(classObj.start_datetime); %></h6>
-                <h6><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h6>
-              </div>
+        	<div class="row justify-content-center">
+          		<div class="col-lg-10">
+            		<form id="edit-class" action="/admin/edit/class" method="POST" class="input-form">
+              			<h4>Class Type:</h4>
+						<h3><%= classObj.name %></h3>
 
-              <div class="form-group mt-3">
-                <label for="description">Class Description (Can be left blank):</label>
-                <textarea id="description" name="description" class="form-control"><%= classObj.description %></textarea>
-              </div>
+              			<div class="alert alert-warning">
+                			<h5 class="mb-2">Current Time Setting:</h5>
+                			<h6><%= formatDate(classObj.start_datetime); %></h6>
+                			<h6><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h6>
+              			</div>
 
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <label for="date">Start Time:</label>
-                  <input id="date" name="date" class="form-control" type="datetime-local" required />
-                </div>
-                <div class="col-md-6 form-group">
-                  <label for="time">End Time:</label>
-                  <input id="time" name="time" class="form-control" type="time" required/>
-                </div>
-              </div>
+              			<div class="form-group mt-3">
+                			<label for="description">Class Description (Can be left blank):</label>
+                			<textarea id="description" name="description" class="form-control"><%= classObj.description %></textarea>
+              			</div>
 
-              <div class="form-group mt-3">
-                <label for="credit">Credit Cost:</label>
-                <input id="credit" name="credit" class="form-control" type="number" min="1" placeholder="Credit Cost" value=<%= classObj.credit_cost %> required />
-              </div>
-              <div class="form-group mt-3">
-                <label for="student">Max Students:</label>
-                <input id="student" name="student" class="form-control" type="number" min="1" placeholder="Max Students" value=<%= classObj.max_students %> required />
-              </div>
-              <input name="class_id" value=<%= classObj.class_id %> hidden />
-              <div class="text-center">
-                <button type="submit">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+              			<div class="row">
+                			<div class="col-md-6 form-group">
+                  				<label for="date">Start Time:</label>
+                  				<input id="date" name="date" class="form-control" type="datetime-local" required />
+                			</div>
+                			<div class="col-md-6 form-group">
+                  				<label for="time">End Time:</label>
+                  				<input id="time" name="time" class="form-control" type="time" required/>
+                			</div>
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<label for="credit">Credit Cost:</label>
+                			<input id="credit" name="credit" class="form-control" type="number" min="1" placeholder="Credit Cost" value=<%= classObj.credit_cost %> required />
+              			</div>
+              			<div class="form-group mt-3">
+                			<label for="student">Max Students:</label>
+                			<input id="student" name="student" class="form-control" type="number" min="1" placeholder="Max Students" value=<%= classObj.max_students %> required />
+              			</div>
+              			<input name="class_id" value=<%= classObj.class_id %> hidden />
+              			<div class="text-center">
+                			<button type="submit">Submit</button>
+              			</div>
+
+            		</form>
+          		</div>
+        	</div>
+      	</div>
     </main>
 
     <footer>
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
     <script>
-      $('#edit-class').on('submit', e => {
-        if (!confirm('Are you sure? This action cannot be undone and could surprise or confuse some of your users.')) {
-          e.preventDefault();
-        }
-      });
+      	$('#edit-class').on('submit', e => {
+        	if (!confirm('Are you sure? This action cannot be undone and could surprise or confuse some of your users.')) {
+          		e.preventDefault();
+        	}
+      	});
     </script>
 
-  </body>
+  	</body>
 </html>

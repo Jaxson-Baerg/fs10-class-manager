@@ -238,6 +238,23 @@ router.post('/delete/class_type', async (req, res) => {
 });
 
 // Render the create class form page
+router.get('/create/class', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classTypes = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/create/class');
+      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes, selectedId: req.params.class_type_id });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Render the create class form page with populated class type
 router.get('/create/class/:class_type_id', async (req, res) => {
   try {
     if (req.session.admin) {
