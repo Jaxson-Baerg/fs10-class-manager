@@ -12,13 +12,19 @@
 
     <main>
       	<div class="jumbotron">
-        	<h1>Admin</h1>
+
+			<div class="section-title">
+        		<h1 class="text-center">Admin</h1>
+				<div class="flex">
+					<a href="/admin/create/class_type" class="m-1"><button type="button" class="btn link-btn">Create Class Type</button></a>
+					<a href="/admin/create/class" class="m-1"><button type="button" class="btn link-btn">Create Class</button></a>
+					<a href="/admin/view/students" class="m-1"><button type="button" class="btn link-btn">View Students</button></a>
+				</div>
+			</div>
+
         	<% if(message) { %>
           		<p class="alert alert-success"><%= message %></p>
         	<% } %>
-
-        	<a href="/admin/create/class_type"><button type="button" class="btn link-btn">Create Class Type</button></a>
-        	<a href="/admin/create/class"><button type="button" class="btn link-btn">Create Class</button></a>
 
         	<div class="row portfolio-container">
           		<% typeList.forEach(type => { %>

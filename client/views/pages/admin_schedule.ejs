@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-      <%- include('../partials/head'); %>
+      	<%- include('../partials/head'); %>
   	</head>
   	<body class="container">
 
@@ -11,15 +11,25 @@
 
     <main>
       	<div class="jumbotron">
-	        <h1 class="text-center"><%- classType.name %></h1>
-		
-			<form action=<%= `/admin/create/class/${classType.class_type_id}` %> class="flex">
-				<input name="class_type_id" value="<%= classType.class_type_id %>" hidden>
-				<button type="submit" class="btn link-btn">Create Class</button>
-			</form>
+			
+			<div class="flex-between">
+				<a href="/admin"><button type="button" class="btn link-btn"><&nbsp;&nbsp;Back</button></a>
+				<a href=<%= `/admin/edit/class_type/${classType.class_type_id}` %>><button type="button" class="btn link-btn">Edit&nbsp;&nbsp;></button></a>
+			</div>
 
-        	<p><%- classType.description %></p>
+			<div class="section-title">
+				<h1 class="text-center"><%- classType.name %></h1>
+		
+				<form action=<%= `/admin/create/class/${classType.class_type_id}` %> class="flex">
+					<input name="class_type_id" value="<%= classType.class_type_id %>" hidden>
+					<button type="submit" class="btn link-btn">Create Class</button>
+				</form>
+			</div>
+
+			<h2>Description: </h2>
+        	<p class="desc-text"><%- classType.description %></p>
         	
+			<h2>Classes: </h2>
 			<div class="row portfolio-container">
           		<% classList.forEach(obj => { %>
             		<div class="div-sizing">

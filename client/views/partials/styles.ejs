@@ -109,6 +109,22 @@
     width: 15em;
   }
 
+  .div-sizing-student {
+    margin: 0.5em;
+    padding: 0.5em;
+    height: 15em;
+    width: 30em;
+  }
+  
+  @media only screen and (max-width: 850px) {
+    .div-sizing-student {
+      margin: 0.5em;
+      padding: 0.5em;
+      height: 15em;
+      width: 100%;
+    }
+  }
+
   .mobile-display {
     display: none;
   }
@@ -154,6 +170,16 @@
   .card-text {
     background: rgba(221, 221, 221, 0.5);
     padding: 2px 5px;
+  }
+
+  .desc-text {
+    background: rgba(221, 221, 221, 0.5);
+    padding: 5px 10px;
+    transition: 0.2s;
+  }
+  
+  .desc-text:hover {
+    background: rgba(184, 184, 184, 0.5);
   }
 
   .class-type-list-div {
@@ -264,6 +290,12 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .flex {
