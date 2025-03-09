@@ -19,15 +19,28 @@
                 <h2 class="text-center">Students</h2>
 			</div>
 
+            <div class="flex-column card-text">
+                <h1><%= studentList.length %></h1>
+                <h4>Total Students!</h4>
+            </div>
+
+            <div class="flex mt-2">
+                <input id="search-bar" class="search-bar" type="text" placeholder="John Smith...">
+            </div>
+
             <div class="row portfolio-container">
                 <% studentList.forEach(student => { %>
                     <div class="div-sizing-student">
-                        <div class="portfolio-item wow">
+                        <div class="portfolio-item wow open-class">
                             <div class="portfolio-info card-center admin-card">
 
                                 <h4 class="card-text"><%= student.first_name %> <%= student.last_name %></h4>
-                                <p><a href="mailto:<%= student.email %>"><%= student.email %></a></p>
-                                <p>Credits: <%= student.credits %></p>
+
+                                <div class="card-text flex-column">
+                                    <p><a href="mailto:<%= student.email %>"><%= student.email %></a></p>
+                                    <p>Classes completed: <%= student.num_completed_classes %></p>
+                                    <p>Credits: <%= student.credits %></p>
+                                </div>
 
                                 <a href=<%= `/admin/edit/student/${student.student_id}` %>><button type="button" class="btn link-btn">Edit</button></a>
 
@@ -51,6 +64,20 @@
           		}
         	});
       	});
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchBar = document.getElementById("search-bar");
+            const studentItems = document.querySelectorAll(".div-sizing-student");
+
+            searchBar.addEventListener("keyup", () => {
+                const searchText = searchBar.value.toLowerCase();
+
+                studentItems.forEach(item => {
+                    const studentText = item.textContent.toLowerCase();
+                    item.style.display = studentText.includes(searchText) ? "block" : "none";
+                });
+            });
+        });
     </script>
 
   	</body>

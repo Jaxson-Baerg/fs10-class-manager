@@ -10,6 +10,7 @@ const { getClassTypes, getClassTypeById, createClassType, deleteClassType, updat
 const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { getStudents } = require('../db/queries/studentQueries');
+const { getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -32,8 +33,17 @@ router.get('/', async (req, res) => {
 router.get('/view/students', async (req, res) => {
   try {
     if (req.session.admin) {
-      const studentList = await getStudents();
-      
+      studentList = await getStudents();
+
+      studentList = await Promise.all(
+        studentList.map(async student => {
+          const numComClasses = await getCompletedClasses(student.student_id);
+          return { ...student, "num_completed_classes": numComClasses };
+        })
+      );
+
+      studentList.sort((a, b) => a.first_name.localeCompare(b.first_name));
+
       req.session.history = updateHistory(req.session.history, 'admin/view/students');
       res.render('../../client/views/pages/admin_students', { user: req.session.user, studentList });
     } else {

@@ -30,26 +30,30 @@
 				<h2 class="text-center">View Class</h2>
 			</div>
         	
-			<h1><%= classObj.name %></h1>
+			<div class="card-text flex-column">
+				<h1><%= classObj.name %></h1>
+        		<h3><%= formatDate(classObj.start_datetime); %></h3>
+        		<h3><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h3>
+			</div>
 
-        	<h3><%= formatDate(classObj.start_datetime); %></h3>
-        	<h3><%= formatTime(classObj.start_datetime, false); %> - <%= formatTime(classObj.end_datetime, true); %></h3>
+			<div class="flex-column">
+				<p class="mb-0">Spots Remaining: <%= classObj.spots_remaining %></p>
+        		<p>Credit Cost: <%= classObj.credit_cost %></p>
 
-        	<p><%= classObj.spots_remaining %> spots remaining.</p>
-        	<p><%= classObj.credit_cost %> credit<%= classObj.credit_cost > 1 ? 's' : '' %> to register.</p>
+				<% if (studentList.length !== 0) { %>
+					<a href="mailto:<% studentList.forEach(obj => { %><%= obj.email %>,<% }); %>">Email Students</a>
+				<% } %>
+			</div>
 
         	<% if (studentList.length !== 0) { %>
-
-	  			<a href="mailto:<% studentList.forEach(obj => { %><%= obj.email %>,<% }); %>">Email Students</a>
-
           		<div class="row portfolio-container">
             		<% studentList.forEach(obj => { %>
-              			<div class="div-sizing">
-              				<div class="portfolio-item wow">
+              			<div class="div-sizing-student">
+              				<div class="portfolio-item wow open-class">
                 				<div class="portfolio-info card-center admin-card">
 
-                  					<div>
-                    					<h4 class="card-text"><%= obj.first_name %> <%= obj.last_name %></h4>
+                  					<div class="card-text flex-column">
+                    					<h4><%= obj.first_name %> <%= obj.last_name %></h4>
 		    							<p><a href="mailto:<%= obj.email %>"><%= obj.email %></a></p>
                     					<p>Credits: <%= obj.credits %></p>
                   					</div>
