@@ -1,149 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    console.log(window.innerWidth);
-      var calendarEl = document.getElementById('calendar');
+	<head>
+		<%- include('../partials/head'); %>
+		<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const calendarEl = document.getElementById('calendar');
 
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: (window.innerWidth > 800) ? 'timeGridWeek' : 'dayGridDay',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth timeGridWeek dayGridDay'
-        },
-        events: [
-        <% classList.forEach(event => { %>
-          <% if (event.can_register) { let name = event.name; name = name.replace(/&nbsp;/ig, ''); name = name.replace(/&amp;/ig, 'and'); %>
-          {
-            title: '<%= name %>',
-            start: '<%= event.event_date %>',
-            url: '<%= `/schedule/class/${event.class_type_id}` %>',
-          },
-          <% } %>
-        <% }); %>
-        ]
-      });
+				const calendar = new FullCalendar.Calendar(calendarEl, {
+					initialView: (window.innerWidth > 800) ? 'timeGridWeek' : 'dayGridDay',
+					headerToolbar: {
+						left: 'prev,next today',
+						center: 'title',
+						right: 'dayGridMonth timeGridWeek dayGridDay'
+					},
+					events: [
+						<% classList.forEach(event => { %>
+							<% if (event.can_register) { let name = event.name; name = name.replace(/&nbsp;/ig, ''); name = name.replace(/&amp;/ig, 'and'); %>
+								{
+									title: '<%= name %>',
+									start: '<%= event.event_date %>',
+									url: '<%= `/schedule/class/${event.class_type_id}` %>',
+								},
+							<% } %>
+						<% }); %>
+					]
+				});
 
-      calendar.render();
-    });
-    </script>
-  </head>
-  <body>
+				calendar.render();
+			});
+		</script>
+	</head>
 
-    <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
-    </header>
+	<body>
 
-    <main>
-      <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
-        <div class="container text-center text-md-left" data-aos="fade-up">
-          <h1>Welcome to <span>FortySix10 Fitness</span></h1>
-          <h2>Not your typical fitness class!<br />
-<br />
-We will gain core strength, improve alignment & practice accepting ourselves.<br />
-Classes for women in Calgary combining yoga, pilates and meditation from a Christian perspective.<br />
-<br />
-Not a quick fix. A life transformed.<br />
-Mind, body and soul.</h2>
-          <a href="#class-schedules" class="btn-get-started scrollto">Get Started</a>
-          <a href="#testimonials" class="btn-get-started scrollto">View Testimonials</a>
-        </div>
-      </section>
-      <section id="class-schedules" class="section-bg">
-        <div class="container">
-          <div class="section-title">
-            <h2>Class Options</h2>
-          </div>
-          <div class="row portfolio-container">
-            <% typeList.forEach(type => { %>
-              <div class="div-sizing">
-              <div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
-                  <div class="portfolio-info card-center">
-                    <h2 class="card-text"><%- type.name %></h2>
-                    <!-- TODO<p>(2 open classes!)</p> -->
-                    <a href=<%= `/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">More Info</button></a>
-                  </div>
-              </div>
-              </div>
-            <% }); %>
-          </div>
-        </div>
-      </section>
-      <section id="calendar" class="section-bg">
-        <div class="container">
-          <div class="row portfolio-container" id="calendar"></div>
-        </div>
-      </section>
-      <section id="testimonials" class="testimonials">
-        <div class="container">
-          <div class="section-title">
-            <h2>Testimonials</h2>
-          </div>
-          <div class="testimonials">
-            <div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
-              <div class="testimonial-item">
-                <p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> Weights class has been such a positive activity in my life, not only physically but mentally and spiritually as well! The atmosphere is so uplifting and I always walk away from class feeling relaxed and re-energized :) <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Rayna</h3>
-              </div>
-            </div>
-            <div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
-              <div class="testimonial-item">
-                <p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> Lisa is an amazing yoga instructor. Very patient and was easy to follow when I first started. I have taken numerous sessions since then and have definitely noticed a improvement in my over all well being. The classes are always very welcoming and you can stay at a level you are comfortable with. I always leave feeling very relaxed and rejuvenated. <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Jen</h3>
-              </div>
-            </div>
-            <div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
-              <div class="testimonial-item">
-                <p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> I have been doing Lisa's class for years now. My willingness of doing yoga before, was zero to none. However Lisa keep encouraging me to try it and embrace the stillness of it all. I since cherish my time doing yoga. She is skilled and confident in this practice.I love her new studio. It is well thought out space full of peace and comfort. Thank you for having this space I cannot wait to do more classes! <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Aileen</h3>
-              </div>
-            </div>
-            <div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
-              <div class="testimonial-item">
-                <p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> I went to the Relaxation Evening class at Lisa's studio and it did exactly that. The vibe in the studio was lovely; the low lights, lit candle, and soothing music all contributed to a relaxing stretch class that was needed at the end of a long week. Lisa was knowledgeable and helped one on one with aligning stretches correctly , one of which helped my hips feel so much better than they did when I arrived! I would definitely take this class again, a very unique exercise class experience. <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Miriam</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id="about" class="section-bg">
-        <div class="container">
-          <div class="section-title">
-            <h2>This Is Me</h2>
-          </div>
-          <div class="about-profile">
-            <div class="text-center">
-              <p>Hi, I'm Lisa! I started my journey down this fitness path about 18 years ago. After suffering a back injury as a teenager and then giving birth to 3 babies over the years and spending years sitting at my desk job; my posture, my core strength and my energy levels were severely lacking. I was often in pain, suffered from headaches, and needed to visit my chiropractor and massage therapist many times each month just to be able to function. I was looking for something to help my body recover and this is what worked for me. I have attended so many classes, training courses, retreats and spent countless hours on my mat. And because this has worked for me, I get super excited about sharing these things with other women!</p>
-              <p>I used to pride myself in being a "busy" person able to multi-task all day, but now am learning to be more content, to slow down and to actually enjoy the present moment. To be able to find peace when there is chaos all around, is truly a gift. When I think back to where I was almost 20 years ago, I know that this has changed my life. Mind, body and soul. Everything is connected.</p>
-              <p>We are all on a journey and I hope that you'll join me along the way!</p>
-              <p>"Be still, and know that I am God."<br>Psalm 46:10</p>
-              <p>- Certified Holy Yogalates Instructor -</p>
-              <p>- Certified Holy Yoga with Weights Instructor -</p>
-              <p><img src="../../public/images/trapeze-instructor-badge.png" width="200px"></p>
-              <p>Located in Coventry Hills, Calgary, AB</p>
-            </div>
-            <div class="about-profile-img"></div>
-          </div>
-          <div class="about-image-grid">
-            <img src="../../public/images/about-photo-1.jpg" width="100%">
-            <img src="../../public/images/about-photo-2.jpg" width="100%">
-          </div>
-          <img src="../../public/images/about-photo-3.jpg" width="100%">
-          <div class="about-image-grid">
-            <img src="../../public/images/about-photo-4.jpg" width="100%">
-            <img src="../../public/images/about-photo-5.jpg" width="100%">
-          </div>
-          <img src="../../public/images/about-photo-6.jpg" width="100%">
-        </section>
-      </div>
-    </main>
+	<header id="header" class="fixed-top">
+	  	<%- include('../partials/header'); %>
+	</header>
 
-    <footer class="fixed-bottom">
-      <%- include('../partials/footer'); %>
-    </footer>
+	<main>
+	  	<section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+			<div class="container text-center text-md-left" data-aos="fade-up">
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center active"><i class="bi bi-arrow-up-short">⬆</i></a>
+		  		<h1>Welcome to <span>FortySix10 Fitness</span></h1>
+		  		<h2>
+					Not your typical fitness class!
+					<br /><br />
+					We will gain core strength, improve alignment & practice accepting ourselves.
+					<br />
+					Classes for women in Calgary combining yoga, pilates and meditation from a Christian perspective.
+					<br /><br />
+					Not a quick fix. A life transformed.
+					<br />Mind, body and soul.
+				</h2>
+				
+		  		<a href="#class-schedules" class="btn-get-started scrollto">Get Started</a>
+		  		<a href="#testimonials" class="btn-get-started scrollto">View Testimonials</a>
 
-  </body>
+			</div>
+	  	</section>
+
+	  	<section id="class-schedules" class="section-bg">
+			<div class="container">
+		  		<div class="section-title">
+					<h2>Class Options</h2>
+		  		</div>
+
+		  		<div class="row portfolio-container">
+					<% typeList.forEach(type => { %>
+			  			<div class="div-sizing">
+			  				<div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
+				  				<div class="portfolio-info card-center">
+									<h2 class="card-text"><%- type.name %></h2>
+									<!-- TODO<p>(2 open classes!)</p> -->
+									<a href=<%= `/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">More Info</button></a>
+				  				</div>
+			  				</div>
+			  			</div>
+					<% }); %>
+		  		</div>
+
+			</div>
+	  	</section>
+
+	  	<section id="calendar" class="section-bg">
+			<div class="container">
+		  		<div class="row portfolio-container" id="calendar"></div>
+			</div>
+	  	</section>
+
+	  	<section id="testimonials" class="testimonials">
+			<div class="container">
+		  		<div class="section-title">
+					<h2>Testimonials</h2>
+		  		</div>
+		  		<div class="testimonials">
+
+					<div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
+			  			<div class="testimonial-item">
+							<p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> Weights class has been such a positive activity in my life, not only physically but mentally and spiritually as well! The atmosphere is so uplifting and I always walk away from class feeling relaxed and re-energized :) <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Rayna</h3>
+			  			</div>
+					</div>
+
+					<div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
+			  			<div class="testimonial-item">
+							<p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> Lisa is an amazing yoga instructor. Very patient and was easy to follow when I first started. I have taken numerous sessions since then and have definitely noticed a improvement in my over all well being. The classes are always very welcoming and you can stay at a level you are comfortable with. I always leave feeling very relaxed and rejuvenated. <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Jen</h3>
+			  			</div>
+					</div>
+
+					<div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
+			  			<div class="testimonial-item">
+							<p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> I have been doing Lisa's class for years now. My willingness of doing yoga before, was zero to none. However Lisa keep encouraging me to try it and embrace the stillness of it all. I since cherish my time doing yoga. She is skilled and confident in this practice.I love her new studio. It is well thought out space full of peace and comfort. Thank you for having this space I cannot wait to do more classes! <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Aileen</h3>
+			  			</div>
+					</div>
+
+					<div style="width: 320px; margin-right: 20px;" role="group" aria-label="3 / 5">
+			  			<div class="testimonial-item">
+							<p> <i class="bx bxs-quote-alt-left quote-icon-left">“</i> I went to the Relaxation Evening class at Lisa's studio and it did exactly that. The vibe in the studio was lovely; the low lights, lit candle, and soothing music all contributed to a relaxing stretch class that was needed at the end of a long week. Lisa was knowledgeable and helped one on one with aligning stretches correctly , one of which helped my hips feel so much better than they did when I arrived! I would definitely take this class again, a very unique exercise class experience. <i class="bx bxs-quote-alt-right quote-icon-right">”</i></p> <h3>Miriam</h3>
+			  			</div>
+					</div>
+
+		  		</div>
+			</div>
+	  	</section>
+
+	  	<section id="about" class="section-bg">
+			<div class="container">
+		  		<div class="section-title">
+					<h2>This Is Me</h2>
+		  		</div>
+		  		<div class="about-profile">
+					<div class="text-center">
+			  			<p>Hi, I'm Lisa! I started my journey down this fitness path about 18 years ago. After suffering a back injury as a teenager and then giving birth to 3 babies over the years and spending years sitting at my desk job; my posture, my core strength and my energy levels were severely lacking. I was often in pain, suffered from headaches, and needed to visit my chiropractor and massage therapist many times each month just to be able to function. I was looking for something to help my body recover and this is what worked for me. I have attended so many classes, training courses, retreats and spent countless hours on my mat. And because this has worked for me, I get super excited about sharing these things with other women!</p>
+			  			<p>I used to pride myself in being a "busy" person able to multi-task all day, but now am learning to be more content, to slow down and to actually enjoy the present moment. To be able to find peace when there is chaos all around, is truly a gift. When I think back to where I was almost 20 years ago, I know that this has changed my life. Mind, body and soul. Everything is connected.</p>
+			  			<p>We are all on a journey and I hope that you'll join me along the way!</p>
+			  			<p>"Be still, and know that I am God."<br>Psalm 46:10</p>
+			  			<p>- Certified Holy Yogalates Instructor -</p>
+			  			<p>- Certified Holy Yoga with Weights Instructor -</p>
+			  			<p><img src="../../public/images/trapeze-instructor-badge.png" width="200px"></p>
+			  			<p>Located in Coventry Hills, Calgary, AB</p>
+					</div>
+				<div class="about-profile-img"></div>
+		  	</div>
+
+		  	<div class="about-image-grid">
+				<img src="../../public/images/about-photo-1.jpg" width="100%">
+				<img src="../../public/images/about-photo-2.jpg" width="100%">
+		  	</div>
+
+		  	<img src="../../public/images/about-photo-3.jpg" width="100%">
+
+		  	<div class="about-image-grid">
+				<img src="../../public/images/about-photo-4.jpg" width="100%">
+				<img src="../../public/images/about-photo-5.jpg" width="100%">
+		  	</div>
+
+		  	<img src="../../public/images/about-photo-6.jpg" width="100%">
+
+		</section>
+	</main>
+
+	<footer class="fixed-bottom">
+	  	<%- include('../partials/footer'); %>
+	</footer>
+
+	<a href="#" class="back-to-top d-flex align-items-center justify-content-center active"><i class="bi bi-arrow-up-short">⬆</i></a>
+
+  	</body>
 </html>

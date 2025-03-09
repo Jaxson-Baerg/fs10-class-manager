@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <%- include('../partials/head'); %>
+	<head>
+		<%- include('../partials/head'); %>
   	</head>
 
   	<body class="container">
 
-    <header id="header" class="fixed-top">
-      	<%- include('../partials/header'); %>
-    </header>
+	<header id="header" class="fixed-top">
+	  	<%- include('../partials/header'); %>
+	</header>
 
-    <main>
-      	<div class="jumbotron">
+	<main>
+	  	<div class="jumbotron">
 
 			<div class="section-title">
-        		<h1 class="text-center">Admin</h1>
+				<h1 class="text-center">Admin</h1>
 				<div class="flex">
 					<a href="/admin/create/class_type" class="m-1"><button type="button" class="btn link-btn">Create Class Type</button></a>
 					<a href="/admin/create/class" class="m-1"><button type="button" class="btn link-btn">Create Class</button></a>
@@ -22,51 +22,51 @@
 				</div>
 			</div>
 
-        	<% if(message) { %>
-          		<p class="alert alert-success"><%= message %></p>
-        	<% } %>
+			<% if(message) { %>
+		  		<p class="alert alert-success"><%= message %></p>
+			<% } %>
 
-        	<div class="row portfolio-container">
-          		<% typeList.forEach(type => { %>
-            		<div class="div-sizing">
-            			<div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
-              				<div class="portfolio-info card-center">
-                				<h2 class="card-text"><%- type.name %></h2>
-                				<div class="flex-column">
-                  					<a href=<%= `/admin/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
+			<div class="row portfolio-container">
+		  		<% typeList.forEach(type => { %>
+					<div class="div-sizing">
+						<div class="portfolio-item wow" style="<%= `background: url('public/images/${type.image_url}'); background-size: cover;` %>">
+			  				<div class="portfolio-info card-center">
+								<h2 class="card-text"><%- type.name %></h2>
+								<div class="flex-column">
+				  					<a href=<%= `/admin/schedule/class/${type.class_type_id}` %>><button type="button" class="btn link-btn">View Classes</button></a>
 
-                  					<div class="flex">
-                      					<form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
-                          					<button type="submit" class="btn link-btn admin-link-btn">Edit</button>
-                      					</form>
+				  					<div class="flex">
+					  					<form action=<%= `/admin/edit/class_type/${type.class_type_id}` %> method="GET">
+						  					<button type="submit" class="btn link-btn admin-link-btn">Edit</button>
+					  					</form>
 
 										<form class="class_type_del" action="/admin/delete/class_type" method="POST">
-                          					<input name="class_type_id" value=<%= type.class_type_id %> hidden />
-                          					<button type="submit" class="btn link-btn admin-link-btn">Delete</button>
-                      					</form>
-                  					</div>
-                				</div>
-              				</div>
-            			</div>
-            		</div>
-          		<% }); %>
+						  					<input name="class_type_id" value=<%= type.class_type_id %> hidden />
+						  					<button type="submit" class="btn link-btn admin-link-btn">Delete</button>
+					  					</form>
+				  					</div>
+								</div>
+			  				</div>
+						</div>
+					</div>
+		  		<% }); %>
 			</div>
-      	</div>
-    </main>
+	  	</div>
+	</main>
 
-    <footer>
-      	<%- include('../partials/footer'); %>
-    </footer>
+	<footer>
+	  	<%- include('../partials/footer'); %>
+	</footer>
 
-    <script>
-      	$('.class_type_del').each(function (index, element) {
-	        $(this).on('submit', e => {
-          		if (!confirm('Are you sure you wish to delete this class type? This will delete all classes belonging to this type and refund all students registered for those classes.')) {
-            		e.preventDefault();
-          		}
-        	});
-      	});
-    </script>
+	<script>
+	  	$('.class_type_del').each(function (index, element) {
+			$(this).on('submit', e => {
+		  		if (!confirm('Are you sure you wish to delete this class type? This will delete all classes belonging to this type and refund all students registered for those classes.')) {
+					e.preventDefault();
+		  		}
+			});
+	  	});
+	</script>
 
   	</body>
 </html>
