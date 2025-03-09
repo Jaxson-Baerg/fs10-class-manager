@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      	<%- include('../partials/head'); %>
+  	</head>
+  	<body class="container">
+
+    <header id="header" class="fixed-top">
+      	<%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      	<div class="jumbotron">
+
+            <a href="/admin"><button type="button" class="btn link-btn"><&nbsp;&nbsp;Back</button></a>
+            
+			<div class="section-title">
+				<h1 class="text-center">Admin</h1>
+                <h2 class="text-center">Students</h2>
+			</div>
+
+            <div class="row portfolio-container">
+                <% studentList.forEach(student => { %>
+                    <div class="div-sizing-student">
+                        <div class="portfolio-item wow">
+                            <div class="portfolio-info card-center admin-card">
+
+                                <h4 class="card-text"><%= student.first_name %> <%= student.last_name %></h4>
+                                <p><a href="mailto:<%= student.email %>"><%= student.email %></a></p>
+                                <p>Credits: <%= student.credits %></p>
+
+                                <a href=<%= `/admin/edit/student/${student.student_id}` %>><button type="button" class="btn link-btn">Edit</button></a>
+
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+      	</div>
+    </main>
+
+    <footer>
+      	<%- include('../partials/footer'); %>
+    </footer>
+
+    <script>
+      	$('.class_del').each(function (index, element) {
+	        $(this).on('submit', e => {
+          		if (!confirm('Are you sure you want to delete this class? This will refund all registered students.')) {
+            		e.preventDefault();
+          		}
+        	});
+      	});
+    </script>
+
+  	</body>
+</html>
