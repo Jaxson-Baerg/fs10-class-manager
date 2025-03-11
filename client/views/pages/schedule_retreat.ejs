@@ -34,7 +34,7 @@
 
                                         <!-- Displays a shortened class description and an expand button -->
                                         <div id="<%= obj.class_id + 'short' %>" class="tile-info" <%= obj.description.length > 20 ? "" : "hidden" %>>
-                                            <p><%= obj.description.substring(0, 60); %>...</p>
+                                            <p><%= obj.description.substring(0, 50); %>...</p>
                                             <button class="retreat-info-button" onclick="enlargeTile('<%= obj.class_id %>')">Read more</button>
                                         </div>
 
