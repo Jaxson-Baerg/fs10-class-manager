@@ -1,52 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('../partials/head'); %>
-  </head>
-  <body class="container">
+  	<head>
+    	<%- include('../partials/head'); %>
+  	</head>
+  	<body class="container">
 
     <header id="header" class="fixed-top">
-      <%- include('../partials/header'); %>
+      	<%- include('../partials/header'); %>
     </header>
 
     <main>
-      <div class="jumbotron">
-        <h1>Create a Class Type</h1>
-        <div class="row mt-5 justify-content-center">
-          <div class="col-lg-10">
-            <form action="/admin/create/class_type" method="POST" class="input-form">
-              <div class="form-group mt-3">
-                <input name="name" class="form-control" type="text" placeholder="Your Name" required />
-              </div>
-              <div class="form-group mt-3">
-                <textarea name="description" class="form-control" type="text" placeholder="Your Description" required></textarea>
-              </div>
+      	<div class="jumbotron">
+			
+			<a href="/admin"><button type="button" class="btn link-btn"><&nbsp;&nbsp;Back</button></a>
 
-              <div class="form-group mt-3 class-type-list-div">
-                <label>Items to bring:</label>
-                <input name="item_list_one" type="text" placeholder="Item #1" maxlength="30" />
-                <input name="item_list_two" type="text" placeholder="Item #2" maxlength="30" />
-                <input name="item_list_three" type="text" placeholder="Item #3" maxlength="30" />
-                <input name="item_list_four" type="text" placeholder="Item #4" maxlength="30" />
-                <input name="item_list_five" type="text" placeholder="Item #5" maxlength="30" />
-              </div>
+			<div class="section-title">
+				<h1 class="text-center">Admin</h1>
+	        	<h2 class="text-center">Create a Class Type</h2>
+			</div>
+			
+        	<div class="row justify-content-center">
+          		<div class="col-lg-10">
 
-              <div class="form-group mt-3">
-                <label for="image_url">Upload a Photo:</label>
-                <input name="image_url" type="file" required />
-              </div>
-              <div class="text-center">
-                <button type="submit">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+            		<form action="/admin/create/class_type" method="POST" class="input-form">
+
+              			<div class="form-group mt-3">
+                			<input name="name" class="form-control" type="text" placeholder="Yogalates..." required />
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<textarea name="description" class="form-control" type="text" placeholder="This is a one hour intermediate..." required></textarea>
+              			</div>
+
+              			<div class="form-group mt-3 class-type-list-div">
+                			<label>Items to bring:</label>
+                			<input name="item_list_one" type="text" placeholder="Item #1" maxlength="30" />
+                			<input name="item_list_two" type="text" placeholder="Item #2" maxlength="30" />
+                			<input name="item_list_three" type="text" placeholder="Item #3" maxlength="30" />
+                			<input name="item_list_four" type="text" placeholder="Item #4" maxlength="30" />
+                			<input name="item_list_five" type="text" placeholder="Item #5" maxlength="30" />
+              			</div>
+
+              			<div class="form-group mt-3">
+                			<label for="image_url">Upload a Photo:</label>
+                			<input name="image_url" type="file" required />
+              			</div>
+
+              			<div class="text-center">
+                			<button type="submit">Submit</button>
+              			</div>
+
+            		</form>
+          		</div>
+        	</div>
+      	</div>
     </main>
 
     <footer>
-      <%- include('../partials/footer'); %>
+      	<%- include('../partials/footer'); %>
     </footer>
 
-  </body>
+  	</body>
 </html>

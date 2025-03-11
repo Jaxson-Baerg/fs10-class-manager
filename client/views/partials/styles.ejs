@@ -1,8 +1,8 @@
 <style>
-  h1 {
+  /* h1 {
     font-family: 'Brush Script MT', 'Brush Script Std', 'Lucida Calligraphy', 'Lucida Handwriting', 'Apple Chancery', cursive;
-  }
-  h2, h3, h4, h5, h6 {
+  } */
+  h1, h2, h3, h4, h5, h6 {
     font-family: 'Poiret One', sans-serif;
     font-weight: bold;
   }
@@ -74,7 +74,7 @@
   }
 
   .about-profile-img  {
-    background: url(../../public/images/about-profile.jpg);
+    background: url(/public/images/about-profile.jpg);
     background-size: contain;
     background-repeat: no-repeat;
     min-width: 20%;
@@ -107,6 +107,37 @@
     padding: 0.5em;
     height: 15em;
     width: 15em;
+  }
+
+  .search-bar {
+    text-align: center;
+    outline: transparent;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #394f5e;
+    border-radius: 10px;
+    padding: 5px 10px;
+  }
+
+  .search-bar:focus {
+    border-width: 2px;
+    border-color: #3498db;
+  }
+
+  .div-sizing-student {
+    margin: 0.5em;
+    padding: 0.5em;
+    height: 15em;
+    width: 30em;
+  }
+  
+  @media only screen and (max-width: 850px) {
+    .div-sizing-student {
+      margin: 0.5em;
+      padding: 0.5em;
+      height: 15em;
+      width: 100%;
+    }
   }
 
   .mobile-display {
@@ -149,6 +180,21 @@
     .desktop-display {
       display: none;
     }
+  }
+
+  .card-text {
+    background: rgba(221, 221, 221, 0.5);
+    padding: 2px 5px;
+  }
+
+  .desc-text {
+    background: rgba(221, 221, 221, 0.5);
+    padding: 5px 10px;
+    transition: 0.2s;
+  }
+  
+  .desc-text:hover {
+    background: rgba(184, 184, 184, 0.5);
   }
 
   .class-type-list-div {
@@ -252,6 +298,30 @@
   .btn-link {
     background: none!important;
     color: #3498db!important;
+  }
+
+  .flex-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .admin-link-btn {
+    padding: 5px 10px!important;
+    margin: 5px 2px;
   }
 
   #card-error {

@@ -7,8 +7,10 @@ require('dotenv').config();
 const { getClassesByClassType, getClassById, createClass, deleteClass, updateClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass, getRegistrations } = require('../db/queries/classStudentQueries');
 const { getClassTypes, getClassTypeById, createClassType, deleteClassType, updateClassType } = require('../db/queries/classTypeQueries');
-const { updateStudent } = require('../db/queries/studentQueries');
+const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
 const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
+const { getStudents } = require('../db/queries/studentQueries');
+const { getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { formatDate, formatTime, updateHistory, sortClasses } = require('../helpers/operationHelpers');
 
 // Render the admin page if the admin password has been given, with all class types
@@ -19,6 +21,31 @@ router.get('/', async (req, res) => {
 
       req.session.history = updateHistory(req.session.history, 'admin/');
       res.render('../../client/views/pages/admin', { user: req.session.user, typeList, message: undefined });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/view/students', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      studentList = await getStudents();
+
+      studentList = await Promise.all(
+        studentList.map(async student => {
+          const numComClasses = await getCompletedClasses(student.student_id);
+          return { ...student, "num_completed_classes": numComClasses };
+        })
+      );
+
+      studentList.sort((a, b) => a.first_name.localeCompare(b.first_name));
+
+      req.session.history = updateHistory(req.session.history, 'admin/view/students');
+      res.render('../../client/views/pages/admin_students', { user: req.session.user, studentList });
     } else {
       res.redirect('/admin/login');
     }
@@ -227,7 +254,24 @@ router.get('/create/class', async (req, res) => {
       const classTypes = await getClassTypes();
 
       req.session.history = updateHistory(req.session.history, 'admin/create/class');
-      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes });
+      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes, selectedId: req.params.class_type_id });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Render the create class form page with populated class type
+router.get('/create/class/:class_type_id', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const classTypes = await getClassTypes();
+
+      req.session.history = updateHistory(req.session.history, 'admin/create/class');
+      res.render('../../client/views/pages/admin_create_class', { user: req.session.user, classTypes, selectedId: req.params.class_type_id });
     } else {
       res.redirect('/admin/login');
     }
@@ -367,6 +411,48 @@ router.post('/delete/class', async (req, res) => {
         console.log('Found a dependant registration, aborting.');
         res.redirect('/admin');
       }
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/edit/student/:student_id', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      const studentObj = await getStudentById(req.params.student_id);
+
+      req.session.history = updateHistory(req.session.history, 'admin/edit/student/form');
+      res.render('../../client/views/pages/admin_edit_student', { user: req.session.user, student: studentObj });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/edit/student', async (req, res) => {
+  try {
+    res.redirect('/admin');
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/edit/student', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      await updateStudent(req.body.student_id, req.body);
+      const studentList = await getStudents();
+
+      req.session.history = updateHistory(req.session.history, 'admin/view/students');
+      res.render('../../client/views/pages/admin_students', { user: req.session.user, studentList, message: "Student successfully modified." });
     } else {
       res.redirect('/admin/login');
     }
