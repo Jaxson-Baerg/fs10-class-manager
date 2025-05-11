@@ -49,9 +49,11 @@
                 </div>
               </div>
 
-              <div class="alert alert-warning">
+              <div class="alert alert-secondary">
                 <p>Total: <span id="checkout-total">$0.00</span></p>
               </div>
+
+              <p id="bogo-notice" class="alert alert-warning text-center"><strong>**Between May 11th and May 19th when you purchase 2 class credits receive 1 credit for free.**<br><br><span id="credit-total"></span></strong></p>
 
               <p id="e-transfer">To pay by e-transfer, send payment to <a href='mailto:lisa@fortysix10fitness.ca'>lisa@fortysix10fitness.ca</a>. Your credits will be added to your account within 12 hours.</p>
 
@@ -91,6 +93,10 @@
 
           const checkoutTotal = $('#checkout-total');
 
+          // BOGO sale
+          const creditTotal = $('#credit-total');
+          const bogoNotice = $('#bogo-notice');
+
           const creditSelectOneTimeEl = $('#one-time-credit-select');
           const creditSelectSubEl = $('#subscription-credit-select');
 
@@ -109,6 +115,8 @@
               $('#sub-credit-amount').prop('required', false);
               eTransfer.show();
               subscriptionNotice.hide();
+              bogoNotice.show();
+              creditTotal.show();
             } else {
               if (creditAmountSubEl.val() === '5') {
                 checkoutTotal.text(`$${((5 * $('#sub-option-one-credit-cost').text()) * 0.01).toFixed(2)}`);
@@ -123,11 +131,14 @@
               $('#onetime-credit-amount').prop('required', false);
               eTransfer.hide();
               subscriptionNotice.show();
+              bogoNotice.hide();
+              creditTotal.hide();
             }
           });
           
           creditAmountOneTimeEl.change(function () {
             checkoutTotal.text(`$${((creditAmountOneTimeEl.val() * $('#one-time-credit-cost').text()) * 0.01).toFixed(2)}`)
+            creditTotal.text(`You will receive ${(Math.floor(creditAmountOneTimeEl.val() * 1.5))} credits!`);
           });
 
           creditAmountSubEl.change(function () {
