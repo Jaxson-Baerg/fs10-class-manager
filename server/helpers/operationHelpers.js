@@ -68,6 +68,7 @@ const sendEmail = async (file, email_to, subject, data) => {
   const result = await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: email_to,
+    bcc: process.env.EMAIL_FROM,
     subject: process.env.COMPANY + ` ${subject}`,
     html: htmlToSend
   });
