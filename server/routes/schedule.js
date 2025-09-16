@@ -182,7 +182,9 @@ router.post('/register', async (req, res) => {
           {
             class_type: classList[0].name,
             day: formatDate(classList[0].start_datetime),
-            time: formatTime(classList[0].start_datetime, true)
+            time: formatTime(classList[0].start_datetime, true),
+            description: classList[0].description,
+            overrideDescription: classList[0].description.length > 0
           }
         );
 

@@ -25,7 +25,9 @@ const initScheduledJobs = () => {
             {
               class_type: c.name,
               day: formatDate(c.start_datetime),
-              time: formatTime(c.start_datetime, true)
+              time: formatTime(c.start_datetime, true),
+              description: c.description,
+              overrideDescription: c.description.length > 0
             }
           )
         });

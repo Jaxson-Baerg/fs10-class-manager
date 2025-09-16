@@ -2,8 +2,12 @@
 <html>
   <body>
     <p>Congratulations! You are registered for the {{{class_type}}} class on {{day}} at {{time}}.</p>
-    <p>Address of the studio is 67 Coventry View NE</p>
-    <p>Please park at the end of the street, near the mailboxes. Come to the side gate, next to the front door - look for the round metal tree hanging on the gate. Walk along the side of the house to the studio at the back and come on inside! There is a FortySix10 sign in the window. Please note the studio does not have washroom facilities.</p>
-    <p>See you soon!</p>
+    {{#if overrideDescription}}
+      {{{description}}}
+    {{else}}
+      <p>Address of the studio is 67 Coventry View NE</p>
+      <p>Please park at the end of the street, near the mailboxes. Come to the side gate, next to the front door - look for the round metal tree hanging on the gate. Walk along the side of the house to the studio at the back and come on inside! There is a FortySix10 sign in the window. Please note the studio does not have washroom facilities.</p>
+      <p>See you soon!</p>
+    {{/if}}
   </body>
 </html>
