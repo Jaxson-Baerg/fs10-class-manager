@@ -8,7 +8,7 @@ const { execSync } = require("child_process");
 console.log( `-> Connecting to PG using "PGPASSWORD=${process.env.DB_PASS} psql -U ${process.env.DB_USER} -h ${process.env.DB_HOST} -p ${process.env.DB_PORT} ${process.env.DB_NAME}" ...` );
 
 console.log( `\t-> Running db/init.sql` );
-execSync(`PGPASSWORD=${process.env.DB_PASS} psql -U ${process.env.DB_USER} -h ${process.env.DB_HOST} -p ${process.env.DB_PORT} ${process.env.DB_NAME} < ./db/init.sql`, (error, stdout, stderr) => {
+execSync(`PGPASSWORD=postgres psql -U postgres -h ${process.env.DB_HOST} -p ${process.env.DB_PORT} < ./db/init.sql`, (error, stdout, stderr) => {
     if (error) {
         console.error(chalk.red(`error: ${error.message}`));
         return;
