@@ -17,6 +17,8 @@ const getClassById = async (class_id) => {
   const sql = 
       "SELECT *, (start_datetime > current_timestamp) can_register"+
       ", (start_datetime > current_timestamp + interval '12 hours') can_cancel"+
+      ", to_char(start_datetime at time zone 'America/Edmonton', 'YYYY-MM-DD\"T\"HH24:MI') start_val"+
+      ", to_char(end_datetime at time zone 'America/Edmonton', 'HH24:MI') end_val"+
       " FROM classes WHERE class_id = $1;";
   const queryDef = {
     text: sql,
