@@ -18,7 +18,7 @@ router.get('/class/:class_type_id/', async (req, res) => {
     const classType = await getClassTypeById(req.params.class_type_id);
     let classList = await getClassesByClassType(req.params.class_type_id, req.session.user ? req.session.user.student_id : undefined);
 
-    req.session.history = updateHistory(req.session.history, `schedule/${req.params.class_type_id}`);
+    req.session.history = updateHistory(req.session.history, `schedule/class/${req.params.class_type_id}`);
 
     if (classType.name.match(/(retreat)/gi)) {
       res.render('../../client/views/pages/schedule_retreat', { user: req.session.user, classList: classList, formatDate, formatTime, confirm: undefined, classType });

@@ -95,12 +95,6 @@ router.post('/checkout', async (req, res) => {
             plural: req.body['credit-amount'] > 1 ? 's' : ''
           }
         );
-
-        const data = await getAccountPageData(req.session.user, "One-time payment successful.");
-
-        req.session.history = updateHistory(req.session.history, 'account/');
-        res.render('../../client/views/pages/account', data);
-        
       } else { // Subscription payment logic
 
         let price_id;
@@ -122,9 +116,12 @@ router.post('/checkout', async (req, res) => {
 
         // add credits for display on account page - credits are added to account and email receipt sent via webhook
         req.session.user.credits += Number(req.body['credit-amount'][1]);
-
-        const data = await getAccountPageData(req.session.user, "Subscription payment successful.");
-
+      }
+      const data = await getAccountPageData(req.session.user, "One-time payment successful.");
+      const hasSchedule = [...req.session.history].reverse().find(entry => entry.includes('schedule'));
+      if (hasSchedule) {
+        res.redirect(`/${hasSchedule}`);
+      } else {
         req.session.history = updateHistory(req.session.history, 'account/');
         res.render('../../client/views/pages/account', data);
       }
