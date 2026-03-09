@@ -8,7 +8,8 @@
     "start": "node ./bin/www",
     "db:start": "cd .. && ./docker-postgres.sh",
     "db:reset": "node ./db/reset.js",
-    "db:restore": "node ./db/restore.js"
+    "db:restore": "node ./db/restore.js",
+    "db:psql": "node ./db/psql.js"
   },
   "keywords": [],
   "author": "",
