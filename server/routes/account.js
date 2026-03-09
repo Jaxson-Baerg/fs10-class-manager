@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 require('dotenv').config();
 
-const { updateStudent, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
+const { updateStudent, updateStudentWaiver, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
@@ -109,6 +109,49 @@ router.get('/logout', async (req, res) => {
       req.session.user = null;
     }
     res.redirect('/');
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/waiver', async (req, res) => {
+  try {
+    if (req.session.user) {
+      if (req.session.user.waiver_signed_at) {
+        res.redirect('/account');
+      } else {
+        const newDate =  new Date();
+        req.session.history = updateHistory(req.session.history, 'account/waiver');
+        res.render('../../client/views/pages/account_waiver', { user: req.session.user, date: newDate.toDateString(), message: "A signed waiver is required to register for any class, please take the time to read and sign below." });
+      }
+    } else {
+      res.redirect('/');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/waiver', async (req, res) => {
+  try {
+    if (req.session.user) {
+      if (!req.body.name) {
+        res.redirect('/waiver');
+      } else {
+        req.session.user = await updateStudentWaiver(req.session.user.student_id, req.body.name);
+
+        const hasSchedule = [...req.session.history].reverse().find(entry => entry.includes('schedule'));
+        if (hasSchedule) {
+          res.redirect(`/${hasSchedule}`);
+        } else {
+          res.redirect('/account');
+        }
+      }
+    } else {
+      res.redirect('/');
+    }
   } catch(err) {
     console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });

@@ -49,13 +49,15 @@ router.post('/register/confirm', async (req, res) => {
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
       if (studentClasses.filter(e => e.class_id === req.body.class_id).length < 1) {
         if (req.body.spots_remaining > 0) {
-          if (req.session.user.credits >= req.body.credits) {
-            res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
-          } else {
+          if (!req.session.user.waiver_signed_at) {
+            res.redirect('/account/waiver');
+          } else if (req.session.user.credits < req.body.credits) {
             const data = await getPurchasePageData(req.session.user, `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`);
 
             req.session.history = updateHistory(req.session.history, 'purchase/');
             res.render('../../client/views/pages/purchase', data);
+          } else {
+            res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
           }
         } else {
           res.redirect('/');

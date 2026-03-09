@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+    <header id="header" class="fixed-top">
+      <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
+        <h1>FortySix10 Fitness - Waiver Form</h1>
+
+        <% if(message) { %>
+            <p class="alert alert-info"><%= message %></p>
+        <% } %>
+
+        <p>
+            I, the undersigned, agree that I am voluntarily participating 
+            in the fitness classes offered by FortySix10 Fitness.
+        </p>
+        <p>
+            I understand 
+            that my participation may involve the risk of possible injury to myself. 
+            If there are any personal medical concerns with my participation in 
+            these classes, I have discussed them with my Doctor for approval, and 
+            have also made the instructor aware of these concerns.
+        </p>
+        <p>
+            I hereby assume all risk of injury myself, and will not hold
+            the instructor or the facility liable.
+        </p>
+
+        <form method="post">
+            <input type="text" name="name" placeholder="Name" required />
+            <button type="submit">Confirm</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
+
+  </body>
+</html>

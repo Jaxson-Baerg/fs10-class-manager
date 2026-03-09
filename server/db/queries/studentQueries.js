@@ -25,7 +25,7 @@ const getStudentByEmail = async (email) => {
 // Get a single student by its id
 const getStudentById = async (id) => {
   const queryDef = {
-    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id, mailing_list FROM students WHERE student_id = $1;',
+    text: 'SELECT student_id, first_name, last_name, email, credits, customer_id, mailing_list, waiver_signed_at FROM students WHERE student_id = $1;',
     values: [id]
   };
 
@@ -80,6 +80,14 @@ const updateStudent = async (student_id, studentInfo) => {
   return data.rows[0];
 };
 
+// Update a student's waiver information
+const updateStudentWaiver = async (student_id, waiver_name) => {
+  const queryDef = `UPDATE students SET waiver_signed_at=current_timestamp,waiver_signed_name='${waiver_name}' WHERE student_id=${student_id} RETURNING *;`;
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 // Create a student by the parameters
 const addStudent = async (first_name, last_name, email, mailing_list) => {
   const unique_code = generateUniqueCode();
@@ -101,5 +109,6 @@ module.exports = {
   getStudentByCode,
   getStudentByStripeId,
   updateStudent,
-  addStudent
+  updateStudentWaiver,
+  addStudent,
 };
