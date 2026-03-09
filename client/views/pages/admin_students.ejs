@@ -40,6 +40,7 @@
                                     <p><a href="mailto:<%= student.email %>"><%= student.email %></a></p>
                                     <p>Classes completed: <%= student.num_completed_classes %></p>
                                     <p>Credits: <%= student.credits %></p>
+                                    <p>Waiver Signed: <%= student.waiver_signed_at %></p>
                                 </div>
 
                                 <a href=<%= `/admin/edit/student/${student.student_id}` %>><button type="button" class="btn link-btn">Edit</button></a>
