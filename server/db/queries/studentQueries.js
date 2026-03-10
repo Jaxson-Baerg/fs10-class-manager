@@ -88,6 +88,16 @@ const updateStudentWaiver = async (student_id, waiver_name) => {
   return data.rows[0];
 };
 
+// Add/Remove credits
+const changeStudentCredits = async (student_id, credits, description) => {
+  const queryDef = {
+    text: `SELECT record_student_credit_change($1, $2, $3);`,
+    values: [student_id, credits, description]
+  };
+  await db.query(queryDef);
+  return;
+};
+
 // Create a student by the parameters
 const addStudent = async (first_name, last_name, email, mailing_list) => {
   const unique_code = generateUniqueCode();
@@ -100,6 +110,29 @@ const addStudent = async (first_name, last_name, email, mailing_list) => {
   return data.rows[0];
 };
 
+// Get credit audit entries for a student
+const getStudentCreditAudit = async (student_id) => {
+  const queryDef = {
+    text: `
+      SELECT
+        audit_id,
+        student_id,
+        credits_before,
+        credits_after,
+        delta,
+        description,
+        to_char(changed_at at time zone 'America/Edmonton', 'YYYY-MM-DD HH24:MI') AS changed_at
+      FROM student_credits_audit
+      WHERE student_id = $1
+      ORDER BY changed_at DESC, audit_id DESC;
+    `,
+    values: [student_id]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows;
+};
+
 module.exports = {
   generateUniqueCode,
   getStudents,
@@ -108,7 +141,9 @@ module.exports = {
   getStudentCodeById,
   getStudentByCode,
   getStudentByStripeId,
+  getStudentCreditAudit,
   updateStudent,
   updateStudentWaiver,
+  changeStudentCredits,
   addStudent,
 };
