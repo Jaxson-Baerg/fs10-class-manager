@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY);
 
-const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
+const { updateStudent, getStudentById, changeStudentCredits } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData, getPurchasePageData } = require('../helpers/renderHelpers');
 
@@ -75,10 +75,8 @@ router.post('/checkout', async (req, res) => {
         });
 
         // add credits
-        student = await updateStudent(req.session.user.student_id, {
-          credits: req.session.user.credits + Number(req.body['credit-amount'])
-        });
-        req.session.user = student;
+        await changeStudentCredits(req.session.user.student_id, Number(req.body['credit-amount']), 'One-time purchase');
+        req.session.user = await getStudentById(req.session.user.student_id);
 
         // email user
         await sendEmail(

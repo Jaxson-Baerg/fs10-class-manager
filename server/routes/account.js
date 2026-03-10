@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 require('dotenv').config();
 
-const { updateStudent, updateStudentWaiver, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
+const { updateStudent, updateStudentWaiver, changeStudentCredits, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData } = require('../helpers/renderHelpers');
 
@@ -183,9 +183,11 @@ router.post('/register', async (req, res) => {
         req.session.user = student;
 
         if (req.session.user.mailing_list) {
-          req.session.user = await updateStudent(req.session.user.student_id, {
-            credits: req.session.user.credits + 1
-          });
+          await changeStudentCredits(
+            req.session.user.student_id,
+            1,
+            'Account Registration'
+          );
           // TODO mailchimp logic
           console.log(`add mailchimp setup here for ${req.session.user.first_name} ${req.session.user.last_name}.`);
         }
@@ -211,6 +213,7 @@ router.post('/register', async (req, res) => {
           }
         );
 
+        req.session.user = await getStudentById(req.session.user.student_id);
         const data = await getAccountPageData(req.session.user, "Successfully created your account.");
 
         req.session.history = updateHistory(req.session.history, 'account/');

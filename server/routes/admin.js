@@ -7,7 +7,7 @@ require('dotenv').config();
 const { getClassesByClassType, getClassById, createClass, deleteClass, updateClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass, getRegistrations } = require('../db/queries/classStudentQueries');
 const { getClassTypes, getClassTypeById, createClassType, deleteClassType, updateClassType } = require('../db/queries/classTypeQueries');
-const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
+const { updateStudent, getStudentById, changeStudentCredits, getStudentCreditAudit } = require('../db/queries/studentQueries');
 const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { getStudents } = require('../db/queries/studentQueries');
 const { getCompletedClasses } = require('../db/queries/classStudentQueries');
@@ -216,9 +216,11 @@ router.post('/delete/class_type', async (req, res) => {
             const students = await getStudentsForClass(c.class_id);
             const studentsCom = await getStudentList(students);
             studentsCom.forEach(async s => {
-              await updateStudent(s.student_id, {
-                credits: s.credits + c.credit_cost
-              });
+              await changeStudentCredits(
+                s.student_id,
+                c.credit_cost,
+                'Admin delete class type'
+              );
               await cancelRegistration(c.class_id, s.student_id);
             });
 
@@ -395,9 +397,11 @@ router.post('/delete/class', async (req, res) => {
         const studentsCom = await getStudentList(students);
 
         studentsCom.forEach(async s => {
-          await updateStudent(s.student_id, {
-            credits: s.credits + classObj.credit_cost
-          });
+          await changeStudentCredits(
+            s.student_id,
+            classObj.credit_cost,
+            'Admin delete class'
+          );
           await cancelRegistration(req.body.class_id, s.student_id);
         });
 
@@ -424,9 +428,14 @@ router.get('/edit/student/:student_id', async (req, res) => {
   try {
     if (req.session.admin) {
       const studentObj = await getStudentById(req.params.student_id);
+      const creditAudit = await getStudentCreditAudit(req.params.student_id);
 
       req.session.history = updateHistory(req.session.history, 'admin/edit/student/form');
-      res.render('../../client/views/pages/admin_edit_student', { user: req.session.user, student: studentObj });
+      res.render('../../client/views/pages/admin_edit_student', {
+        user: req.session.user,
+        student: studentObj,
+        creditAudit
+      });
     } else {
       res.redirect('/admin/login');
     }
@@ -448,11 +457,38 @@ router.get('/edit/student', async (req, res) => {
 router.post('/edit/student', async (req, res) => {
   try {
     if (req.session.admin) {
-      await updateStudent(req.body.student_id, req.body);
-      const studentList = await getStudents();
+      const existingStudent = await getStudentById(req.body.student_id);
 
-      req.session.history = updateHistory(req.session.history, 'admin/view/students');
-      res.render('../../client/views/pages/admin_students', { user: req.session.user, studentList, message: "Student successfully modified." });
+      const newCredits = Number(req.body.credits);
+      const oldCredits = Number(existingStudent.credits);
+      const delta = newCredits - oldCredits;
+
+      const studentData = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email
+      };
+
+      await updateStudent(req.body.student_id, studentData);
+
+      if (delta !== 0) {
+        await changeStudentCredits(
+          req.body.student_id,
+          delta,
+          req.body.credit_audit_note || 'Admin edit'
+        );
+      }
+
+      const studentObj = await getStudentById(req.body.student_id);
+      const creditAudit = await getStudentCreditAudit(req.body.student_id);
+
+      req.session.history = updateHistory(req.session.history, 'admin/edit/student/form');
+      res.render('../../client/views/pages/admin_edit_student', {
+        user: req.session.user,
+        student: studentObj,
+        creditAudit,
+        message: "Student successfully modified."
+      });
     } else {
       res.redirect('/admin/login');
     }
@@ -477,6 +513,12 @@ router.post('/checkin/', async (req, res) => {
 // Cancel a student's registration for a class
 router.post('/cancel', async (req, res) => {
   try {
+    const classObj = await getClassById(req.body.class_id);
+    await changeStudentCredits(
+      req.body.student_id,
+      classObj.credit_cost,
+      'Admin cancel registration'
+    );
     await cancelRegistration(req.body.class_id, req.body.student_id);
 
     res.redirect(`/admin/class/${req.body.class_id}`);

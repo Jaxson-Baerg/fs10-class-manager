@@ -4,7 +4,7 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const chalk = require('chalk');
 
-const { getStudentByStripeId, updateStudent } = require('../db/queries/studentQueries');
+const { getStudentByStripeId, changeStudentCredits } = require('../db/queries/studentQueries');
 
 require('dotenv').config();
 
@@ -81,7 +81,12 @@ const addSubscriptionCredits = async (invoice) => {
     const student = await getStudentByStripeId(invoice.customer);
 
     const add_credits = (invoice.amount_paid == 10000 ? 5 : 8);
-    const student_updated = await updateStudent(student.student_id, { credits: student.credits + add_credits });
+    await changeStudentCredits(
+      student.student_id,
+      add_credits,
+      'Subscription processed'
+    );
+    const student_updated = await getStudentByStripeId(invoice.customer);
 
     // email user
     await sendEmail(

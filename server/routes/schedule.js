@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 require('dotenv').config();
 
-const { updateStudent, getStudentById } = require('../db/queries/studentQueries');
+const { updateStudent, changeStudentCredits, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType, getClassById } = require('../db/queries/classQueries');
 const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, unpackageClassObjects } = require('../helpers/classStudentHelpers');
@@ -170,7 +170,11 @@ router.post('/register', async (req, res) => {
 
       if (studentClasses.filter(c => c.class_id == req.body.class_id).length < 1) {
         await registerStudent(req.body.class_id, req.session.user.student_id);
-        await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
+        await changeStudentCredits(
+          req.session.user.student_id,
+          Number(req.body.credits) * -1,
+          'Class Registration'
+        );
         req.session.user = await getStudentById(req.session.user.student_id);
 
         const classObjInc = await getClassById(req.body.class_id);
@@ -284,7 +288,11 @@ router.post('/retreat/register', async (req, res) => {
             }
           );
         }
-        await updateStudent(req.session.user.student_id, { credits: req.session.user.credits - req.body.credits });
+        await changeStudentCredits(
+          req.session.user.student_id,
+          Number(req.body.credits) * -1,
+          'Retreat Registration'
+        );
         req.session.user = await getStudentById(req.session.user.student_id);
 
         const data = await getAccountPageData(req.session.user, "Successfully registered.");
@@ -354,7 +362,11 @@ router.post('/cancel', async (req, res) => {
       const classes = await getClassesForStudent(req.session.user.student_id);
       if (classes.filter(c => c.class_id == req.body.class_id).length > 0) {
         await cancelRegistration(req.body.class_id, req.session.user.student_id);
-        await updateStudent(req.session.user.student_id, { credits: Number(req.session.user.credits) +    Number(req.body.credits) });
+        await changeStudentCredits(
+          req.session.user.student_id,
+          Number(req.body.credits),
+          'Class Cancellation'
+        );
         req.session.user = await getStudentById(req.session.user.student_id);
 
         const classObjInc = await getClassById(req.body.class_id);
