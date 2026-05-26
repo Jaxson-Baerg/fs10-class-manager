@@ -7,7 +7,7 @@ require('dotenv').config();
 const { getClassesByClassType, getClassById, createClass, deleteClass, updateClass } = require('../db/queries/classQueries');
 const { getStudentsForClass, cancelRegistration, completeClass, getRegistrations } = require('../db/queries/classStudentQueries');
 const { getClassTypes, getClassTypeById, createClassType, deleteClassType, updateClassType } = require('../db/queries/classTypeQueries');
-const { updateStudent, getStudentById, changeStudentCredits, getStudentCreditAudit } = require('../db/queries/studentQueries');
+const { updateStudent, getStudentById, changeStudentCredits, getStudentCreditAudit, deleteStudent } = require('../db/queries/studentQueries');
 const { getSpotsRemaining, getStudentList, getStudentsCheckedIn, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { getStudents } = require('../db/queries/studentQueries');
 const { getCompletedClasses } = require('../db/queries/classStudentQueries');
@@ -45,7 +45,11 @@ router.get('/view/students', async (req, res) => {
       studentList.sort((a, b) => a.first_name.localeCompare(b.first_name));
 
       req.session.history = updateHistory(req.session.history, 'admin/view/students');
-      res.render('../../client/views/pages/admin_students', { user: req.session.user, studentList });
+      res.render('../../client/views/pages/admin_students', {
+        user: req.session.user,
+        studentList,
+        message: req.query.message
+      });
     } else {
       res.redirect('/admin/login');
     }
@@ -434,7 +438,8 @@ router.get('/edit/student/:student_id', async (req, res) => {
       res.render('../../client/views/pages/admin_edit_student', {
         user: req.session.user,
         student: studentObj,
-        creditAudit
+        creditAudit,
+        confirmDelete: false
       });
     } else {
       res.redirect('/admin/login');
@@ -448,6 +453,15 @@ router.get('/edit/student/:student_id', async (req, res) => {
 router.get('/edit/student', async (req, res) => {
   try {
     res.redirect('/admin');
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/delete/student', async (req, res) => {
+  try {
+    res.redirect('/admin/view/students');
   } catch(err) {
     console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
     res.status(500).json({ error: err.message });
@@ -487,8 +501,40 @@ router.post('/edit/student', async (req, res) => {
         user: req.session.user,
         student: studentObj,
         creditAudit,
-        message: "Student successfully modified."
+        message: "Student successfully modified.",
+        confirmDelete: false
       });
+    } else {
+      res.redirect('/admin/login');
+    }
+  } catch(err) {
+    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Hard-delete a student and dependent records after explicit confirmation
+router.post('/delete/student', async (req, res) => {
+  try {
+    if (req.session.admin) {
+      if (req.body.confirm_delete !== 'yes') {
+        const studentObj = await getStudentById(req.body.student_id);
+        const creditAudit = await getStudentCreditAudit(req.body.student_id);
+
+        return res.render('../../client/views/pages/admin_edit_student', {
+          user: req.session.user,
+          student: studentObj,
+          creditAudit,
+          confirmDelete: true
+        });
+      }
+
+      const deletedStudent = await deleteStudent(req.body.student_id);
+      const deletedName = deletedStudent
+        ? `${deletedStudent.first_name} ${deletedStudent.last_name}`
+        : 'Student';
+
+      res.redirect(`/admin/view/students?message=${encodeURIComponent(`${deletedName} successfully deleted.`)}`);
     } else {
       res.redirect('/admin/login');
     }

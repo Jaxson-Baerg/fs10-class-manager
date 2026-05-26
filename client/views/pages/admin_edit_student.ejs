@@ -23,6 +23,44 @@
       <div class="alert alert-success mt-3"><%= message %></div>
       <% } %>
 
+      <% if (typeof confirmDelete !== 'undefined' && confirmDelete) { %>
+        <form id="delete-student" action="/admin/delete/student" method="POST" class="mt-4">
+          <input name="student_id" value="<%= student.student_id %>" hidden />
+          <input name="confirm_delete" value="yes" hidden />
+
+          <div class="alert alert-danger">
+            <h4 class="alert-heading">Confirm Student Deletion</h4>
+
+            <p>
+              You are about to permanently delete
+              <strong><%= student.first_name %> <%= student.last_name %></strong>.
+            </p>
+
+            <p>
+              This will also delete this student's class registrations and credit history.
+              This action cannot be undone.
+            </p>
+
+            <div class="form-check mt-3">
+              <input
+                id="confirm-delete-checkbox"
+                class="form-check-input"
+                type="checkbox"
+                required
+              />
+              <label class="form-check-label" for="confirm-delete-checkbox">
+                I understand this action is permanent.
+              </label>
+            </div>
+          </div>
+
+          <div class="text-center mb-4">
+            <button type="submit" class="btn btn-danger">Permanently Delete Student</button>
+            <a href="/admin/edit/student/<%= student.student_id %>" class="btn btn-secondary ml-2">Cancel</a>
+          </div>
+        </form>
+      <% } %>
+
 			<div class="row justify-content-center">
 			  	<div class="col-lg-10">
 					<form id="edit-student" action="/admin/edit/student" method="POST" class="input-form flex-column">
@@ -105,6 +143,14 @@
 							<button type="submit">Submit</button>
 						</div>
 					</form>
+
+          <% if (!(typeof confirmDelete !== 'undefined' && confirmDelete)) { %>
+            <form id="delete-student" action="/admin/delete/student" method="POST" class="mt-4 text-center">
+              <input name="student_id" value="<%= student.student_id %>" hidden />
+              <button type="submit" class="btn btn-danger">Delete Student</button>
+            </form>
+          <% } %>
+
 		  		</div>
 			</div>
 	  	</div>

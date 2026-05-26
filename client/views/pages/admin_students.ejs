@@ -19,6 +19,10 @@
                 <h2 class="text-center">Students</h2>
 			</div>
 
+            <% if (typeof message !== 'undefined' && message) { %>
+              <div class="alert alert-success mt-3"><%= message %></div>
+            <% } %>
+
             <div class="flex-column card-text">
                 <h1><%= studentList.length %></h1>
                 <h4>Total Students!</h4>

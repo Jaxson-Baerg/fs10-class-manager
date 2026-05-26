@@ -133,6 +133,35 @@ const getStudentCreditAudit = async (student_id) => {
   return data.rows;
 };
 
+// Delete a student and dependent records
+const deleteStudent = async (student_id) => {
+  const queryDef = {
+    text: `
+      WITH
+        deleted_class_students AS (
+          DELETE FROM class_students
+          WHERE student_id = $1
+          RETURNING *
+        ),
+        deleted_credit_audit AS (
+          DELETE FROM student_credits_audit
+          WHERE student_id = $1
+          RETURNING *
+        ),
+        deleted_student AS (
+          DELETE FROM students
+          WHERE student_id = $1
+          RETURNING student_id, first_name, last_name, email
+        )
+      SELECT * FROM deleted_student;
+    `,
+    values: [student_id]
+  };
+
+  const data = await db.query(queryDef);
+  return data.rows[0];
+};
+
 module.exports = {
   generateUniqueCode,
   getStudents,
@@ -146,4 +175,5 @@ module.exports = {
   updateStudentWaiver,
   changeStudentCredits,
   addStudent,
+  deleteStudent,
 };
