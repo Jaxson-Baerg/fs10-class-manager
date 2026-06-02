@@ -1,12 +1,63 @@
 const express = require('express');
 const router = express.Router();
 const chalk = require('chalk');
+const https = require('https');
 
 require('dotenv').config();
 
 const { updateStudent, updateStudentWaiver, changeStudentCredits, generateUniqueCode, getStudentByEmail, getStudentByCode, addStudent, getStudentById } = require('../db/queries/studentQueries');
 const { updateHistory, sendEmail } = require('../helpers/operationHelpers');
 const { getAccountPageData } = require('../helpers/renderHelpers');
+
+const verifyRecaptcha = (token, remoteIp) => {
+  return new Promise((resolve, reject) => {
+    if (!process.env.RECAPTCHA_SECRET_KEY || !token) {
+      return resolve(false);
+    }
+
+    const params = new URLSearchParams();
+    params.append('secret', process.env.RECAPTCHA_SECRET_KEY);
+    params.append('response', token);
+
+    if (remoteIp) {
+      params.append('remoteip', remoteIp);
+    }
+
+    const postData = params.toString();
+
+    const request = https.request(
+      {
+        hostname: 'www.google.com',
+        path: '/recaptcha/api/siteverify',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      },
+      response => {
+        let body = '';
+
+        response.on('data', chunk => {
+          body += chunk;
+        });
+
+        response.on('end', () => {
+          try {
+            const result = JSON.parse(body);
+            resolve(result.success === true);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      }
+    );
+
+    request.on('error', reject);
+    request.write(postData);
+    request.end();
+  });
+};
 
 // Render the user's account page if they are logged in
 router.get('/', async (req, res) => {
@@ -163,7 +214,14 @@ router.get('/register', async (req, res) => {
   try {
     if (!req.session.user) {
       req.session.history = updateHistory(req.session.history, 'account/register');
-      res.render('../../client/views/pages/account_register', { user: req.session.user });
+      res.render('../../client/views/pages/account_register', {
+        user: req.session.user,
+        message: undefined,
+        captchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
+        form: {
+          mailing_list: true
+        }
+      });
     } else {
       res.redirect('/');
     }
@@ -176,6 +234,23 @@ router.get('/register', async (req, res) => {
 // Register a new user into the database
 router.post('/register', async (req, res) => {
   try {
+    const captchaValid = await verifyRecaptcha(
+      req.body['g-recaptcha-response'],
+      req.ip
+    );
+
+    if (!captchaValid) {
+      return res.render('../../client/views/pages/account_register', {
+        user: req.session.user,
+        message: 'Captcha verification failed. Please try again.',
+        captchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
+        form: {
+          ...req.body,
+          mailing_list: Boolean(req.body.mailing_list)
+        }
+      });
+    }
+
     const studentObj = await getStudentByEmail(req.body.email);
     if (!studentObj) {
       const student = await addStudent(req.body.first_name, req.body.last_name, req.body.email, req.body.mailing_list ? true : false);
