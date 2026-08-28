@@ -75,7 +75,7 @@ router.post('/checkout', async (req, res) => {
         });
 
         // add credits
-        await changeStudentCredits(req.session.user.student_id, Number(req.body['credit-amount']), 'One-time purchase');
+        await changeStudentCredits(req.session.user.student_id, Math.floor(Number(req.body['credit-amount']) * 1.5), 'One-time purchase');
         req.session.user = await getStudentById(req.session.user.student_id);
 
         // email user
