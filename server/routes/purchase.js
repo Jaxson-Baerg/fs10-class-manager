@@ -79,20 +79,25 @@ router.post('/checkout', async (req, res) => {
         req.session.user = await getStudentById(req.session.user.student_id);
 
         // email user
-        await sendEmail(
-          'email_receipt.html',
-          process.env.EMAIL_TO || student.email,
-          'Purchase Receipt',
-          {
-            type: "one-time",
-            credits: req.body['credit-amount'],
-            cost: `$${((req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS) / 100).toFixed(2)}`,
-            balance: req.session.user.credits,
-            subMsg: '',
-            host_url: process.env.HOST_URL,
-            plural: req.body['credit-amount'] > 1 ? 's' : ''
-          }
-        );
+        // email user; do not fail the purchase if receipt email fails
+        try {
+          await sendEmail(
+            'email_receipt.html',
+            process.env.EMAIL_TO || req.session.user.email,
+            'Purchase Receipt',
+            {
+              type: "one-time",
+              credits: req.body['credit-amount'],
+              cost: `$${((req.body['credit-amount'] * process.env.ONE_TIME_CREDIT_COST_CENTS) / 100).toFixed(2)}`,
+              balance: req.session.user.credits,
+              subMsg: '',
+              host_url: process.env.HOST_URL,
+              plural: Number(req.body['credit-amount']) > 1 ? 's' : ''
+            }
+          );
+        } catch (emailErr) {
+          console.log(chalk.red.bold('Receipt email failed: ') + emailErr.message);
+        }
       } else { // Subscription payment logic
 
         let price_id;
@@ -128,8 +133,38 @@ router.post('/checkout', async (req, res) => {
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "Please login to purchase credits." });
     }
   } catch(err) {
-    console.log(chalk.red.bold(`Error (${err.status}): `) + " " + err.message);
-    res.status(500).json({ error: err.message });
+    const status = err.statusCode || err.status || 500;
+    console.log(chalk.red.bold(`Error (${status}): `) + " " + err.message);
+
+    if (req.session.user) {
+      const isStripeCardError = err.type === 'StripeCardError' || err.code === 'card_declined';
+
+      const message = isStripeCardError
+        ? err.message
+        : 'There was a problem processing your purchase. Please contact us if your card was charged.';
+
+      try {
+        req.session.user = await getStudentById(req.session.user.student_id);
+        const data = await getPurchasePageData(req.session.user, message);
+
+        return res
+          .status(isStripeCardError ? 402 : status)
+          .render('../../client/views/pages/purchase', data);
+      } catch(renderErr) {
+        console.log(chalk.red.bold('Error rendering purchase page: ') + renderErr.message);
+
+        return res
+          .status(500)
+          .send('There was a problem processing your purchase. Please contact support.');
+      }
+    }
+
+    req.session.history = updateHistory(req.session.history, 'account/login');
+
+    return res.status(401).render('../../client/views/pages/account_email_login', {
+      user: req.session.user,
+      message: 'Please login to purchase credits.'
+    });
   }
 });
 
