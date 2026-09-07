@@ -30,6 +30,11 @@ BEGIN
 
   v_after := v_before + COALESCE(p_credits_change, 0);
 
+  IF v_after < 0 THEN
+    RAISE EXCEPTION 'insufficient credits for student id %: current %, change %',
+      p_student_id, v_before, p_credits_change;
+  END IF;
+
   UPDATE students
   SET credits = v_after
   WHERE student_id = p_student_id;

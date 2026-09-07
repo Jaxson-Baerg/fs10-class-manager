@@ -4,9 +4,15 @@ const chalk = require('chalk');
 
 require('dotenv').config();
 
-const { updateStudent, changeStudentCredits, getStudentById } = require('../db/queries/studentQueries');
+const { changeStudentCredits, getStudentById } = require('../db/queries/studentQueries');
 const { getClassesByClassType, getClassById } = require('../db/queries/classQueries');
-const { registerStudent, cancelRegistration, getClassesForStudent, getCompletedClasses } = require('../db/queries/classStudentQueries');
+const {
+  registerStudentForClassWithCredits,
+  registerStudentForRetreatWithCredits,
+  cancelRegistration,
+  getClassesForStudent,
+  getStudentsForClass
+} = require('../db/queries/classStudentQueries');
 const { getSpotsRemaining, unpackageClassObjects } = require('../helpers/classStudentHelpers');
 const { formatDate, formatTime, updateHistory, sortClasses, sendEmail } = require('../helpers/operationHelpers');
 const { getClassTypeById } = require('../db/queries/classTypeQueries');
@@ -44,27 +50,49 @@ router.get('/register/confirm', async (req, res) => {
 router.post('/register/confirm', async (req, res) => {
   try {
     if (req.session.user) {
-      req.session.user = await getStudentById(req.session.user.student_id);
+      const classObj = await getClassById(req.body.class_id);
+
+      if (!classObj || !classObj.can_register) {
+        return res.redirect('/');
+      }
 
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
-      if (studentClasses.filter(e => e.class_id === req.body.class_id).length < 1) {
-        if (req.body.spots_remaining > 0) {
-          if (!req.session.user.waiver_signed_at) {
-            res.redirect('/account/waiver');
-          } else if (req.session.user.credits < req.body.credits) {
-            const data = await getPurchasePageData(req.session.user, `You do not have enough credits to register for this class. You need ${req.body.credits - req.session.user.credits} more to register.`);
+      const alreadyRegistered = studentClasses.some(c => Number(c.class_id) === Number(classObj.class_id));
 
-            req.session.history = updateHistory(req.session.history, 'purchase/');
-            res.render('../../client/views/pages/purchase', data);
-          } else {
-            res.render('../../client/views/pages/class_register', { user: req.session.user, class_type_id: req.body.class_type_id, class_id: req.body.class_id, credits: req.body.credits });
-          }
-        } else {
-          res.redirect('/');
-        }
-      } else {
-        res.redirect('/');
+      if (alreadyRegistered) {
+        return res.redirect('/');
       }
+
+      const students = await getStudentsForClass(classObj.class_id);
+      const spotsRemaining = Number(classObj.max_students) - students.length;
+
+      if (spotsRemaining < 1) {
+        return res.redirect('/');
+      }
+
+      if (!req.session.user.waiver_signed_at) {
+        return res.redirect('/account/waiver');
+      }
+
+      if (Number(req.session.user.credits) < Number(classObj.credit_cost)) {
+        const data = await getPurchasePageData(
+          req.session.user,
+          `You do not have enough credits to register for this class. You need ${Number(classObj.credit_cost) - Number(req.session.user.credits)} more to register.`
+        );
+
+        req.session.history = updateHistory(req.session.history, 'purchase/');
+        return res.render('../../client/views/pages/purchase', data);
+      }
+
+      // Ensure session user has latest credits (optional but helps consistency)
+      req.session.user = await getStudentById(req.session.user.student_id);
+
+      return res.render('../../client/views/pages/class_register', {
+        user: req.session.user,
+        class_type_id: classObj.class_type_id,
+        class_id: classObj.class_id,
+        credits: classObj.credit_cost
+      });
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
@@ -91,53 +119,52 @@ router.post('/register/retreat/confirm', async (req, res) => {
       req.session.user = await getStudentById(req.session.user.student_id);
 
       const studentClasses = await getClassesForStudent(req.session.user.student_id);
-      let classTypeId;
       let eventsToRegister = [];
+      let classTypeId;
       let totalCredits = 0;
-      let tmp = {};
-      // Extract the needed info from the selected retreat events
-      Object.keys(req.body).forEach(arg => {
-        let match = arg.match(/(.*)-class_id/);
-        if (match) {
-          tmp['class_id'] = match[1];
-        }
-        match = arg.match(/(.*)-spots_remaining/);
-        if (match) {
-          if (tmp['class_id'] === match[1]) {
-            tmp['spots_remaining'] = req.body[arg];
-            eventsToRegister.push(tmp);
-            tmp = {};
-          }
-        }
-        match = arg.match(/(.*)-credits/);
-        if (match) {
-          totalCredits += Number(req.body[arg]);
-        }
-        match = arg.match(/(.*)-class_type_id/);
-        if (match) {
-          classTypeId = req.body[arg];
-        }
-      });
 
-      // Ensure none of the events are registered for and that they have spots remaining
-      let flag = false;
-      eventsToRegister.forEach(event => {
-        if (studentClasses.filter(e => e.class_id === event.class_id).length || event.spots_remaining < 1) {
-          flag = true;
-        }
-      });
+      const selectedClassIds = Object.keys(req.body)
+        .map(arg => {
+          const match = arg.match(/(.*)-class_id/);
+          return match ? Number(match[1]) : null;
+        })
+        .filter(Boolean);
 
-      if (!flag) {
-        if (req.session.user.credits >= totalCredits) {
-          res.render('../../client/views/pages/retreat_register', { user: req.session.user, class_type_id: classTypeId, events: eventsToRegister, credits: totalCredits });
-        } else {
-          const data = await getPurchasePageData(req.session.user, `You do not have enough credits to register for the selected options for the retreat. You need ${totalCredits - req.session.user.credits} more to register.`);
+      for (const classId of selectedClassIds) {
+        const classObj = await getClassById(classId);
 
-          req.session.history = updateHistory(req.session.history, 'purchase/');
-          res.render('../../client/views/pages/purchase', data);
+        if (!classObj || !classObj.can_register) {
+          return res.redirect('/');
         }
+
+        const alreadyRegistered = studentClasses.some(
+          c => Number(c.class_id) === Number(classObj.class_id)
+        );
+
+        const students = await getStudentsForClass(classObj.class_id);
+        const spotsRemaining = Number(classObj.max_students) - students.length;
+
+        if (alreadyRegistered || spotsRemaining < 1) {
+          return res.redirect('/');
+        }
+
+        if (!classTypeId) {
+          classTypeId = classObj.class_type_id;
+        }
+        totalCredits += Number(classObj.credit_cost);
+        eventsToRegister.push({ class_id: classObj.class_id });
+      }
+
+      if (req.session.user.credits >= totalCredits) {
+        res.render('../../client/views/pages/retreat_register', { user: req.session.user, class_type_id: classTypeId, events: eventsToRegister, credits: totalCredits });
       } else {
-        res.redirect('/');
+        const data = await getPurchasePageData(
+          req.session.user,
+          `You do not have enough credits to register for the selected options for the retreat. You need ${totalCredits - req.session.user.credits} more to register.`
+        );
+
+        req.session.history = updateHistory(req.session.history, 'purchase/');
+        res.render('../../client/views/pages/purchase', data);
       }
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
@@ -166,18 +193,15 @@ router.get('/register', async (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     if (req.session.user) {
-      const studentClasses = await getClassesForStudent(req.session.user.student_id);
+      const result = await registerStudentForClassWithCredits(
+        req.body.class_id,
+        req.session.user.student_id
+      );
 
-      if (studentClasses.filter(c => c.class_id == req.body.class_id).length < 1) {
-        await registerStudent(req.body.class_id, req.session.user.student_id);
-        await changeStudentCredits(
-          req.session.user.student_id,
-          Number(req.body.credits) * -1,
-          'Class Registration'
-        );
-        req.session.user = await getStudentById(req.session.user.student_id);
+      req.session.user = await getStudentById(req.session.user.student_id);
 
-        const classObjInc = await getClassById(req.body.class_id);
+      if (result.status === 'registered') {
+        const classObjInc = await getClassById(result.classId);
         const classList = await unpackageClassObjects([classObjInc]);
 
         // send user email
@@ -208,16 +232,28 @@ router.post('/register', async (req, res) => {
           }
         );
 
-        const data = await getAccountPageData(req.session.user, "Successfully registered.");
-
+        const data = await getAccountPageData(req.session.user, 'Successfully registered.');
         req.session.history = updateHistory(req.session.history, 'account/');
-        res.render('../../client/views/pages/account', data);
-      } else {
-        const data = await getAccountPageData(req.session.user, "Already registered!");
-
-        req.session.history = updateHistory(req.session.history, 'account/');
-        res.render('../../client/views/pages/account', data);
+        return res.render('../../client/views/pages/account', data);
       }
+
+      if (result.status === 'insufficient_credits') {
+        const data = await getPurchasePageData(
+          req.session.user,
+          `You do not have enough credits to register for this class. You need ${result.creditsNeeded} more to register.`
+        );
+
+        req.session.history = updateHistory(req.session.history, 'purchase/');
+        return res.render('../../client/views/pages/purchase', data);
+      }
+
+      const message = result.status === 'already_registered'
+        ? 'Already registered!'
+        : 'Unable to register for this class.';
+
+      const data = await getAccountPageData(req.session.user, message);
+      req.session.history = updateHistory(req.session.history, 'account/');
+      return res.render('../../client/views/pages/account', data);
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});
@@ -245,23 +281,22 @@ router.get('/retreat/register', async (req, res) => {
 router.post('/retreat/register', async (req, res) => {
   try {
     if (req.session.user) {
-      const studentClasses = await getClassesForStudent(req.session.user.student_id);
-      // Ensure none of the events are registered for and that they have spots remaining
-      let flag = false;
-      for (let i = 0; i < Object.keys(req.body).length - 1; i++) {
-        if (studentClasses.filter(e => e.class_id === req.body[Object.keys(req.body)[i]]).length) {
-          flag = true;
-        }
-      };
+      const classIds = Array.isArray(req.body.class_ids)
+        ? req.body.class_ids
+        : [req.body.class_ids].filter(Boolean);
 
-      if (!flag) {
-        for (let i = 0; i < Object.keys(req.body).length - 1; i++) {
-          await registerStudent(req.body[Object.keys(req.body)[i]], req.session.user.student_id);
+      const result = await registerStudentForRetreatWithCredits(
+        classIds,
+        req.session.user.student_id
+      );
 
-          const classObjInc = await getClassById(req.body[Object.keys(req.body)[i]]);
+      req.session.user = await getStudentById(req.session.user.student_id);
+
+      if (result.status === 'registered') {
+        for (const classId of result.classIds) {
+          const classObjInc = await getClassById(classId);
           const classList = await unpackageClassObjects([classObjInc]);
 
-          // send user email
           await sendEmail(
             'email_retreat_class_register.html',
             process.env.EMAIL_TO || req.session.user.email,
@@ -274,7 +309,6 @@ router.post('/retreat/register', async (req, res) => {
             }
           );
 
-          // send admin email
           await sendEmail(
             'email_admin_class_register.html',
             process.env.EMAIL_TO || process.env.EMAIL_FROM,
@@ -288,23 +322,29 @@ router.post('/retreat/register', async (req, res) => {
             }
           );
         }
-        await changeStudentCredits(
-          req.session.user.student_id,
-          Number(req.body.credits) * -1,
-          'Retreat Registration'
-        );
-        req.session.user = await getStudentById(req.session.user.student_id);
 
-        const data = await getAccountPageData(req.session.user, "Successfully registered.");
-
+        const data = await getAccountPageData(req.session.user, 'Successfully registered.');
         req.session.history = updateHistory(req.session.history, 'account/');
-        res.render('../../client/views/pages/account', data);
-      } else {
-        const data = await getAccountPageData(req.session.user, "Already registered!");
-
-        req.session.history = updateHistory(req.session.history, 'account/');
-        res.render('../../client/views/pages/account', data);
+        return res.render('../../client/views/pages/account', data);
       }
+
+      if (result.status === 'insufficient_credits') {
+        const data = await getPurchasePageData(
+          req.session.user,
+          `You do not have enough credits to register for the selected options for the retreat. You need ${result.creditsNeeded} more to register.`
+        );
+
+        req.session.history = updateHistory(req.session.history, 'purchase/');
+        return res.render('../../client/views/pages/purchase', data);
+      }
+
+      const message = result.status === 'already_registered'
+        ? 'Already registered!'
+        : 'Unable to register for the selected retreat events.';
+
+      const data = await getAccountPageData(req.session.user, message);
+      req.session.history = updateHistory(req.session.history, 'account/');
+      return res.render('../../client/views/pages/account', data);
     } else {
       req.session.history = updateHistory(req.session.history, 'account/login');
       res.render('../../client/views/pages/account_email_login', { user: req.session.user, message: "You must login first to register for a class."});

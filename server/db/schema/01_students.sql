@@ -5,7 +5,7 @@ CREATE TABLE students(
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     unique_code TEXT NOT NULL,
-    credits INT NOT NULL,
+    credits INT NOT NULL CHECK (credits >= 0),
     mailing_list BOOLEAN DEFAULT false NOT NULL,
     customer_id TEXT,
     waiver_signed_at TIMESTAMP,
