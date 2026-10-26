@@ -3,7 +3,8 @@ const db = require('../index');
 // Get all classes with time based attributes
 const getClasses = async () => {
   const data = await db.query(
-      "SELECT *, (start_datetime > current_timestamp) can_register, start_datetime::text as event_date"+
+      "SELECT *, (start_datetime > current_timestamp) can_register"+
+      ", to_char(start_datetime at time zone 'MST7', 'YYYY-MM-DD\"T\"HH24:MI') event_date"+
       ", (start_datetime > current_timestamp + interval '12 hours') can_cancel"+
       ", (start_datetime > current_timestamp + interval '24 hours' AND start_datetime <= current_timestamp + interval '25 hours') send_reminder"+
       " FROM classes join class_types using(class_type_id)"+
