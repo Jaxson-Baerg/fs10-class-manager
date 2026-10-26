@@ -18,6 +18,7 @@ const purchaseRouter = require('./routes/purchase');
 const pricingRouter = require('./routes/pricing');
 const adminRouter = require('./routes/admin');
 const stripeRouter = require('./routes/stripe');
+const calendarRouter = require('./routes/calendar');
 const { initScheduledJobs } = require('./helpers/scheduledFunctions');
 
 const app = express();
@@ -51,6 +52,7 @@ app.use('/purchase', purchaseRouter);
 app.use('/pricing', pricingRouter);
 app.use('/admin', adminRouter);
 app.use('/stripe', stripeRouter);
+app.use('/calendar', calendarRouter);
 
 // Run node-cron init function
 initScheduledJobs();
