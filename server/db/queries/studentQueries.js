@@ -7,7 +7,7 @@ const generateUniqueCode = () => {
 
 // Get all students' info except id and unique code
 const getStudents = async () => {
-  const data = await db.query("SELECT student_id, first_name, last_name, email, credits, mailing_list, to_char(waiver_signed_at at time zone 'America/Edmonton', 'YYYY-MM-DD HH24:MI') waiver_signed_at, customer_id FROM students;");
+  const data = await db.query("SELECT student_id, first_name, last_name, email, credits, mailing_list, to_char(waiver_signed_at at time zone 'MST7', 'YYYY-MM-DD HH24:MI') waiver_signed_at, customer_id FROM students;");
   return data.rows;
 };
 
@@ -121,7 +121,7 @@ const getStudentCreditAudit = async (student_id) => {
         credits_after,
         delta,
         description,
-        to_char(changed_at at time zone 'America/Edmonton', 'YYYY-MM-DD HH24:MI') AS changed_at
+        to_char(changed_at at time zone 'MST7', 'YYYY-MM-DD HH24:MI') AS changed_at
       FROM student_credits_audit
       WHERE student_id = $1
       ORDER BY changed_at DESC, audit_id DESC;

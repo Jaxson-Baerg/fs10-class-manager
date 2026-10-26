@@ -1,3 +1,8 @@
+// Alberta no longer observes daylight savings: pin the process to fixed Mountain
+// time (UTC-7) so formatDate/formatTime always render Mountain wall time,
+// regardless of the host machine's timezone
+process.env.TZ = 'MST7';
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
