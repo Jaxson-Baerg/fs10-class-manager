@@ -24,18 +24,16 @@ const plainText = (text) => `${text}`
   .replace(/\s+/g, ' ')
   .trim();
 
-// Format a timestamp as an ICS floating time in fixed Mountain wall time, e.g.
-// 20221115T160000. Times are emitted without a zone (no "Z" and no TZID) on
-// purpose: subscribing calendars such as Google Calendar convert absolute
-// times to the subscriber's timezone, which applies DST and renders a 4pm
-// class as 5pm during former DST months. Floating times display the wall time
-// as written in every calendar.
+// Format a timestamp as a UTC ICS date-time value, e.g. 20221115T163000Z.
+// Times are emitted as absolute instants: Google Calendar reads zone-less
+// times as UTC anyway, so floating times render shifted for everyone. A
+// subscriber's calendar converts these to its own timezone, so a viewer
+// whose calendar applies DST sees them shift with DST.
 const icsDateTime = (timestamp) => {
-  // fixed Mountain time is UTC-7 all year; shift the instant into MST wall time
-  const date = new Date(new Date(timestamp).getTime() - 7 * 3600 * 1000);
+  const date = new Date(timestamp);
   const pad = (n) => `${n}`.padStart(2, '0');
   return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}` +
-    `T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}`;
+    `T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}Z`;
 };
 
 // RFC 5545 limits lines to 75 octets; fold longer lines with CRLF + a leading space
@@ -48,7 +46,7 @@ const foldIcsLine = (line) => {
 
 // Calendar feed of all classes (past and upcoming) that can be subscribed to
 // from an external calendar such as Google Calendar. Events are emitted as
-// fixed Mountain floating times so every subscriber sees the same wall time.
+// UTC instants; each subscriber's calendar renders them in its own timezone.
 router.get('/', async (req, res) => {
   try {
     const classes = await getClasses(); // ordered by start_datetime
@@ -63,7 +61,7 @@ router.get('/', async (req, res) => {
       'X-PUBLISHED-TTL:PT1H'
     ];
 
-    const dtstamp = `${icsDateTime(new Date())}Z`; // DTSTAMP must be UTC
+    const dtstamp = icsDateTime(new Date());
 
     classes.forEach(c => {
       lines.push(
